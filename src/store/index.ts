@@ -7,6 +7,8 @@ import type {
   HelpTextItem,
   HelpTextItemQuery,
   JsScriptInfo,
+  StoreElem,
+  StoreElemType,
 } from "~/type";
 
 export enum goCqHttpStateCode {
@@ -852,6 +854,17 @@ export const useStore = defineStore('main', {
         responseType: "blob",
       })
       return response as unknown as Blob;
+    },
+
+    async storePage(params: {type: StoreElemType}) {
+      const info : {result: false, err?: string} | {
+        result: true,
+        pageNum: number,
+        pageSize: number,
+        total: number,
+        data: StoreElem[],
+      } = await backend.get(urlPrefix + '/store/page', {params})
+      return info
     }
   }
 })
