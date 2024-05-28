@@ -856,6 +856,14 @@ export const useStore = defineStore('main', {
       return response as unknown as Blob;
     },
 
+    async storeRecommend(params: {type: StoreElemType}) {
+      const info : {result: false, err?: string} | {
+        result: true,
+        data: StoreElem[],
+      } = await backend.get(urlPrefix + '/store/recommend', {params})
+      return info
+    },
+
     async storePage(params: {type: StoreElemType}) {
       const info : {result: false, err?: string} | {
         result: true,
