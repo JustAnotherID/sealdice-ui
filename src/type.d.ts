@@ -82,13 +82,10 @@ export interface AdvancedConfig {
     storeBackendUrl: string,
 }
 
-export type StoreElemType = 'plugin' | 'deck' | 'reply' | 'helpdoc'
+export type StoreElemType = 'plugin' | 'deck' // | 'reply' | 'helpdoc'
 
 export interface StoreElem {
-    namespace: string
     id: string
-    version: string
-    key: string
     installed: boolean
 
     source: 'official' | string
@@ -96,18 +93,19 @@ export interface StoreElem {
     ext: '.js' | '.toml' | '.json' | '.jsonc' | '.yaml' | '.xlsx' | string
 
     name: string
+    version: string
     authors: string[]
     desc: string
     license: string
     releaseTime: number
-    updateTime: number
-    tags: string[]
-    rate: number
-    extra: Map<string, string>
-    downloadNum: number,
+    updateTime?: number
+    tags?: string[]
+    rate?: number
+    extra?: Map<string, string>
+    downloadNum?: number,
     downloadUrl: string,
-    hash: Map<string, string>
-    homePage: string
-    sealVersion: string
-    dependencies: Map<string, string>
+    hash?: Map<string, string>
+    homePage?: string
+    sealVersion?: string
+    dependencies?: Map<string, string>
 }
