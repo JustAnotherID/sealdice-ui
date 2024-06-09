@@ -79,6 +79,7 @@ export interface AdvancedConfig {
     storyLogBackendUrl: string,
     storyLogApiVersion: string,
     storyLogBackendToken: string,
+    storeBackendUrl: string,
 }
 
 export type StoreElemType = 'plugin' | 'deck' | 'reply' | 'helpdoc'
