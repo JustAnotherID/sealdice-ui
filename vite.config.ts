@@ -6,6 +6,7 @@ import legacy from "@vitejs/plugin-legacy";
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from "unplugin-vue-components/vite";
 import {ElementPlusResolver} from "unplugin-vue-components/resolvers";
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
 
@@ -41,6 +42,7 @@ export default defineConfig({
         ElementPlusResolver({
           importStyle: "css",
         }),
+        NaiveUiResolver(),
         IconsResolver(),
       ],
     }),
@@ -49,6 +51,7 @@ export default defineConfig({
         ElementPlusResolver({
           importStyle: "css",
         }),
+        NaiveUiResolver(),
         IconsResolver(),
       ],
     }),
@@ -71,6 +74,7 @@ export default defineConfig({
           common: [
             "element-plus",
             "lodash-es",
+            "naive-ui",
           ],
           utils: [
             "@vueuse/core",
