@@ -1,94 +1,115 @@
 <template>
-  <el-container id="root"
-       class="bg-gray-600 mx-auto my-0 h-screen flex flex-col">
-    <el-header class="nav bg-inherit flex-none text-white flex justify-between">
-      <el-space alignment="center" :size="0" style="height: 60px;">
+  <n-layout id="root" class="mx-auto my-0 h-screen flex flex-col">
+    <n-layout-header class="nav bg-inherit flex-none text-white flex justify-between">
+      <n-flex align="center" :size="0" style="height: 60px;">
         <div class="menu-button-wrapper mx-2">
-          <el-button link size="large" @click="drawerMenu = true">
-            <el-icon color="#fff" size="1.5rem">
-              <IconMenu/>
-            </el-icon>
-          </el-button>
+          <n-button text size="large" @click="drawerMenu = true">
+            <n-icon color="white" size="1.5rem">
+              <i-carbon-menu/>
+            </n-icon>
+          </n-button>
         </div>
 
-        <el-space :v-show="store.canAccess" direction="vertical" alignment="flex-start" :size="0" style="">
-          <el-space size="small" alignment="center">
+        <n-flex :v-show="store.canAccess" vertical align="flex-start" :size="0">
+          <n-flex size="small" align="center">
             <span @click="enableAdvancedConfig" style="font-size: 1.2rem; cursor: pointer;">SealDice</span>
-            <el-tooltip v-if="store.diceServers.length > 0 && store.diceServers[0].baseInfo.containerMode" class="flex items-center">
-              <template #content>当前以容器模式启动，部分功能受到限制。</template>
-              <el-icon type="info">
-                <i-carbon-container-software/>
-              </el-icon>
-            </el-tooltip>
-          </el-space>
-          <span v-if="store.diceServers.length > 0" size="small" style="font-size: .7rem;">
+            <n-tooltip v-if="store.diceServers.length > 0 && store.diceServers[0].baseInfo.containerMode"
+                       class="flex items-center">
+              <template #trigger>
+                <n-icon>
+                  <i-carbon-container-software/>
+                </n-icon>
+              </template>
+              当前以容器模式启动，部分功能受到限制。
+            </n-tooltip>
+          </n-flex>
+          <span v-if="store.diceServers.length > 0" style="font-size: .7rem;">
             {{ store.diceServers[0].baseInfo.OS }} - {{ store.diceServers[0].baseInfo.arch }}
           </span>
-        </el-space>
-      </el-space>
+        </n-flex>
+      </n-flex>
 
-      <el-space v-show="store.canAccess" size="large"
-                style="color: #fff; font-size: small; text-align: right;">
+      <n-flex v-show="store.canAccess" size="medium" align="center">
         <div @click="dialogFeed = true"
              style="cursor: pointer;">
-          <el-badge value="new" :hidden="newsChecked">
-            <img :src="imgNews" alt="news" style="width: 2.3rem;">
-          </el-badge>
+          <n-badge value="new" :show="!newsChecked">
+            <n-icon size="1.75rem">
+              <i-bi-newspaper/>
+            </n-icon>
+          </n-badge>
         </div>
 
         <div style="display: flex; flex-direction: column; align-items: center;">
           <div style="display: flex; align-items: center;">
-            <el-tag effect="dark" size="small" disable-transitions
-                    style="margin-right: 0.3rem;"
-                    :type="store.curDice.baseInfo.appChannel === 'stable' ? 'success' : 'info'">
+            <n-tag :bordered="false" size="small"
+                   style="margin-right: 0.3rem;"
+                   :type="store.curDice.baseInfo.appChannel === 'stable' ? 'success' : 'default'">
               {{ store.curDice.baseInfo.appChannel === 'stable' ? '正式版' : '测试版' }}
-            </el-tag>
-            <el-tooltip :content="store.curDice.baseInfo.version" placement="bottom">
-              <el-text size="large" style="color: #fff">
-                {{ store.curDice.baseInfo.versionSimple }}
-              </el-text>
-            </el-tooltip>
+            </n-tag>
+            <n-tooltip placement="bottom">
+              <template #trigger>
+                <n-text class="text-base">
+                  {{ store.curDice.baseInfo.versionSimple }}
+                </n-text>
+              </template>
+              {{ store.curDice.baseInfo.version }}
+            </n-tooltip>
           </div>
           <div v-if="store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode">
             🆕{{ store.curDice.baseInfo.versionNew }}
           </div>
         </div>
-      </el-space>
-    </el-header>
 
-    <div class="flex-grow overflow-y-auto flex">
-      <div class="menu bg-inherit flex-none overflow-y-auto no-scrollbar">
+        <n-switch v-model:value="isDark">
+          <template #checked-icon>
+            <n-icon>
+              <i-bi-moon/>
+            </n-icon>
+          </template>
+          <template #unchecked-icon>
+            <n-icon>
+              <i-bi-sun/>
+            </n-icon>
+          </template>
+        </n-switch>
+      </n-flex>
+    </n-layout-header>
+
+    <n-layout class="flex-grow overflow-y-auto flex" has-sider>
+      <n-layout-sider class="menu bg-inherit flex-none overflow-y-auto no-scrollbar">
         <Menu type="dark" v-model:advancedConfigCounter="advancedConfigCounter"/>
-      </div>
+      </n-layout-sider>
 
-      <div class="bg-gray-100 h-auto text-left flex-1 overflow-y-auto">
-        <el-main v-loading="loading" class="main-container w-full h-full" ref="rightbox">
+      <n-layout-content class="h-auto text-left flex-1 overflow-y-auto">
+        <n-spin :show="loading" class="main-container w-full h-full" ref="rightbox">
           <router-view v-if="!loading"
                        @update:advanced-settings-show="(show: boolean) => refreshAdvancedSettings(show)"/>
-        </el-main>
-      </div>
-    </div>
-  </el-container>
+        </n-spin>
+      </n-layout-content>
+    </n-layout>
+  </n-layout>
 
-  <el-drawer v-model="drawerMenu" direction="ltr" :show-close="false"
-             size="50%" class="drawer-menu bg-gray-600">
-    <template #header>
-      <div class="text-white flex items-center justify-between">
-        <el-space :v-show="store.canAccess" direction="vertical" alignment="flex-start" :size="0">
-          <span @click="enableAdvancedConfig" style="font-size: 1.2rem; cursor: pointer;">SealDice</span>
-          <span v-if="store.diceServers.length > 0" style="font-size: .7rem;">
+  <n-drawer v-model:show="drawerMenu" placement="left" default-width="50%"
+            class="drawer-menu">
+    <n-drawer-content body-content-style="padding: 0;">
+      <template #header>
+        <n-flex size="small">
+          <n-flex :v-show="store.canAccess" vertical align="flex-start" :size="0">
+            <span @click="enableAdvancedConfig" class="text-base cursor-pointer">SealDice</span>
+            <span v-if="store.diceServers.length > 0" class="text-xs">
             {{ store.diceServers[0].baseInfo.OS }} - {{ store.diceServers[0].baseInfo.arch }}
           </span>
-        </el-space>
+          </n-flex>
+          <n-tag :bordered="false" size="small"
+                 :type="store.curDice.baseInfo.appChannel === 'stable' ? 'success' : 'default'">
+            {{ store.curDice.baseInfo.appChannel === 'stable' ? '正式版' : '测试版' }}
+          </n-tag>
+        </n-flex>
+      </template>
 
-        <el-tag effect="dark" size="small" disable-transitions
-                :type="store.curDice.baseInfo.appChannel === 'stable' ? 'success' : 'info'">
-          {{ store.curDice.baseInfo.appChannel === 'stable' ? '正式版' : '测试版' }}
-        </el-tag>
-      </div>
-    </template>
-    <Menu type="dark" v-model:advancedConfigCounter="advancedConfigCounter"/>
-  </el-drawer>
+      <Menu v-model:advancedConfigCounter="advancedConfigCounter"/>
+    </n-drawer-content>
+  </n-drawer>
 
   <el-dialog v-model="showDialog" title="" :close-on-click-modal="false" :close-on-press-escape="false"
              :show-close="false" class="the-dialog">
@@ -97,42 +118,42 @@
     <el-button type="primary" style="padding: 0px 50px; margin-top: 1rem;" @click="doUnlock">确认</el-button>
   </el-dialog>
 
-  <el-dialog v-model="dialogLostConnectionVisible" title="主程序离线" :close-on-click-modal="false"
-             :close-on-press-escape="false" :show-close="false" class="the-dialog">
-    <div>与主程序断开连接，请耐心等待连接恢复</div>
-    <div>如果失去响应过久，请登录服务器处理</div>
-  </el-dialog>
+  <n-modal v-model:show="dialogLostConnectionVisible" title="主程序离线"
+           preset="card" :closable="false" style="width: 30%;"
+           transform-origin="center"
+           class="the-dialog">
+    <n-text>与主程序的连接断开，请耐心等待连接恢复。如果失去响应过久，请登录服务器处理。</n-text>
+  </n-modal>
 
-  <el-dialog v-model="dialogFeed" :close-on-click-modal="false" :close-on-press-escape="false" class="dialog-feed"
-             :show-close="false">
-    <template #header="{ close, titleId, titleClass }">
-      <div class="my-header">
-        <h4 :id="titleId" :class="titleClass" style="margin: 0.5rem">海豹新闻</h4>
-        <el-button type="success" :icon="Check" @click="checkNews(close)">确认已读</el-button>
-      </div>
+  <n-modal v-model:show="dialogFeed" title="海豹新闻"
+           preset="card" :closable="false" class="w-3/4">
+    <template #header-extra>
+      <n-button type="primary" @click="checkNews">
+        <template #icon>
+          <n-icon>
+            <i-bi-check/>
+          </n-icon>
+        </template>
+        确认已读
+      </n-button>
     </template>
 
     <div style="text-align: left;" v-html="newsData">
     </div>
-  </el-dialog>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
 import {useStore} from './store'
-import imgNews from '~/assets/news.png'
+import {useMessage} from "naive-ui";
+import {passwordHash} from "./utils"
 
-import {
-  Check,
-  Menu as IconMenu,
-} from '@element-plus/icons-vue'
+const isDark = useDark()
+const message = useMessage()
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import {CircleCloseFilled} from '@element-plus/icons-vue'
-
-import {passwordHash} from "./utils"
-import { delay, replace } from "lodash-es"
 
 dayjs.locale('zh-cn')
 dayjs.extend(relativeTime);
@@ -147,16 +168,15 @@ const dialogFeed = ref(false)
 const newsData = ref(`<div>暂无内容</div>`)
 const newsChecked = ref(true)
 const newsMark = ref('')
-const checkNews = async (close: any) => {
-  console.log('newsMark', newsMark.value)
+const checkNews = async () => {
   const ret = await store.checkNews(newsMark.value)
   if (ret?.result) {
-    ElMessage.success('已阅读最新的海豹新闻')
+    message.success('已阅读最新的海豹新闻')
   } else {
-    ElMessage.error('阅读海豹新闻失败')
+    message.error('阅读海豹新闻失败')
   }
+  dialogFeed.value = false
   await updateNews()
-  close()
 }
 const updateNews = async () => {
   const newsInfo = await store.news()
@@ -165,7 +185,7 @@ const updateNews = async () => {
     newsChecked.value = newsInfo.checked
     newsMark.value = newsInfo.newsMark
   } else {
-    ElMessage.error(newsInfo?.err ?? '获取海豹新闻失败')
+    message.error(newsInfo?.err ?? '获取海豹新闻失败')
   }
 }
 
@@ -267,45 +287,16 @@ const refreshAdvancedSettings = async (show: boolean) => {
 }
 </script>
 
-<style>
+<style lang="css">
 html,
 body {
   height: 100%;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track-piece {
-  background: #fafafa;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #bdbdbd;
-}
-
-::-webkit-scrollbar-corner {
-  background: #fafafa;
-}
-
-::-webkit-scrollbar-thumb:window-inactive {
-  background: #e0e0e0;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9e9e9e;
 }
 
 .main-container {
   padding: 2rem;
   box-sizing: border-box;
   min-height: 100%;
-}
-
-.h100 {
-  height: 100%;
 }
 
 @media screen and (max-width: 640px) {
@@ -332,49 +323,7 @@ body {
   }
 }
 
-.sd-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 #app {
-  font-family: "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", "Segoe UI",
-  "Microsoft YaHei", "微软雅黑", sans-serif;
-  /* font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif; */
-  text-align: center;
-  color: #2c3e50;
-  height: 100%;
-  display: flex;
-}
-
-.element-plus-logo {
-  width: 50%;
-}
-
-.my-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@media screen and (max-width: 640px) {
-  .dialog-feed {
-    width: 90% !important;
-  }
-}
-
-.drawer-menu {
-  background-color: #545c64;
-
-  .el-drawer__header {
-    margin: 0;
-    padding: 1rem;
-  }
-
-  .el-drawer__body {
-    padding: 0;
-  }
+  font-family: "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", "Segoe UI", "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 </style>

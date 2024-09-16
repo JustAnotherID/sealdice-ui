@@ -1,148 +1,135 @@
 <template>
-  <el-menu :unique-opened="true" style="border-right: 0;" :active-text-color="twColors.amber[300]"
-           :background-color="props.type === 'dark' ? twColors.gray[600] : undefined"
-           :text-color="props.type === 'dark' ? '#fff' : undefined"
-           router :default-active="route.path">
-    <el-menu-item index="/home">
-      <el-icon><home-filled /></el-icon>
-      <span>主页</span>
-    </el-menu-item>
-
-    <el-menu-item index="/connect">
-      <el-icon>
-        <connection/>
-      </el-icon>
-      <span>账号设置</span>
-    </el-menu-item>
-
-    <el-sub-menu index="/custom-text">
-      <template #title>
-        <el-icon>
-          <setting/>
-        </el-icon>
-        <span>自定义文案</span>
-      </template>
-
-      <el-menu-item :index="`/custom-text/${k}`"
-                    :key="k" v-for="(_, k) in store.curDice.customTexts">
-        <span>{{ k }}</span>
-      </el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="/mod">
-      <template #title>
-        <el-icon>
-          <edit-pen/>
-        </el-icon>
-        <span>扩展功能</span>
-      </template>
-
-      <el-menu-item index="/mod/reply">
-        <span>自定义回复</span>
-      </el-menu-item>
-
-      <el-menu-item index="/mod/deck">
-        <span>牌堆管理</span>
-      </el-menu-item>
-
-      <el-menu-item index="/mod/story">
-        <span>跑团日志</span>
-      </el-menu-item>
-
-      <el-menu-item index="/mod/js">
-        <span>JS扩展</span>
-      </el-menu-item>
-
-      <el-menu-item index="/mod/helpdoc">
-        <span>帮助文档</span>
-      </el-menu-item>
-
-      <el-menu-item index="/mod/censor">
-        <span>拦截管理</span>
-      </el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="/misc">
-      <template #title>
-        <el-icon>
-          <operation/>
-        </el-icon>
-        <span>综合设置</span>
-      </template>
-
-      <el-menu-item index="/misc/base-setting">
-        <span>基本设置</span>
-      </el-menu-item>
-
-      <el-menu-item index="/misc/group">
-        <span>群组管理</span>
-      </el-menu-item>
-
-      <el-menu-item index="/misc/ban">
-        <span>黑白名单</span>
-      </el-menu-item>
-
-      <el-menu-item index="/misc/backup">
-        <span>备份</span>
-      </el-menu-item>
-
-      <el-menu-item index="/misc/advanced-setting" v-if="advancedConfigCounter >= 8">
-        <span>高级设置</span>
-      </el-menu-item>
-    </el-sub-menu>
-
-    <el-sub-menu index="/tool">
-      <template #title>
-        <el-icon>
-          <tools/>
-        </el-icon>
-        <span>辅助工具</span>
-      </template>
-
-      <el-menu-item index="/tool/test">
-        <span>指令测试</span>
-      </el-menu-item>
-
-      <el-menu-item index="/tool/resource">
-        <span>资源管理</span>
-      </el-menu-item>
-    </el-sub-menu>
-
-    <el-menu-item index="/about">
-      <el-icon>
-        <star/>
-      </el-icon>
-      <span>关于</span>
-    </el-menu-item>
-  </el-menu>
+  <n-menu accordion :options="options" :value="route.path"/>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import {
-  HomeFilled,
   Connection,
+  EditPen,
+  HomeFilled,
+  Operation,
   Setting,
   Star,
-  Operation,
-  Tools,
-  EditPen
+  Tools
 } from '@element-plus/icons-vue'
-import { useStore } from "~/store";
-import type { ModelRef } from "vue";
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from '../../tailwind.config'
+import {useStore} from "~/store";
+import type {ComputedRef, ModelRef} from "vue";
 
-const twColors = resolveConfig(tailwindConfig).theme.colors
-
-const props = defineProps<{
-  type: 'light' | 'dark'
-}>()
-
-const advancedConfigCounter: ModelRef<number> = defineModel('advancedConfigCounter', { default: 0 })
+const advancedConfigCounter: ModelRef<number> = defineModel('advancedConfigCounter', {default: 0})
 
 const store = useStore()
 
 const route = useRoute()
+
+const customTextOptions: ComputedRef<MenuOption[]> = computed(() => Object.keys((store.curDice.customTexts ?? {})).map(k => ({
+  key: `/custom-text/${k}`,
+  label: () => <router-link to={`/custom-text/${k}`}>{k}</router-link>,
+})))
+
+const miscOptions: ComputedRef<MenuOption[]> = computed(() => {
+  let list = [
+    {
+      key: '/misc/base-setting',
+      label: () => <router-link to='/misc/base-setting'>基本设置</router-link>,
+    },
+    {
+      key: '/misc/group',
+      label: () => <router-link to='/misc/group'>群组管理</router-link>,
+    },
+    {
+      key: '/misc/ban',
+      label: () => <router-link to='/misc/ban'>黑白名单</router-link>,
+    },
+    {
+      key: '/misc/backup',
+      label: () => <router-link to='/misc/backup'>备份</router-link>,
+    },
+  ]
+  if (advancedConfigCounter.value >= 8) {
+    list.push({
+      key: '/misc/advanced-setting',
+      label: () => <router-link to='/misc/advanced-setting'>高级设置</router-link>,
+    })
+  }
+  return list
+})
+
+const options: ComputedRef<MenuOption[]> = computed(() => [
+  {
+    key: '/home',
+    label: () => <router-link to='/home'>主页</router-link>,
+    icon: () => <n-icon><HomeFilled/></n-icon>
+  },
+  {
+    key: '/connect',
+    label: () => <router-link to='/connect'>账号设置</router-link>,
+    icon: () => <n-icon><Connection/></n-icon>
+  },
+  {
+    key: '/custom-text',
+    label: '自定义文案',
+    icon: () => <n-icon><Setting/></n-icon>,
+    children: customTextOptions.value,
+  },
+  {
+    key: '/mod',
+    label: '扩展功能',
+    icon: () => <n-icon><EditPen/></n-icon>,
+    children: [
+      {
+        key: '/mod/reply',
+        label: () => <router-link to='/mod/reply'>自定义回复</router-link>,
+      },
+      {
+        key: '/mod/deck',
+        label: () => <router-link to='/mod/deck'>牌堆管理</router-link>,
+      },
+      {
+        key: '/mod/story',
+        label: () => <router-link to='/mod/story'>跑团日志</router-link>,
+      },
+      {
+        key: '/mod/js',
+        label: () => <router-link to='/mod/js'>JS扩展</router-link>,
+      },
+      {
+        key: '/mod/helpdoc',
+        label: () => <router-link to='/mod/helpdoc'>帮助文档</router-link>,
+      },
+      {
+        key: '/mod/censor',
+        label: () => <router-link to='/mod/censor'>拦截管理</router-link>,
+      },
+    ],
+  },
+  {
+    key: '/misc',
+    label: '综合设置',
+    icon: () => <n-icon><Operation/></n-icon>,
+    children: miscOptions.value
+  },
+  {
+    key: '/tool',
+    label: '辅助工具',
+    icon: () => <n-icon><Tools/></n-icon>,
+    children: [
+      {
+        key: '/tool/test',
+        label: () => <router-link to='/tool/test'>测试</router-link>,
+      },
+      {
+        key: '/tool/resource',
+        label: () => <router-link to='/tool/resource'>资源管理</router-link>,
+      },
+    ]
+  },
+  {
+    key: '/about',
+    label: () => <router-link to='/about'>关于</router-link>,
+    icon: () => <n-icon><Star/></n-icon>,
+  },
+])
+
 </script>
 
 <style scoped lang="css">
