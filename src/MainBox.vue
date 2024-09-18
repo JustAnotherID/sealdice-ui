@@ -1,6 +1,6 @@
 <template>
   <n-layout id="root" class="mx-auto my-0 h-screen flex flex-col">
-    <n-layout-header class="nav bg-inherit flex-none text-white flex justify-between">
+    <n-layout-header bordered class="nav bg-inherit flex-none text-white flex justify-between">
       <n-flex align="center" :size="0" style="height: 60px;">
         <div class="menu-button-wrapper mx-2">
           <n-button text size="large" @click="drawerMenu = true">
@@ -12,32 +12,33 @@
 
         <n-flex :v-show="store.canAccess" vertical align="flex-start" :size="0">
           <n-flex size="small" align="center">
-            <span @click="enableAdvancedConfig" style="font-size: 1.2rem; cursor: pointer;">SealDice</span>
+            <n-text @click="enableAdvancedConfig" style="font-size: 1.2rem; cursor: pointer;">SealDice</n-text>
             <n-tooltip v-if="store.diceServers.length > 0 && store.diceServers[0].baseInfo.containerMode"
                        class="flex items-center">
               <template #trigger>
-                <n-icon>
-                  <i-carbon-container-software/>
-                </n-icon>
+                <n-button text>
+                  <n-icon>
+                    <i-carbon-container-software/>
+                  </n-icon>
+                </n-button>
               </template>
               当前以容器模式启动，部分功能受到限制。
             </n-tooltip>
           </n-flex>
-          <span v-if="store.diceServers.length > 0" style="font-size: .7rem;">
+          <n-text v-if="store.diceServers.length > 0" style="font-size: .7rem;">
             {{ store.diceServers[0].baseInfo.OS }} - {{ store.diceServers[0].baseInfo.arch }}
-          </span>
+          </n-text>
         </n-flex>
       </n-flex>
 
       <n-flex v-show="store.canAccess" size="medium" align="center">
-        <div @click="dialogFeed = true"
-             style="cursor: pointer;">
-          <n-badge value="new" :show="!newsChecked">
+        <n-badge value="new" :show="!newsChecked">
+          <n-button text @click="dialogFeed = true">
             <n-icon size="1.75rem">
               <i-bi-newspaper/>
             </n-icon>
-          </n-badge>
-        </div>
+          </n-button>
+        </n-badge>
 
         <div style="display: flex; flex-direction: column; align-items: center;">
           <div style="display: flex; align-items: center;">
@@ -76,11 +77,11 @@
     </n-layout-header>
 
     <n-layout class="flex-grow overflow-y-auto flex" has-sider>
-      <n-layout-sider class="menu bg-inherit flex-none overflow-y-auto no-scrollbar">
+      <n-layout-sider bordered class="menu bg-inherit flex-none overflow-y-auto no-scrollbar">
         <Menu type="dark" v-model:advancedConfigCounter="advancedConfigCounter"/>
       </n-layout-sider>
 
-      <n-layout-content class="h-auto text-left flex-1 overflow-y-auto">
+      <n-layout-content embedded class="h-auto text-left flex-1 overflow-y-auto">
         <n-spin :show="loading" class="main-container w-full h-full" ref="rightbox">
           <router-view v-if="!loading"
                        @update:advanced-settings-show="(show: boolean) => refreshAdvancedSettings(show)"/>
@@ -119,13 +120,14 @@
   </el-dialog>
 
   <n-modal v-model:show="dialogLostConnectionVisible" title="主程序离线"
+           :mask-closable="false"
            preset="card" :closable="false" style="width: 30%;"
            transform-origin="center"
            class="the-dialog">
     <n-text>与主程序的连接断开，请耐心等待连接恢复。如果失去响应过久，请登录服务器处理。</n-text>
   </n-modal>
 
-  <n-modal v-model:show="dialogFeed" title="海豹新闻"
+  <n-modal v-model:show="dialogFeed" title="海豹新闻" :mask-closable="false"
            preset="card" :closable="false" class="w-3/4">
     <template #header-extra>
       <n-button type="primary" @click="checkNews">
@@ -148,7 +150,10 @@ import {useStore} from './store'
 import {useMessage} from "naive-ui";
 import {passwordHash} from "./utils"
 
-const isDark = useDark()
+const isDark = useDark({
+  valueDark: 'dark',
+  valueLight: 'light'
+})
 const message = useMessage()
 
 import dayjs from 'dayjs'

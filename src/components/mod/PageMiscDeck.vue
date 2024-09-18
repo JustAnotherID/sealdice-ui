@@ -1,112 +1,133 @@
 <template>
   <header class="page-header">
-    <el-button type="primary" :icon="Refresh" @click="doBackup">重载牌堆</el-button>
+    <n-button type="primary" :icon="Refresh" @click="doBackup">
+      <template #icon>
+        <n-icon><Refresh /></n-icon>
+      </template>
+      重载牌堆
+    </n-button>
   </header>
 
-  <el-tabs v-model="mode" :stretch="true">
-    <el-tab-pane label="牌堆列表" name="list">
+  <n-tabs v-model:value="mode" type="line" size="large" animated>
+    <n-tab-pane tab="牌堆列表" name="list">
       <header class="deck-list-header">
-        <el-space>
-          <el-upload class="upload" action="" multiple :before-upload="beforeUpload" :file-list="fileList">
-            <el-button type="primary" :icon="Upload">上传牌堆</el-button>
-          </el-upload>
-          <el-input v-model="filter" :prefix-icon="Search" size="small" clearable/>
-          <el-button class="link-button" type="info" :icon="Link" size="small" link tag="a" target="_blank"
-            href="https://github.com/sealdice/draw">获取牌堆</el-button>
-        </el-space>
-        <el-space>
-          <el-text type="info" size="small">目前支持 json/yaml/deck/toml 格式的牌堆</el-text>
-          <el-tooltip raw-content>
-            <template #content>
-              deck牌堆: 一种单文件带图的牌堆格式<br />
-              在牌堆文件中使用./images/xxx.png的相对路径引用图片。并连同图片目录一起打包成zip，修改扩展名为deck即可制作<br />
-              <br />
-              toml牌堆：海豹支持的新牌堆格式。格式更加友好，还提供了包括云牌组在内的更多功能支持。
+        <n-flex align="center">
+          <span>
+            <n-upload class="upload" action="" multiple @before-upload="beforeUpload" v-model:file-list="fileList">
+              <n-button type="primary" :icon="Upload">上传牌堆</n-button>
+            </n-upload>
+          </span>
+          <span>
+            <n-input v-model:value="filter" size="small" clearable placeholder="">
+              <template #prefix>
+                <n-icon><Search /></n-icon>
+              </template>
+            </n-input>
+          </span>
+          <n-button size="small" type="info" text tag="a" target="_blank" class="link-button"
+            href="https://github.com/sealdice/draw">
+            <template #icon>
+              <n-icon><Link /></n-icon>
             </template>
-            <el-icon size="small"><question-filled /></el-icon>
-          </el-tooltip>
-        </el-space>
+            获取牌堆
+          </n-button>
+        </n-flex>
+        <n-flex align="center">
+          <n-text type="info" size="small">目前支持 json/yaml/deck/toml 格式的牌堆</n-text>
+          <n-tooltip>
+            <template #trigger>
+              <n-icon><question-filled /></n-icon>
+            </template>
+            deck牌堆: 一种单文件带图的牌堆格式<br />
+            在牌堆文件中使用./images/xxx.png的相对路径引用图片。并连同图片目录一起打包成zip，修改扩展名为deck即可制作<br />
+            <br />
+            toml牌堆：海豹支持的新牌堆格式。格式更加友好，还提供了包括云牌组在内的更多功能支持。
+          </n-tooltip>
+        </n-flex>
       </header>
       <aside v-if="filterCount > 0" class="mb-4">
-        <el-text size="small" type="info">已过滤 {{ filterCount }} 条</el-text>
+        <n-text type="info">已过滤 {{ filterCount }} 条</n-text>
       </aside>
-      <main class="deck-list-main">
-        <foldable-card class="deck-item" v-for="(i, index) in filtered" :key="index"
-                       :err-title="i.filename" :err-text="i.errText">
-          <template #title>
-            <el-space size="small" alignment="center">
-              <el-text size="large" tag="b">{{ i.name }}</el-text>
-              <el-text>{{ i.version }}</el-text>
-              <el-tag size="small" :type="i.fileFormat === 'toml' ? 'success' : 'primary'" disable-transitions>{{ i.fileFormat }}</el-tag>
-            </el-space>
-          </template>
+      <n-list class="deck-list-main" hoverable>
+        <n-list-item class="deck-item hover:light:bg-gray-100" v-for="(i, index) in filtered" :key="index">
+          <foldable-card :err-title="i.filename" :err-text="i.errText">
+            <template #title>
+              <n-flex size="small" align="center">
+                <n-text tag="b">{{ i.name }}</n-text>
+                <n-text>{{ i.version }}</n-text>
+                <n-tag size="small" :type="i.fileFormat === 'toml' ? 'primary' : 'info'" :bordered="false">{{ i.fileFormat }}</n-tag>
+              </n-flex>
+            </template>
 
-          <template #title-extra>
-            <el-popconfirm v-if="i.updateUrls && i.updateUrls.length > 0"
-                           confirm-button-text="确认"
-                           cancel-button-text="取消"
-                           @confirm="doCheckUpdate(i, index)"
-                           title="更新地址由牌堆作者提供，是否确认要检查该牌堆更新？">
-              <template #reference>
-                <el-button :icon="Download" type="success" size="small" plain :loading="diffLoading">更新</el-button>
-              </template>
-            </el-popconfirm>
-            <el-button :icon="Delete" type="danger" size="small" plain @click="doDelete(i, index)">删除</el-button>
-          </template>
+            <template #title-extra>
+              <n-flex size="small">
+                <n-popconfirm v-if="i.updateUrls && i.updateUrls.length > 0"
+                              positive-text="确认"
+                              negative-text="取消"
+                              @positive-click="doCheckUpdate(i, index)">
+                  <template #trigger>
+                    <n-button :icon="Download" type="success" size="small" secondary :loading="diffLoading">更新</n-button>
+                  </template>
+                  更新地址由牌堆作者提供，是否确认要检查该牌堆更新？
+                </n-popconfirm>
+                <n-button :icon="Delete" type="error" size="small" secondary @click="doDelete(i, index)">删除</n-button>
+              </n-flex>
+            </template>
 
-          <template #title-extra-error>
-            <el-button :icon="Delete" type="danger" size="small" plain @click="doDelete(i, index)">删除</el-button>
-          </template>
+            <template #title-extra-error>
+              <n-button :icon="Delete" type="error" size="small" secondary @click="doDelete(i, index)">删除</n-button>
+            </template>
 
-          <template #description>
-            <el-space size="small" direction="vertical" alignment="normal">
-              <el-text v-if="i.cloud" type="primary" size="small">
-                <el-icon><MostlyCloudy /></el-icon>
-                作者提供云端内容，请自行鉴别安全性
-              </el-text>
-              <el-text v-if="i.fileFormat === 'jsonc'" type="warning" size="small">
-                <el-icon><Warning /></el-icon>
-                注意：该牌堆的格式并非标准 JSON ，而是允许尾逗号与注释语法的扩展 JSON
-              </el-text>
-            </el-space>
-          </template>
+            <template #description>
+              <n-flex size="small" direction="vertical" alignment="normal">
+                <n-text v-if="i.cloud" type="info" size="small">
+                  <n-icon><MostlyCloudy /></n-icon>
+                  作者提供云端内容，请自行鉴别安全性
+                </n-text>
+                <n-text v-if="i.fileFormat === 'jsonc'" type="warning" size="small">
+                  <n-icon><Warning /></n-icon>
+                  注意：该牌堆的格式并非标准 JSON ，而是允许尾逗号与注释语法的扩展 JSON
+                </n-text>
+              </n-flex>
+            </template>
 
-          <el-descriptions style="white-space: pre-line;">
-            <el-descriptions-item :span="3" label="作者">{{ i.author || '&lt;佚名>' }}</el-descriptions-item>
-            <el-descriptions-item :span="3" v-if="i.desc" label="简介">{{ i.desc }}</el-descriptions-item>
-            <el-descriptions-item :span="3" label="牌组列表">
-              <el-tag v-for="(visible, c) of i.command" :key="c" size="small" :type="visible ? 'primary' : 'info'" style="margin-right: 0.5rem;" disable-transitions>
-                {{ c }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item v-if="i.license" label="许可协议">{{ i.license }}</el-descriptions-item>
-            <el-descriptions-item v-if="i.date" label="发布时间">{{ i.date }}</el-descriptions-item>
-            <el-descriptions-item v-if="i.updateDate" label="更新时间">{{ i.updateDate }}</el-descriptions-item>
-          </el-descriptions>
-
-          <template #unfolded-extra>
-            <el-descriptions>
-              <el-descriptions-item :span="3" label="可见牌组列表">
-                <el-tag v-for="(visible, c) of i.command" :key="c" size="small" :type="visible ? 'primary' : 'info'" :style="{marginRight: '0.5rem', display: visible ? '' : 'none'}" disable-transitions>
+            <n-descriptions label-placement="left" style="white-space: pre-line;">
+              <n-descriptions-item :span="3" label="作者">{{ i.author || '&lt;佚名>' }}</n-descriptions-item>
+              <n-descriptions-item :span="3" v-if="i.desc" label="简介">{{ i.desc }}</n-descriptions-item>
+              <n-descriptions-item :span="3" label="牌组列表">
+                <n-tag :bordered="false" v-for="(visible, c) of i.command" :key="c" size="small" :type="visible ? 'primary' : 'info'" style="margin-right: 0.5rem;">
                   {{ c }}
-                </el-tag>
-              </el-descriptions-item>
-            </el-descriptions>
-          </template>
-        </foldable-card>
-      </main>
-    </el-tab-pane>
+                </n-tag>
+              </n-descriptions-item>
+              <n-descriptions-item v-if="i.license" label="许可协议">{{ i.license }}</n-descriptions-item>
+              <n-descriptions-item v-if="i.date" label="发布时间">{{ i.date }}</n-descriptions-item>
+              <n-descriptions-item v-if="i.updateDate" label="更新时间">{{ i.updateDate }}</n-descriptions-item>
+            </n-descriptions>
+
+            <template #unfolded-extra>
+              <n-descriptions label-placement="left">
+                <n-descriptions-item :span="3" label="可见牌组列表">
+                  <n-tag :bordered="false" v-for="(visible, c) of i.command" :key="c" size="small" :type="visible ? 'primary' : 'info'" :style="{marginRight: '0.5rem', display: visible ? '' : 'none'}">
+                    {{ c }}
+                  </n-tag>
+                </n-descriptions-item>
+              </n-descriptions>
+            </template>
+          </foldable-card>
+        </n-list-item>
+      </n-list>
+    </n-tab-pane>
 
     <el-dialog v-model="showDiff" title="牌堆内容对比" class="diff-dialog">
       <diff-viewer :lang="deckCheck.format" :old="deckCheck.old" :new="deckCheck.new"/>
       <template #footer>
         <el-space wrap>
-          <el-button @click="showDiff = false">取消</el-button>
-          <el-button v-if="!(deckCheck.old === deckCheck.new)" type="success" :icon="DocumentChecked" @click="deckUpdate">确认更新</el-button>
+          <n-button @click="showDiff = false">取消</n-button>
+          <n-button v-if="!(deckCheck.old === deckCheck.new)" type="success" :icon="DocumentChecked" @click="deckUpdate">确认更新</n-button>
         </el-space>
       </template>
     </el-dialog>
-  </el-tabs>
+  </n-tabs>
 </template>
 
 <script lang="ts" setup>
@@ -123,6 +144,7 @@ import {
   DocumentChecked,
   Warning,
 } from '@element-plus/icons-vue'
+import type {UploadFileInfo} from "naive-ui";
 
 const store = useStore()
 
@@ -199,7 +221,11 @@ const doSave = async () => {
   ElMessage.success('已保存')
 }
 
-const beforeUpload = async (file: any) => { // UploadRawFile
+const beforeUpload = async (data: {
+  file: UploadFileInfo
+  fileList: UploadFileInfo[]
+}) => { // UploadRawFile
+  const file = data.file.file
   let fd = new FormData()
   fd.append('file', file)
   await store.deckUpload({ form: fd })
@@ -321,9 +347,11 @@ const deckUpdate = async () => {
 }
 
 .deck-list-main {
+  /*
   display: flex;
   flex-wrap: wrap;
   gap: 1rem
+   */
 }
 
 .deck-item-header {

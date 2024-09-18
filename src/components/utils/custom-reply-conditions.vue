@@ -2,13 +2,13 @@
 import {Delete, QuestionFilled} from "@element-plus/icons-vue";
 import {breakpointsTailwind} from "@vueuse/core";
 
-const listModel = defineModel();
+const listModel = defineModel<any>();
 const data = listModel.value;
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const notMobile = breakpoints.greater('sm')
 
-const deleteByIndex = (index) => {
+const deleteByIndex = (index: number) => {
   listModel.value.splice(index, 1)
 }
 

@@ -1,11 +1,15 @@
-<script setup lang="ts">
+<script setup lang="tsx">
+import type { UploadFileInfo } from 'naive-ui'
 import type {Resource} from "~/store";
+import { useDialog, useMessage } from 'naive-ui'
 import {useStore} from "~/store";
 import {filesize} from "filesize";
 import {urlBase} from "~/backend";
 import {CopyDocument, Delete, Download, Search, Upload} from "@element-plus/icons-vue";
 import ClipboardJS from 'clipboard'
 
+const dialog = useDialog()
+const message = useMessage()
 const store = useStore();
 
 const loading = ref(true);
@@ -28,24 +32,27 @@ const refreshResources = async () => {
 }
 
 const deleteResource = async (resource: Resource) => {
-  ElMessageBox.confirm(
-      `确认删除「${resource.name}（${resource.path}）」吗？删除后将无法找回`,
-      '删除',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
+  dialog.warning({
+    title: '删除',
+    content: () => <n-flex size="small">
+      {`确认删除`}
+      <n-tag type="info" size="small">{resource.path}</n-tag>
+      {`吗？`}
+      <n-text type="error" strong>{`删除后将无法找回！`}</n-text>
+    </n-flex>,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const res = await store.resourceDelete(resource.path);
+      if (res.result) {
+        message.success("删除成功")
+      } else {
+        message.error(res.err)
       }
-  ).then(async () => {
-    const res = await store.resourceDelete(resource.path);
-    if (res.result) {
-      ElMessage.success("删除成功")
-    } else {
-      ElMessage.error(res.err)
+      await nextTick(async () => {
+        await refreshResources()
+      })
     }
-    await nextTick(async () => {
-      await refreshResources()
-    })
   })
 }
 
@@ -54,10 +61,14 @@ const handleShow = async (resource: Resource) => {
   drawer.value = true
 }
 
-const beforeUpload = async (file: any) => { // UploadRawFile
-  if (file.type !== 'image/jpeg'
-      && file.type !== 'image/png'
-      && file.type !== 'image/gif') {
+const beforeUpload = async (data: {
+  file: UploadFileInfo
+  fileList: UploadFileInfo[]
+}) => { // UploadRawFile
+  const file = data.file.file
+  if (file?.type !== 'image/jpeg'
+      && file?.type !== 'image/png'
+      && file?.type !== 'image/gif') {
     ElMessage.error('上传的文件不是图片！')
     return false
   }
@@ -94,26 +105,26 @@ onBeforeMount(async () => {
 <template>
   <h2>资源管理</h2>
   <div class="tip">
-    <el-collapse class="helptips">
-      <el-collapse-item name="1">
-        <template #title>
-          <el-text tag="strong">查看帮助</el-text>
-        </template>
-
-        <el-text tag="p">
+    <n-collapse class="helptips">
+      <n-collapse-item title="查看帮助" name="1">
+        <n-text tag="p">
           <div>此处可以上传图片等资源，方便引用。</div>
-        </el-text>
-      </el-collapse-item>
-    </el-collapse>
+        </n-text>
+      </n-collapse-item>
+    </n-collapse>
   </div>
 
   <main>
-    <h3 class="flex items-center justify-between">
-      <span>图片列表</span>
-      <el-upload action="" multiple accept=".png, .jpg, jpeg, .gif"
-                 :before-upload="beforeUpload" :file-list="fileList" :show-file-list="false">
-        <el-button type="primary" :icon="Upload">上传图片</el-button>
-      </el-upload>
+    <h3>
+      <n-flex align="center" justify="space-between">
+        <span>图片列表</span>
+        <span>
+          <n-upload action="" multiple accept=".png, .jpg, jpeg, .gif"
+                    @before-upload="beforeUpload" v-model:file-list="fileList">
+            <n-button type="primary" :icon="Upload">上传图片</n-button>
+          </n-upload>
+        </span>
+      </n-flex>
     </h3>
     <el-table v-loading="loading" :data="images" table-layout="auto">
       <el-table-column align="center" min-width="64px">
@@ -129,71 +140,61 @@ onBeforeMount(async () => {
       </el-table-column>
       <el-table-column fixed="right">
         <template #default="scope">
-          <el-space size="small" direction="vertical">
-            <el-button type="primary" link size="small" :icon="CopyDocument" plain
+          <n-flex size="small" vertical>
+            <n-button type="default" text size="tiny"
                        v-if="scope.row.type === 'image'"
                        class="resource-seal-code-copy-btn" :data-clipboard-text="`[图:${scope.row.path}]`"
                        @click="copySealCode()">
+              <template #icon>
+                <CopyDocument/>
+              </template>
               复制海豹码
-            </el-button>
-            <el-button type="primary" link size="small" :icon="Search" plain
+            </n-button>
+            <n-button type="info" text size="tiny"
                        @click="handleShow(scope.row)">
+              <template #icon>
+                <Search/>
+              </template>
               详情
-            </el-button>
-            <el-button type="success" link size="small" :icon="Download" plain tag="a" style="text-decoration: none;"
+            </n-button>
+            <n-button type="success" text size="tiny" tag="a" style="text-decoration: none;"
                        :href="`${urlBase}/sd-api/resource/download?path=${encodeURIComponent(scope.row.path)}&token=${encodeURIComponent(store.token)}`">
+              <template #icon>
+                <Download/>
+              </template>
               下载
-            </el-button>
-            <el-button type="danger" link size="small" :icon="Delete" plain
+            </n-button>
+            <n-button type="error" text size="tiny"
                        @click="deleteResource(scope.row)">
+              <template #icon>
+                <Delete/>
+              </template>
               删除
-            </el-button>
-          </el-space>
+            </n-button>
+          </n-flex>
         </template>
       </el-table-column>
     </el-table>
   </main>
 
-  <el-drawer
-      v-model="drawer"
-      title="详情"
+  <n-drawer
+      v-model:show="drawer"
       class="resource-detail-drawer"
-      direction="rtl">
-    <el-space class="mx-auto" size="large" direction="vertical" alignment="center">
+      placement="right">
+    <n-drawer-content title="详情">
       <div class="max-w-xs">
-        <resource-render :key="currentResource.path" :data="currentResource"/>
+        <resource-render :data="currentResource"/>
       </div>
-      <el-descriptions title="" :column="1">
-        <el-descriptions-item label="文件名">{{ currentResource.name }}</el-descriptions-item>
-        <el-descriptions-item label="路径">{{ currentResource.path }}</el-descriptions-item>
-        <el-descriptions-item label="大小">{{ filesize(currentResource.size) }}</el-descriptions-item>
-      </el-descriptions>
-    </el-space>
-  </el-drawer>
+       <n-descriptions label-placement="left" title="" :column="1">
+        <n-descriptions-item label="文件名">{{ currentResource.name }}</n-descriptions-item>
+        <n-descriptions-item label="路径">{{ currentResource.path }}</n-descriptions-item>
+        <n-descriptions-item label="大小">{{ filesize(currentResource.size) }}</n-descriptions-item>
+      </n-descriptions>
+    </n-drawer-content>
+  </n-drawer>
 </template>
 
 <style scoped lang="css">
-.helptips {
-  background-color: #f3f5f7;
-
-  :deep(.el-collapse-item__header) {
-    background-color: #f3f5f7;
-  }
-
-  :deep(.el-collapse-item__wrap) {
-    background-color: #f3f5f7;
-  }
-}
-
-.el-loading-mask {
-  z-index: 9;
-}
-
-.el-drawer__body {
-  display: flex;
-  justify-content: center;
-}
-
 @media screen and (max-width: 700px) {
   .resource-detail-drawer {
     width: 50% !important;

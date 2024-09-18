@@ -1,14 +1,20 @@
 <template>
   <Teleport v-if="store.curDice.logs.length" to="#root">
-    <el-button type="default" class="btn-scrolldown" :icon="CaretBottom" circle @click="scrollDown" content="最新日志"></el-button>
+    <n-button type="primary" secondary circle class="btn-scrolldown" @click="scrollDown">
+      <template #icon>
+        <n-icon><i-bi-caret-down-fill/></n-icon>
+      </template>
+    </n-button>
   </Teleport>
 
   <div style="display: flex; justify-content: flex-end; align-items: center">
     <div style="display: flex; flex-direction: column;">
-      <el-tooltip v-if="store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode && store.curDice.baseInfo.containerMode"
-                  content="容器模式下禁止直接更新，请手动拉取最新镜像">
-        <el-button type="primary" disabled>升级新版</el-button>
-      </el-tooltip>
+      <n-tooltip v-if="store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode && store.curDice.baseInfo.containerMode">
+        <template #trigger>
+          <el-button type="primary" disabled>升级新版</el-button>
+        </template>
+        容器模式下禁止直接更新，请手动拉取最新镜像
+      </n-tooltip>
       <el-button v-else-if="store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode"
                  type="primary" @click="upgradeDialogVisible = true">
         升级新版
@@ -19,114 +25,119 @@
   <h4>状态</h4>
   <div class="flex flex-col justify-center gap-4">
     <div class="flex items-center flex-wrap gap-1">
-      <span>内存占用：</span>
-      <span class="mr-2">{{filesize(store.curDice.baseInfo.memoryUsedSys || 0)}}</span>
-      <el-text size="small" type="info">理论内存占用，数值偏大。系统任务管理器中的「活动内存」才是实际使用的系统内存。</el-text>
+      <n-text>内存占用：</n-text>
+      <n-text class="mr-2">{{filesize(store.curDice.baseInfo.memoryUsedSys || 0)}}</n-text>
+      <n-text type="info">理论内存占用，数值偏大。系统任务管理器中的「活动内存」才是实际使用的系统内存。</n-text>
     </div>
 
     <div class="flex items-center flex-wrap gap-1" @click="refreshNetworkHealth">
-      <el-tooltip raw-content content="点击重新进行检测">
-        <span>网络质量：</span>
-      </el-tooltip>
+      <n-tooltip>
+        <template #trigger>
+          <n-text>网络质量：</n-text>
+        </template>
+        点击重新进行检测
+      </n-tooltip>
 
-      <el-text type="primary" v-if="networkHealth.timestamp === 0">检测中…… 🤔</el-text>
-      <el-text type="success" v-else-if="networkHealth.total !== 0 && networkHealth.total === networkHealth.ok?.length">优 😄</el-text>
-      <el-text type="primary" v-else-if="networkHealth.ok?.includes('sign') && networkHealth.ok?.includes('seal')">一般 😐️</el-text>
-      <el-text type="danger" v-else-if="networkHealth.total !== 0 && (networkHealth.ok ?? []).length === 0">网络中断 😱</el-text>
+      <n-text type="default" v-if="networkHealth.timestamp === 0">检测中…… 🤔</n-text>
+      <n-text type="success" v-else-if="networkHealth.total !== 0 && networkHealth.total === networkHealth.ok?.length">优 😄</n-text>
+      <n-text type="info" v-else-if="networkHealth.ok?.includes('sign') && networkHealth.ok?.includes('seal')">一般 😐️</n-text>
+      <n-text type="error" v-else-if="networkHealth.total !== 0 && (networkHealth.ok ?? []).length === 0">网络中断 😱</n-text>
       <template v-else>
-        <el-text type="warning" class="mr-4">差 ☹️</el-text>
-        <el-text type="warning" size="small">这意味着你可能无法正常使用内置客户端/Lagrange 连接 QQ 平台，有时会出现消息无法正常发送的现象。</el-text>
+        <n-text type="warning" class="mr-4">差 ☹️</n-text>
+        <n-text type="warning">这意味着你可能无法正常使用内置客户端/Lagrange 连接 QQ 平台，有时会出现消息无法正常发送的现象。</n-text>
       </template>
     
-      <el-tooltip v-if="networkHealth.timestamp !== 0">
-        <template #content>
-          {{ dayjs.unix(networkHealth.timestamp).format('YYYY-MM-DD HH:mm:ss') }}
+      <n-tooltip v-if="networkHealth.timestamp !== 0">
+        <template #trigger>
+          <n-text class="ml-auto" type="info">检测于 {{ dayjs.unix(networkHealth.timestamp).from(now) }}</n-text>
         </template>
-        <el-text class="ml-auto" type="info" size="small">检测于 {{ dayjs.unix(networkHealth.timestamp).from(now) }}</el-text>
-      </el-tooltip>
+        {{ dayjs.unix(networkHealth.timestamp).format('YYYY-MM-DD HH:mm:ss') }}
+      </n-tooltip>
     </div>
 
     <div v-if="networkHealth.timestamp !== 0" class="mx-2 flex items-center gap-4">
-      <el-text size="small">官网 <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('seal'))"></component></el-text>
-      <el-text size="small">Lagrange Sign <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('sign'))"></component></el-text>
-      <el-text size="small">Google <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('google'))"></component></el-text>
-      <el-text size="small">GitHub <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('github'))"></component></el-text>
+      <n-text>官网 <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('seal'))"></component></n-text>
+      <n-text>Lagrange Sign <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('sign'))"></component></n-text>
+      <n-text>Google <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('google'))"></component></n-text>
+      <n-text>GitHub <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('github'))"></component></n-text>
     </div>
   </div>
 
   <div class="flex justify-between items-center">
     <h4>日志</h4>
-    <el-checkbox v-model="autoRefresh">保持刷新</el-checkbox>
+    <n-checkbox v-model:checked="autoRefresh">保持刷新</n-checkbox>
   </div>
 
-  <el-divider class="latest-log-warn">
-    <el-text type="warning" size="small" class="hover:cursor-pointer" @click="scrollDown">点击下拉到底查看最新</el-text>
-  </el-divider>
+  <n-divider title-placement="center">
+    <n-text type="warning" class="hover:cursor-pointer" @click="scrollDown">点击下拉到底查看最新</n-text>
+  </n-divider>
 
-  <div class="hidden md:block p-0 logs">
-    <el-table :data="store.curDice.logs"
-              :row-class-name="getLogRowClassName" :header-cell-style="{backgroundColor: '#f3f5f7'}">
-      <el-table-column label="时间" width="90" >
-        <template #default="scope">
-          <div style="display: flex; align-items: center">
-            <el-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(--el-color-warning)"><timer /></el-icon>
-            <el-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(--el-color-primary)"><timer /></el-icon>
-            <el-icon v-else-if="scope.row.level === 'warn'" color="var(--el-color-warning)"><timer /></el-icon>
-            <el-icon v-else-if="scope.row.level === 'error'" color="var(--el-color-danger)"><timer /></el-icon>
-            <el-icon v-else><timer /></el-icon>
-            <span style="margin-left: 0.3rem">
-              <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(--el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>
-              <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(--el-color-primary)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>
-              <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>
-              <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>
-              <span v-else>{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>
-            </span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="level" label="级别" width="55">
-        <template #default="scope">
-          <el-text v-if="scope.row.msg.startsWith('onebot | ')" type="warning">{{ scope.row.level }}</el-text>
-          <el-text v-else-if="scope.row.msg.startsWith('发给')" type="primary">{{ scope.row.level }}</el-text>
-          <el-text v-else-if="scope.row.level === 'warn'" type="warning">{{ scope.row.level }}</el-text>
-          <el-text v-else-if="scope.row.level === 'error'" type="danger">{{ scope.row.level }}</el-text>
-          <el-text v-else>{{ scope.row.level }}</el-text>
-        </template>
-      </el-table-column>
-      <el-table-column prop="msg" label="信息">
-        <template #default="scope">
-          <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(--el-color-warning)">{{ scope.row.msg }}</span>
-          <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(--el-color-primary)">{{ scope.row.msg }}</span>
-          <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">{{ scope.row.msg }}</span>
-          <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">{{ scope.row.msg }}</span>
-          <span v-else>{{ scope.row.msg }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-  </div>
-  <el-table :data="store.curDice.logs" class="md:hidden w-full logs"
-            :row-class-name="getLogRowClassName" :header-cell-style="{backgroundColor: '#f3f5f7'}">
-    <el-table-column label="时间" width="60" >
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(--el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>
-          <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(--el-color-primary)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>
-          <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>
-          <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>
-          <span v-else>{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="msg" label="信息">
-      <template #default="scope">
-        <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(--el-color-warning)">{{ scope.row.msg }}</span>
-        <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(--el-color-primary)">{{ scope.row.msg }}</span>
-        <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">{{ scope.row.msg }}</span>
-        <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">{{ scope.row.msg }}</span>
-        <span v-else>{{ scope.row.msg }}</span>
-      </template>
-    </el-table-column>
-  </el-table>
+  <n-data-table :bordered="false" :columns="columns" :data="store.curDice.logs" :row-props="rowProps"/>
+
+<!--  <div class="hidden md:block p-0 logs">-->
+<!--    <el-table :data="store.curDice.logs"-->
+<!--              :row-class-name="getLogRowClassName" :header-cell-style="{backgroundColor: '#f3f5f7'}">-->
+<!--      <el-table-column label="时间" width="90" >-->
+<!--        <template #default="scope">-->
+<!--          <div style="display: flex; align-items: center">-->
+<!--            <el-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(&#45;&#45;el-color-warning)"><timer /></el-icon>-->
+<!--            <el-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(&#45;&#45;el-color-primary)"><timer /></el-icon>-->
+<!--            <el-icon v-else-if="scope.row.level === 'warn'" color="var(&#45;&#45;el-color-warning)"><timer /></el-icon>-->
+<!--            <el-icon v-else-if="scope.row.level === 'error'" color="var(&#45;&#45;el-color-danger)"><timer /></el-icon>-->
+<!--            <el-icon v-else><timer /></el-icon>-->
+<!--            <span style="margin-left: 0.3rem">-->
+<!--              <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(&#45;&#45;el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>-->
+<!--              <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(&#45;&#45;el-color-primary)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>-->
+<!--              <span v-else-if="scope.row.level === 'warn'" style="color: var(&#45;&#45;el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>-->
+<!--              <span v-else-if="scope.row.level === 'error'" style="color: var(&#45;&#45;el-color-danger)">{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>-->
+<!--              <span v-else>{{ dayjs.unix(scope.row.ts).format('HH:mm:ss') }}</span>-->
+<!--            </span>-->
+<!--          </div>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column prop="level" label="级别" width="55">-->
+<!--        <template #default="scope">-->
+<!--          <el-text v-if="scope.row.msg.startsWith('onebot | ')" type="warning">{{ scope.row.level }}</el-text>-->
+<!--          <el-text v-else-if="scope.row.msg.startsWith('发给')" type="primary">{{ scope.row.level }}</el-text>-->
+<!--          <el-text v-else-if="scope.row.level === 'warn'" type="warning">{{ scope.row.level }}</el-text>-->
+<!--          <el-text v-else-if="scope.row.level === 'error'" type="danger">{{ scope.row.level }}</el-text>-->
+<!--          <el-text v-else>{{ scope.row.level }}</el-text>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column prop="msg" label="信息">-->
+<!--        <template #default="scope">-->
+<!--          <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(&#45;&#45;el-color-warning)">{{ scope.row.msg }}</span>-->
+<!--          <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(&#45;&#45;el-color-primary)">{{ scope.row.msg }}</span>-->
+<!--          <span v-else-if="scope.row.level === 'warn'" style="color: var(&#45;&#45;el-color-warning)">{{ scope.row.msg }}</span>-->
+<!--          <span v-else-if="scope.row.level === 'error'" style="color: var(&#45;&#45;el-color-danger)">{{ scope.row.msg }}</span>-->
+<!--          <span v-else>{{ scope.row.msg }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--    </el-table>-->
+<!--  </div>-->
+<!--  <el-table :data="store.curDice.logs" class="md:hidden w-full logs"-->
+<!--            :row-class-name="getLogRowClassName" :header-cell-style="{backgroundColor: '#f3f5f7'}">-->
+<!--    <el-table-column label="时间" width="60" >-->
+<!--      <template #default="scope">-->
+<!--        <div style="display: flex; align-items: center">-->
+<!--          <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(&#45;&#45;el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>-->
+<!--          <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(&#45;&#45;el-color-primary)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>-->
+<!--          <span v-else-if="scope.row.level === 'warn'" style="color: var(&#45;&#45;el-color-warning)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>-->
+<!--          <span v-else-if="scope.row.level === 'error'" style="color: var(&#45;&#45;el-color-danger)">{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>-->
+<!--          <span v-else>{{ dayjs.unix(scope.row.ts).format('HH:mm') }}</span>-->
+<!--        </div>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+<!--    <el-table-column prop="msg" label="信息">-->
+<!--      <template #default="scope">-->
+<!--        <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(&#45;&#45;el-color-warning)">{{ scope.row.msg }}</span>-->
+<!--        <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(&#45;&#45;el-color-primary)">{{ scope.row.msg }}</span>-->
+<!--        <span v-else-if="scope.row.level === 'warn'" style="color: var(&#45;&#45;el-color-warning)">{{ scope.row.msg }}</span>-->
+<!--        <span v-else-if="scope.row.level === 'error'" style="color: var(&#45;&#45;el-color-danger)">{{ scope.row.msg }}</span>-->
+<!--        <span v-else>{{ scope.row.msg }}</span>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+<!--  </el-table>-->
 
   <el-dialog v-model="upgradeDialogVisible" title="升级新版本" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="true" class="the-dialog">
     <!-- <el-checkbox v-model="importOnlyCurrent">仅当前页面(勾选)/全部自定义文案</el-checkbox> -->
@@ -171,6 +182,7 @@ import {
   CircleCheckFilled,
   CircleCloseFilled,
 } from '@element-plus/icons-vue'
+import type { DataTableColumns } from "naive-ui";
 
 const store = useStore()
 
@@ -198,6 +210,40 @@ const doUpgrade = async () => {
     ElMessageBox.alert((ret as any).text + '<br>如果几分钟后服务没有恢复，检查一下海豹目录', '升级', { dangerouslyUseHTMLString: true })
   } catch (e) {
     // ElMessageBox.alert('升级失败', '升级')
+  }
+}
+
+interface LogRecord {
+  ts: number,
+  level: string,
+  msg: string,
+}
+
+const createColumns = ({logRecord}: { logRecord: (row: LogRecord) => void }): DataTableColumns<LogRecord> => [
+  {
+    title: '时间',
+    key: 'ts',
+    render: (row) => <n-flex size="small" align="center">
+      <n-icon><i-bi-clock/></n-icon>
+      {dayjs.unix(row.ts).format('HH:mm:ss')}
+    </n-flex>,
+    width: 100,
+  },
+  {
+    title: '级别',
+    key: 'level',
+    width: 55,
+  },
+  {
+    title: '信息',
+    key: 'msg',
+  }
+];
+
+const columns = createColumns({logRecord(logRecord: LogRecord) {}})
+const rowProps = (row: LogRecord) => {
+  return {
+    style: 'bg-color: ' + getColorByLevel(row.level)
   }
 }
 

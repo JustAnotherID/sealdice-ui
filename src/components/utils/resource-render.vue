@@ -1,62 +1,47 @@
 <script setup lang="ts">
-import type {Resource} from "~/store";
-import {useStore} from "~/store";
-import {Microphone, Picture, VideoCamera} from '@element-plus/icons-vue'
+import type { Resource } from "~/store";
+import { useStore } from "~/store";
 
-const store = useStore()
-const url = ref<string>('')
+const store = useStore();
+const url = ref<string>("");
 
 const getImageUrl = async (path: string) => {
-  const blob = await store.resourceData(path, props.mini)
+  const blob = await store.resourceData(path, props.mini);
   return window.URL.createObjectURL(blob);
-}
+};
 
 onMounted(async () => {
-  url.value = await getImageUrl(props.data.path)
-})
+  url.value = await getImageUrl(props.data.path);
+});
 
-const props = withDefaults(defineProps<{
-  key: string
-  mini: boolean
-  data: Resource
-}>(), {
-  mini: false
-})
+const props = withDefaults(
+  defineProps<{
+    mini?: boolean;
+    data: Resource;
+  }>(),
+  {
+    mini: false,
+  }
+);
 </script>
 
 <template>
   <template v-if="data.type === 'image'">
-    <el-image :key="key" :alt="data.name" :src="url" fit="contain" loading="lazy">
+    <n-image :alt="data.name" :src="url" object-fit="contain">
       <template #placeholder>
-        <div>
-          <el-icon>
-            <Picture/>
-          </el-icon>
-        </div>
+        <n-icon size="32px"><i-bi-image /></n-icon>
       </template>
-      <template #error>
-        <div>
-          <el-icon>
-            <Picture/>
-          </el-icon>
-        </div>
-      </template>
-    </el-image>
+    </n-image>
   </template>
   <template v-else-if="data.type === 'audio'">
-    <el-icon>
-      <Microphone/>
-    </el-icon>
+    <n-icon size="32px"><i-bi-mic /></n-icon>
   </template>
   <template v-else-if="data.type === 'video'">
-    <el-icon>
-      <VideoCamera/>
-    </el-icon>
+    <n-icon size="32px"><i-bi-camera-video /></n-icon>
   </template>
   <template v-else>
-    {{ '未知格式' }}
+    <el-text type="warning">未知格式</el-text>
   </template>
 </template>
 
-<style scoped lang="css">
-</style>
+<style scoped lang="css"></style>

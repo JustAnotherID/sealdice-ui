@@ -14,6 +14,7 @@ import {
 } from '@element-plus/icons-vue'
 import {useStore} from "~/store";
 import type {ComputedRef, ModelRef} from "vue";
+import type {MenuOption} from 'naive-ui';
 
 const advancedConfigCounter: ModelRef<number> = defineModel('advancedConfigCounter', {default: 0})
 

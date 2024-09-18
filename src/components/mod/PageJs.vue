@@ -1,130 +1,187 @@
 <template>
   <header class="page-header">
-    <el-switch v-model="jsEnable" active-text="启用" inactive-text="关闭" />
-    <el-button v-show="jsEnable" @click="jsReload" type="primary" :icon="Refresh">重载JS</el-button>
+    <n-switch v-model:value="jsEnable">
+      <template #checked>
+        启用
+      </template>
+      <template #unchecked>
+        关闭
+      </template>
+    </n-switch>
+    <n-button v-show="jsEnable" @click="jsReload" type="primary">
+      <template #icon>
+        <n-icon><Refresh /></n-icon>
+      </template>
+      重载JS
+    </n-button>
   </header>
 
   <el-affix :offset="70" v-if="needReload">
     <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">存在修改，需要重载后生效！</el-text>
+      <n-text type="error" strong>存在修改，需要重载后生效！</n-text>
     </div>
   </el-affix>
   <el-affix :offset="70" v-if="jsConfigEdited">
     <div v-if="jsConfigFormatErrKeys.length > 0">
       <div class="tip-danger">
-        <el-text type="danger" size="large" tag="strong">配置内容已修改，但存在格式错误，无法保存！</el-text>
+        <n-text type="error" strong>配置内容已修改，但存在格式错误，无法保存！</n-text>
       </div>
     </div>
     <div v-else> 
       <div class="tip-danger">
-        <el-text type="danger" size="large" tag="strong">配置内容已修改，不要忘记保存！</el-text>
-        <el-button class="button" type="primary" :icon="DocumentChecked" :disabled="!jsConfigEdited" @click="doJsConfigSave()">点我保存</el-button>
+        <n-text type="error" strong>配置内容已修改，不要忘记保存！</n-text>
+        <n-button class="button" type="primary" :icon="DocumentChecked" :disabled="!jsConfigEdited" @click="doJsConfigSave()">点我保存</n-button>
       </div>
     </div>
   </el-affix>
   <el-row>
     <el-col :span="24">
-      <el-tabs v-model="mode" class="demo-tabs" :stretch=true>
-        <el-tab-pane label="控制台" name="console">
+      <n-tabs v-model:value="mode" type="line" size="large" class="demo-tabs">
+        <n-tab-pane tab="控制台" name="console">
           <div>
             <div ref="editorBox">
             </div>
             <div>
               <div style="margin-top: 1rem">
-                <el-button @click="doExecute" type="success" :icon="CaretRight" :disabled="!jsEnable">执行代码</el-button>
+                <n-button @click="doExecute" type="success" :disabled="!jsEnable">
+                  <template #icon>
+                    <n-icon><CaretRight /></n-icon>
+                  </template>
+                  执行代码
+                </n-button>
               </div>
             </div>
-            <el-text type="danger" tag="p" style="padding: 1rem 0;">注意：延迟执行的代码，其输出不会立即出现</el-text>
+            <n-text type="warning" tag="p" style="padding: 1rem 0;">注意：延迟执行的代码，其输出不会立即出现</n-text>
             <div style="word-break: break-all; margin-bottom: 1rem; white-space: pre-line;">
-              <div v-for="i in jsLines">{{ i }}</div>
+              <n-text code v-for="i in jsLines">{{ i }}</n-text>
             </div>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="插件列表" name="list">
+        </n-tab-pane>
+        <n-tab-pane tab="插件列表" name="list">
           <header class="js-list-header">
-            <el-space>
-              <el-upload action="" multiple accept="application/javascript,application/typescript,.js,.ts" class="upload"
-                :before-upload="beforeUpload" :file-list="uploadFileList">
-                <el-button type="primary" :icon="Upload">上传插件</el-button>
-              </el-upload>
-              <el-input v-model="jsFilter" :prefix-icon="Search" size="small" clearable/>
-              <el-button type="info" :icon="Link" size="small" link tag="a" target="_blank"
-                style="text-decoration: none;" href="https://github.com/sealdice/javascript">获取插件</el-button>
-            </el-space>
+            <n-flex align="center">
+              <span>
+                <n-upload action="" multiple accept="application/javascript,application/typescript,.js,.ts" class="upload"
+                          @before-upload="beforeUpload" v-model:file-list="uploadFileList">
+                  <n-button type="primary">
+                    <template #icon>
+                      <n-icon><Upload /></n-icon>
+                    </template>
+                    上传插件
+                  </n-button>
+                </n-upload>
+              </span>
+              <span>
+                <n-input v-model:value="jsFilter" size="small" clearable placeholder="">
+                  <template #prefix>
+                    <n-icon><Search /></n-icon>
+                  </template>
+                </n-input>
+              </span>
+              <n-button type="info" text tag="a" target="_blank" href="https://github.com/sealdice/javascript">
+                <template #icon>
+                  <n-icon><Link /></n-icon>
+                </template>
+                获取插件
+              </n-button>
+            </n-flex>
           </header>
           <aside v-if="jsFilterCount > 0" class="mb-4">
-            <el-text size="small" type="info">已过滤 {{ jsFilterCount }} 条</el-text>
+            <n-text type="info">已过滤 {{ jsFilterCount }} 条</n-text>
           </aside>
           <main class="js-list-main">
             <foldable-card class="js-item" v-for="(i, index) of filteredJsList" :key="index"
                            :err-title="i.filename" :err-text="i.errText">
               <template #title>
-                <el-space class="js-item-header">
-                  <el-switch v-model="i.enable" @change="changejsScriptStatus(i.name, i.enable)" :disabled="i.errText !== ''"
-                             style="--el-switch-on-color: var(--el-color-success); --el-switch-off-color: var(--el-color-danger)" />
-                  <el-text size="large" tag="b">{{ i.name }}</el-text>
-                  <el-text>{{ i.version || '&lt;未定义>' }}</el-text>
-                  <el-tag v-if="i.official" size="small" type="success">官方</el-tag>
+                <n-flex class="js-item-header">
+                  <n-switch v-model:value="i.enable" @change="changejsScriptStatus(i.name, i.enable)" :disabled="i.errText !== ''"/>
+                  <n-text strong>{{ i.name }}</n-text>
+                  <n-text>{{ i.version || '&lt;未定义>' }}</n-text>
+                  <n-tag v-if="i.official" size="small" type="success" :bordered="false">官方</n-tag>
 
-                  <el-tooltip content="该插件使用 TypeScript 编写">
-                    <el-tag v-if="i.filename.toLowerCase().endsWith('.ts')" size="small" type="primary">TS</el-tag>
-                  </el-tooltip>
-                </el-space>
+                  <n-tooltip v-if="i?.filename?.toLowerCase()?.endsWith('.ts')" trigger="hover">
+                    <template #trigger>
+                      <n-tag size="small" type="info" :bordered="false">TS</n-tag>
+                    </template>
+                    该插件使用 TypeScript 编写
+                  </n-tooltip>
+                </n-flex>
               </template>
 
               <template #title-extra>
-                <el-button v-if="i.official && i.updateUrls && i.updateUrls.length > 0"
-                           :icon="Download" type="success" size="small" plain :loading="diffLoading">更新</el-button>
-                <el-popconfirm v-else-if="i.updateUrls && i.updateUrls.length > 0"
-                               confirm-button-text="确认"
-                               cancel-button-text="取消"
-                               @confirm="doCheckUpdate(i, index)"
-                               title="更新地址由插件作者提供，是否确认要检查该插件更新？">
-                  <template #reference>
-                    <el-button :icon="Download" type="success" size="small" plain :loading="diffLoading">更新</el-button>
-                  </template>
-                </el-popconfirm>
-                <!--                    <el-button :icon="Setting" type="primary" size="small" plain @click="showSettingDialog = true">设置</el-button>-->
-                <el-button v-if="i.builtin && i.builtinUpdated" @click="doDelete(i, index)" :icon="Delete" type="danger" size="small" plain>卸载更新</el-button>
-                <el-button v-if="!i.builtin" @click="doDelete(i, index)" :icon="Delete" type="danger" size="small" plain>删除</el-button>
+                <n-flex size="small">
+                  <n-button v-if="i.official && i.updateUrls && i.updateUrls.length > 0"
+                            type="success" size="tiny" secondary :loading="diffLoading">
+                    <template #icon>
+                      <n-icon><Download /></n-icon>
+                    </template>
+                    更新
+                  </n-button>
+                  <n-popconfirm v-else-if="i.updateUrls && i.updateUrls.length > 0"
+                                positive-text="确认"
+                                negative-text="取消"
+                                @positive-click="doCheckUpdate(i, index)">
+                    <template #trigger>
+                      <n-button type="success" size="tiny" secondary :loading="diffLoading">
+                        <template #icon>
+                          <n-icon><Download /></n-icon>
+                        </template>
+                        更新
+                      </n-button>
+                    </template>
+                    更新地址由插件作者提供，是否确认要检查该插件更新？
+                  </n-popconfirm>
+                  <n-button v-if="i.builtin && i.builtinUpdated" @click="doDelete(i, index)" type="error" size="tiny" secondary>
+                    <template #icon>
+                      <n-icon><Delete /></n-icon>
+                    </template>
+                    卸载更新
+                  </n-button>
+                  <n-button v-if="!i.builtin" @click="doDelete(i, index)" type="error" size="tiny" secondary>
+                    <template #icon>
+                      <n-icon><Delete /></n-icon>
+                    </template>
+                    删除
+                  </n-button>
+                </n-flex>
               </template>
 
               <template #title-extra-error>
-                <el-space>
-                  <el-button v-if="i.builtin && i.builtinUpdated" @click="doDelete(i, index)" :icon="Delete" type="danger" size="small" plain>卸载更新</el-button>
-                  <el-button v-else-if="!i.builtin" @click="doDelete(i, index)" :icon="Delete" type="danger" size="small" plain>删除</el-button>
-                </el-space>
+                <n-flex size="small">
+                  <n-button v-if="i.builtin && i.builtinUpdated" @click="doDelete(i, index)" type="error" size="small" secondary>
+                    <template #icon>
+                      <n-icon><Delete /></n-icon>
+                    </template>
+                    卸载更新
+                  </n-button>
+                  <n-button v-else-if="!i.builtin" @click="doDelete(i, index)" :icon="Delete" type="error" size="tiny" secondary>
+                    <template #icon>
+                      <n-icon><Delete /></n-icon>
+                    </template>
+                    删除
+                  </n-button>
+                </n-flex>
               </template>
 
-              <el-descriptions style="white-space:pre-line;">
-                <el-descriptions-item v-if="!i.official" :span="3" label="作者">{{ i.author || '&lt;佚名>' }}</el-descriptions-item>
-                <el-descriptions-item :span="3" label="介绍">{{ i.desc || '&lt;暂无>' }}</el-descriptions-item>
-                <el-descriptions-item v-if="!i.official" :span="3" label="主页">{{ i.homepage || '&lt;暂无>' }}</el-descriptions-item>
-                <el-descriptions-item label="许可协议">{{ i.license || '&lt;暂无>' }}</el-descriptions-item>
-                <el-descriptions-item label="安装时间">{{ dayjs.unix(i.installTime).fromNow() }}</el-descriptions-item>
-                <el-descriptions-item label="更新时间">
+              <n-descriptions label-placement="left" style="white-space:pre-line;">
+                <n-descriptions-item v-if="!i.official" :span="3" label="作者">{{ i.author || '&lt;佚名>' }}</n-descriptions-item>
+                <n-descriptions-item :span="3" label="介绍">{{ i.desc || '&lt;暂无>' }}</n-descriptions-item>
+                <n-descriptions-item v-if="!i.official" :span="3" label="主页">{{ i.homepage || '&lt;暂无>' }}</n-descriptions-item>
+                <n-descriptions-item label="许可协议">{{ i.license || '&lt;暂无>' }}</n-descriptions-item>
+                <n-descriptions-item label="安装时间">{{ dayjs.unix(i.installTime).fromNow() }}</n-descriptions-item>
+                <n-descriptions-item label="更新时间">
                   {{ i.updateTime ? dayjs.unix(i.updateTime).fromNow() : '' || '&lt;暂无>' }}
-                </el-descriptions-item>
-              </el-descriptions>
+                </n-descriptions-item>
+              </n-descriptions>
 
               <template #unfolded-extra>
-                <el-text truncated>{{ i.desc || '&lt;暂无>' }}</el-text>
+                <n-text>{{ i.desc || '&lt;暂无>' }}</n-text>
               </template>
             </foldable-card>
-
-            <el-dialog v-model="showDiff" title="插件内容对比" class="diff-dialog">
-              <diff-viewer lang="javascript" :old="jsCheck.old" :new="jsCheck.new"/>
-              <template #footer>
-                <el-space wrap>
-                  <el-button @click="showDiff = false">取消</el-button>
-                  <el-button v-if="!(jsCheck.old === jsCheck.new)" type="success" :icon="DocumentChecked" @click="jsUpdate">确认更新</el-button>
-                </el-space>
-              </template>
-            </el-dialog>
           </main>
-        </el-tab-pane>
+        </n-tab-pane>
 
-        <el-tab-pane label="插件设置" name="config">
+        <n-tab-pane tab="插件设置" name="config">
           <main>
             <div v-if="size(jsConfig as Map<any,any>) === 0" style="display: flex; justify-content: center">
               <el-text size="large" tag="strong">暂无设置项</el-text>
@@ -362,8 +419,8 @@
               </el-collapse-item>
             </el-collapse>
           </main>
-        </el-tab-pane>
-      </el-tabs>
+        </n-tab-pane>
+      </n-tabs>
     </el-col>
 
   </el-row>
@@ -390,8 +447,12 @@ import {basicSetup, EditorView} from "codemirror"
 import {javascript} from "@codemirror/lang-javascript"
 import {isEqual, size} from "lodash-es";
 import type {JsPluginConfig, JsPluginConfigItem, JsScriptInfo} from "~/type.d.ts";
+import type {UploadFileInfo} from "naive-ui";
+import { useDialog, useMessage } from "naive-ui";
 
 const store = useStore()
+const dialog = useDialog()
+const message = useMessage()
 const jsEnable = ref(false)
 const editorBox = ref(null);
 const mode = ref('console');
@@ -542,7 +603,7 @@ const doJsConfigRemoveItemAt = <T>(arr: T[], index: number) => {
 const doJsConfigSave = async () => {
   await store.jsSetConfig(jsConfig.value)
     jsConfigEdited.value = false
-    ElMessage.success('已保存')
+  message.success('已保存')
 }
 
 let timerId: number
@@ -632,9 +693,9 @@ const refreshConfig = async () => {
 const jsReload = async () => {
   const ret = await store.jsReload()
   if (ret && ret.testMode) {
-    ElMessage.success('展示模式无法重载脚本')
+    message.success('展示模式无法重载脚本')
   } else {
-    ElMessage.success('已重载')
+    message.success('已重载')
     await refreshList()
     needReload.value = false
   }
@@ -644,21 +705,25 @@ const jsReload = async () => {
 const jsShutdown = async () => {
   const ret = await store.jsShutdown()
   if (ret?.testMode) {
-    ElMessage.success('展示模式无法关闭')
+    message.success('展示模式无法关闭')
   } else if (ret?.result === true) {
-    ElMessage.success('已关闭JS支持')
+    message.success('已关闭JS支持')
     jsLines.value = []
     await refreshList()
   }
   jsEnable.value = await jsStatus()
 }
 
-const beforeUpload = async (file: any) => { // UploadRawFile
+const beforeUpload = async (data: {
+  file: UploadFileInfo
+  fileList: UploadFileInfo[]
+}) => { // UploadRawFile
+  const file = data.file.file
   let fd = new FormData()
   fd.append('file', file)
   await store.jsUpload({ form: fd })
   refreshList();
-  ElMessage.success('上传完成，请在全部操作完成后，手动重载插件')
+  message.success('上传完成，请在全部操作完成后，手动重载插件')
   needReload.value = true
 }
 
@@ -677,7 +742,7 @@ const doDelete = async (data: JsScriptInfo, index: number) => {
       // 稍等等再重载，以免出现没删掉
       refreshList()
     }, 1000);
-    ElMessage.success('插件已删除，请手动重载后生效')
+    message.success('插件已删除，请手动重载后生效')
     needReload.value = true
   })
 }
@@ -689,7 +754,7 @@ const changejsScriptStatus = async (name: string, status: boolean) => {
       refreshList()
     }, 1000);
     if (ret.result) {
-      ElMessage.success('插件已启用，请手动重载后生效')
+      message.success('插件已启用，请手动重载后生效')
     }
   } else {
     const ret = await store.jsDisable({ name })
@@ -697,7 +762,7 @@ const changejsScriptStatus = async (name: string, status: boolean) => {
       refreshList()
     }, 1000);
     if (ret.result) {
-      ElMessage.success('插件已禁用，请手动重载后生效')
+      message.success('插件已禁用，请手动重载后生效')
     }
   }
   needReload.value = true
@@ -720,7 +785,6 @@ const settingForm = ref({
   props: [{key: "name", value: "test props"}] as DeckProp[]
 })
 
-const showDiff = ref<boolean>(false)
 const diffLoading = ref<boolean>(false)
 
 interface JsCheckResult {
@@ -743,24 +807,30 @@ const doCheckUpdate = async (data: any, index: number) => {
   diffLoading.value = false
   if (checkResult.result) {
     jsCheck.value = { ...checkResult, index }
-    showDiff.value = true
+    dialog.info({
+      title: '检查更新结果',
+      content: () => h('diff-viewer', { lang: "javascript", old: jsCheck.value.old, 'new': jsCheck.value.new }),
+      positiveText: '确认更新',
+      negativeText: '取消',
+      onPositiveClick: async () => {
+        const res = await store.jsUpdate(jsCheck.value);
+        if (res.result) {
+          needReload.value = true
+          setTimeout(() => {
+            refreshList()
+          }, 1000)
+          message.success('更新成功，请手动重载后生效')
+        } else {
+          message.error('更新失败！' + res.err)
+        }
+      },
+      positiveButtonProps: {
+        disabled: jsCheck.value.old === jsCheck.value.new
+      },
+      closable: false,
+    })
   } else {
-    ElMessage.error('检查更新失败！' + checkResult.err)
-  }
-}
-
-const jsUpdate = async () => {
-  const res = await store.jsUpdate(jsCheck.value);
-  if (res.result) {
-    showDiff.value = false
-    needReload.value = true
-    setTimeout(() => {
-      refreshList()
-    }, 1000)
-    ElMessage.success('更新成功，请手动重载后生效')
-  } else {
-    showDiff.value = false
-    ElMessage.error('更新失败！' + res.err)
+    message.error('检查更新失败！' + checkResult.err)
   }
 }
 </script>

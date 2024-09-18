@@ -15,10 +15,11 @@ const props = withDefaults(defineProps<{
   compact: false
 });
 
-const getCardType = (t: string) => {
+const getCardType = (t: string | undefined) => {
   switch (t) {
+    case undefined:
     case 'card':
-      return ElCard
+      return NThing
     default:
       return t
   }
@@ -63,13 +64,13 @@ defineExpose({open, close})
               <slot name="title-extra"/>
             </div>
             <div class="mx-2">
-              <el-button link size="small" @click="folded = !folded">
+              <n-button text size="small" @click="folded = !folded">
                 <template #icon>
-                  <el-icon color="var(--el-color-info)">
+                  <n-icon color="var(--el-color-info)">
                     <component :is="folded ? ArrowRight : ArrowDown"/>
-                  </el-icon>
+                  </n-icon>
                 </template>
-              </el-button>
+              </n-button>
             </div>
           </div>
         </div>
@@ -103,14 +104,14 @@ defineExpose({open, close})
       <header class="header">
         <div class="title">
           <div class="title-warp">
-            <el-space alignment="center">
-              <el-icon size="20" color="var(--el-color-danger)">
+            <n-flex align="center">
+              <n-icon size="20" color="var(--el-color-danger)">
                 <circle-close/>
-              </el-icon>
+              </n-icon>
               <del>
-                <el-text size="large" tag="b">{{ errTitle }}</el-text>
+                <n-text strong tag="b">{{ errTitle }}</n-text>
               </del>
-            </el-space>
+            </n-flex>
           </div>
 
           <div class="title-extra">
@@ -122,11 +123,11 @@ defineExpose({open, close})
       </header>
       <div class="nav">
         <div class="description">
-          <el-descriptions style="white-space: pre-line;">
-            <el-descriptions-item label="错误信息">
-              <el-text type="danger">{{ errText }}</el-text>
-            </el-descriptions-item>
-          </el-descriptions>
+          <n-descriptions label-placement="left" style="white-space: pre-line;">
+            <n-descriptions-item label="错误信息">
+              <n-text type="error">{{ errText }}</n-text>
+            </n-descriptions-item>
+          </n-descriptions>
         </div>
         <div class="action">
           <slot name="action-error"/>

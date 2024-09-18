@@ -6,10 +6,10 @@
     <div style="text-align: left; line-height: 2rem; font-size: .8rem;">
       <div class="top-item"><span style="font-weight: 600;">当前版本: {{ store.curDice.baseInfo.version }}</span></div>
       <div class="top-item"><span style="font-weight: 600;">最新版本: {{ store.curDice.baseInfo.versionNew }}</span></div>
-      <div class="top-item" style="font-family: sans-serif;margin-top: 1rem;">官方网站: <el-link type="primary" target="_blank" href="https://www.sealdice.com">https://www.sealdice.com</el-link></div>
-      <div class="top-item" style="font-family: sans-serif;">使用手册: <el-link type="primary" target="_blank" href="https://dice.weizaima.com/manual/">https://dice.weizaima.com/manual/</el-link></div>
-      <div class="top-item" style="font-family: sans-serif;">投喂海豹: <el-link type="primary" target="_blank" href="https://dice.weizaima.com/feed/">https://dice.weizaima.com/feed/</el-link></div>
-      <div class="top-item" style="font-family: sans-serif;">源码: <el-link type="primary" target="_blank" href="https://github.com/sealdice/sealdice-core/">https://github.com/sealdice/sealdice-core</el-link></div>
+      <div class="top-item" style="font-family: sans-serif;margin-top: 1rem;">官方网站: <n-button type="primary" text tag="a" target="_blank" href="https://www.sealdice.com">https://www.sealdice.com</n-button></div>
+      <div class="top-item" style="font-family: sans-serif;">使用手册: <n-button type="primary" text tag="a" target="_blank" href="https://dice.weizaima.com/manual/">https://dice.weizaima.com/manual/</n-button></div>
+      <div class="top-item" style="font-family: sans-serif;">投喂海豹: <n-button type="primary" text tag="a" target="_blank" href="https://dice.weizaima.com/feed/">https://dice.weizaima.com/feed/</n-button></div>
+      <div class="top-item" style="font-family: sans-serif;">源码: <n-button type="primary" text tag="a" target="_blank" href="https://github.com/sealdice/sealdice-core/">https://github.com/sealdice/sealdice-core</n-button></div>
       <div class="top-item">
         <div style="margin-top: 5rem; font-family: sans-serif;">
         </div>
@@ -25,95 +25,95 @@
 
     <div style="margin-top: 2rem;" class="subtitle">V1.5 版本</div>
     <div class="developers">
-      <el-link :underline="false" href="https://github.com/fy0" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</el-link>
-      <el-link :underline="false" href="https://github.com/MintCider" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/MintCider'"/>Mint Cider</el-link>
-      <el-link :underline="false" href="https://github.com/MX-fox" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/MX-fox'"/>暮星</el-link>
-      <el-link :underline="false" href="https://github.com/Xiangze-Li" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</el-link>
-      <el-link :underline="false" href="https://github.com/bugtower100" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/bugtower100'"/>Bugtower100</el-link>
+      <n-button text tag="a" href="https://github.com/fy0" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</n-button>
+      <n-button text tag="a" href="https://github.com/MintCider" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/MintCider'"/>Mint Cider</n-button>
+      <n-button text tag="a" href="https://github.com/MX-fox" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/MX-fox'"/>暮星</n-button>
+      <n-button text tag="a" href="https://github.com/Xiangze-Li" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</n-button>
+      <n-button text tag="a" href="https://github.com/bugtower100" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/bugtower100'"/>Bugtower100</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.4 版本</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/JustAnotherID" target="_blank"><el-avatar shape="circle" :size="50" style="border: 1px solid #aaa;" :src="urlBase + '/sd-api/utils/ga/JustAnotherID'"/>只是另一个ID</el-link>
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/Xiangze-Li" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</el-link>
-      <el-link :underline="false" href="https://github.com/oissevalt" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</el-link>
-      <el-link :underline="false" href="https://github.com/FlameTEXT" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</el-link>
-      <el-link :underline="false" href="https://github.com/fy0" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</el-link>
-      <el-link :underline="false" href="https://github.com/Director259" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Director259'"/>Director259</el-link>
-      <el-link :underline="false" href="https://github.com/VolEurr0Se" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/VolEurr0Se'"/>浣熊旅記(dnd5文档)</el-link>
-      <el-link :underline="false" href="https://github.com/zeroxilo" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/zeroxilo'"/>调零(dnd5文档)</el-link>
-      <el-link :underline="false" href="https://github.com/cherrybird7" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase +'/sd-api/utils/ga/cherrybird7'"/>凤吹风雪(7版怪锤)</el-link>
-      <el-link :underline="false" href="javascript:void(0)"><el-avatar shape="circle" :size="50" :src="imgHaibao"/>奈亚猫猫汉化组(7版怪锤)</el-link>
-      <el-link :underline="false" href="javascript:void(0)"><el-avatar shape="circle" :size="50" :src="imgHaibao"/>稚鸢音(7版怪锤)</el-link>
-      <el-link :underline="false" href="https://github.com/Fripine" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Fripine'"/>Fripine</el-link>
-      <el-link :underline="false" href="https://github.com/MintCider" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/MintCider'"/>逐风</el-link>
-      <el-link :underline="false" href="https://github.com/yichere" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/yichere'"/>炽热</el-link>
-      <el-link :underline="false" href="https://github.com/MX-fox" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/MX-fox'"/>暮星</el-link>
-      <el-link :underline="false" href="https://github.com/0018cha" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/0018cha'"/>0.018</el-link>
-      <el-link :underline="false" href="https://github.com/shakugannosaints" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/shakugannosaints'"/>冷筱华</el-link>
+      <n-button text tag="a" href="https://github.com/JustAnotherID" target="_blank"><n-avatar class="mr-2" round :size="50" style="border: 1px solid #aaa;" :src="urlBase + '/sd-api/utils/ga/JustAnotherID'"/>只是另一个ID</n-button>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/Xiangze-Li" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</n-button>
+      <n-button text tag="a" href="https://github.com/oissevalt" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</n-button>
+      <n-button text tag="a" href="https://github.com/FlameTEXT" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</n-button>
+      <n-button text tag="a" href="https://github.com/fy0" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</n-button>
+      <n-button text tag="a" href="https://github.com/Director259" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Director259'"/>Director259</n-button>
+      <n-button text tag="a" href="https://github.com/VolEurr0Se" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/VolEurr0Se'"/>浣熊旅記(dnd5文档)</n-button>
+      <n-button text tag="a" href="https://github.com/zeroxilo" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/zeroxilo'"/>调零(dnd5文档)</n-button>
+      <n-button text tag="a" href="https://github.com/cherrybird7" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase +'/sd-api/utils/ga/cherrybird7'"/>凤吹风雪(7版怪锤)</n-button>
+      <n-button text tag="a" href="javascript:void(0)"><n-avatar class="mr-2" round :size="50" :src="imgHaibao"/>奈亚猫猫汉化组(7版怪锤)</n-button>
+      <n-button text tag="a" href="javascript:void(0)"><n-avatar class="mr-2" round :size="50" :src="imgHaibao"/>稚鸢音(7版怪锤)</n-button>
+      <n-button text tag="a" href="https://github.com/Fripine" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Fripine'"/>Fripine</n-button>
+      <n-button text tag="a" href="https://github.com/MintCider" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/MintCider'"/>逐风</n-button>
+      <n-button text tag="a" href="https://github.com/yichere" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/yichere'"/>炽热</n-button>
+      <n-button text tag="a" href="https://github.com/MX-fox" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/MX-fox'"/>暮星</n-button>
+      <n-button text tag="a" href="https://github.com/0018cha" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/0018cha'"/>0.018</n-button>
+      <n-button text tag="a" href="https://github.com/shakugannosaints" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/shakugannosaints'"/>冷筱华</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.4 安卓端</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/PaienNate" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/PaienNate'"/>PaienNate</el-link>
-      <el-link :underline="false" href="https://github.com/fy0" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</el-link>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/PaienNate" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/PaienNate'"/>PaienNate</n-button>
+      <n-button text tag="a" href="https://github.com/fy0" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.4.5 特别致谢</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/Linwenxuan05" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Linwenxuan05'"/>Linwenxuan05</el-link>
+      <n-button text tag="a" href="https://github.com/Linwenxuan04" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Linwenxuan04'"/>Linwenxuan</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.3 版本</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/JustAnotherID" target="_blank"><el-avatar shape="circle" :size="50" style="border: 1px solid #aaa;" :src="urlBase + '/sd-api/utils/ga/JustAnotherID'"/>只是另一个ID</el-link>
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/Xiangze-Li" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</el-link>
-      <el-link :underline="false" href="https://github.com/oissevalt" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</el-link>
-      <el-link :underline="false" href="https://github.com/FlameTEXT" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</el-link>
-      <el-link :underline="false" href="https://github.com/fy0" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</el-link>
+      <n-button text tag="a" href="https://github.com/JustAnotherID" target="_blank"><n-avatar class="mr-2" round :size="50" style="border: 1px solid #aaa;" :src="urlBase + '/sd-api/utils/ga/JustAnotherID'"/>只是另一个ID</n-button>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/Xiangze-Li" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Xiangze-Li'"/>JohNSoN</n-button>
+      <n-button text tag="a" href="https://github.com/oissevalt" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</n-button>
+      <n-button text tag="a" href="https://github.com/FlameTEXT" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</n-button>
+      <n-button text tag="a" href="https://github.com/fy0" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.3 安卓端</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/PaienNate" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/PaienNate'"/>PaienNate</el-link>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/PaienNate" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/PaienNate'"/>PaienNate</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.2 版本</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/fy0" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</el-link>
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/yuyannuo" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/yuyannuo'"/>于言诺</el-link>
-      <el-link :underline="false" href="https://github.com/oissevalt" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</el-link>
-      <el-link :underline="false" href="https://github.com/FlameTEXT" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</el-link>
-      <el-link :underline="false" href="https://github.com/SunnyJoyce" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/SunnyJoyce'"/>熊米</el-link>
-      <el-link :underline="false" href="https://github.com/VolEurr0Se" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/VolEurr0Se'"/>浣熊旅記</el-link>
-      <el-link :underline="false" href="https://github.com/lxy071130" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/lxy071130'"/>流溪</el-link>
-      <el-link :underline="false" href="https://github.com/nodisease" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/nodisease'"/>病</el-link>
+      <n-button text tag="a" href="https://github.com/fy0" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/fy0'"/>木落</n-button>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/yuyannuo" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/yuyannuo'"/>于言诺</n-button>
+      <n-button text tag="a" href="https://github.com/oissevalt" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/oissevalt'"/>檀轶步棋</n-button>
+      <n-button text tag="a" href="https://github.com/FlameTEXT" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/FlameTEXT'"/>脑</n-button>
+      <n-button text tag="a" href="https://github.com/SunnyJoyce" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/SunnyJoyce'"/>熊米</n-button>
+      <n-button text tag="a" href="https://github.com/VolEurr0Se" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/VolEurr0Se'"/>浣熊旅記</n-button>
+      <n-button text tag="a" href="https://github.com/lxy071130" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/lxy071130'"/>流溪</n-button>
+      <n-button text tag="a" href="https://github.com/nodisease" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/nodisease'"/>病</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.2 安卓端</div>
     <div class="developers">
       <!-- <img  referrerpolicy="no-referrer"  src="https://avatars.githubusercontent.com/u/54656633?v=4&a=1" /> -->
-      <el-link :underline="false" href="https://github.com/96368a" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/96368a'"/>木末君</el-link>
-      <el-link :underline="false" href="https://github.com/Szzrain" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</el-link>
-      <el-link :underline="false" href="https://github.com/JiYeHuanXiang" target="_blank"><el-avatar shape="circle" :size="50" :src="urlBase + '/sd-api/utils/ga/JiYeHuanXiang'"/>极夜幻想</el-link>
+      <n-button text tag="a" href="https://github.com/96368a" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/96368a'"/>木末君</n-button>
+      <n-button text tag="a" href="https://github.com/Szzrain" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/Szzrain'"/>Szzrain</n-button>
+      <n-button text tag="a" href="https://github.com/JiYeHuanXiang" target="_blank"><n-avatar class="mr-2" round :size="50" :src="urlBase + '/sd-api/utils/ga/JiYeHuanXiang'"/>极夜幻想</n-button>
     </div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.1 版本</div>
     <div>Szzrain - 实现了Discord和Kook(开黑啦)两个平台的海豹接入</div>
     <div>于言诺 - 制作了很多海豹扩展和牌堆，如养猫、踢海豹、赛博功德、风味月饼、万圣节糖果等等……协助撰写了一些海豹的文档和教程，并找出了众多海豹的bug</div>
     <div>云陌 - 海豹文档教程协力，同时也找了很多海豹的bug</div>
-    <div><el-link href="https://github.com/kagangtuya-star" target="_blank">星尘</el-link> - 编写了海豹同网络登录的教程，友情提供了用于指令参考的fvtt。以及一些建议和bug反馈</div>
+    <div><n-button text tag="a" href="https://github.com/kagangtuya-star" target="_blank">星尘 - 编写了海豹同网络登录的教程，友情提供了用于指令参考的fvtt。以及一些建议和bug反馈</n-button></div>
 
     <div style="margin-top: 2rem;" class="subtitle">V1.0版本</div>
     <div>Ariel船长 - 早期测试参与者，协助解决登录流程问题</div>
@@ -169,11 +169,11 @@ onBeforeUnmount(() => {
 }
 
 .about {
-  background-color: #fff;
+  /* background-color: #fff; */
   padding: 2rem;
   line-height: 2rem;
   text-align: left;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04)
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04) */
 }
 
 .subtitle {
