@@ -5,7 +5,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import legacy from '@vitejs/plugin-legacy';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import { ElementPlusResolver, NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 
@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => ({
         ElementPlusResolver({
           importStyle: 'css',
         }),
+        NaiveUiResolver(),
         IconsResolver(),
       ],
     }),
@@ -52,6 +53,7 @@ export default defineConfig(({ mode }) => ({
         ElementPlusResolver({
           importStyle: 'css',
         }),
+        NaiveUiResolver(),
         IconsResolver(),
       ],
     }),
@@ -71,7 +73,7 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           base: ['vue', 'pinia', 'vue-router'],
           codemirror: ['codemirror', '@codemirror/lang-javascript'],
-          common: ['element-plus', 'lodash-es'],
+          common: ['element-plus', 'lodash-es', 'naive-ui'],
           utils: [
             '@vueuse/core',
             'asmcrypto.js',
