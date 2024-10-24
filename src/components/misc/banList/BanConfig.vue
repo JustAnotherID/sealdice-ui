@@ -56,7 +56,7 @@ watch(
   </el-space>
 
   <h4>怒气值设置</h4>
-  <div class="mt-4 mb-6">
+  <div class="mb-6 mt-4">
     <el-text type="warning" tag="p"
       >说明：海豹的黑名单使用积分制，每当用户做出恶意行为，其积分上涨一定数值，到达阈值后自动进入黑名单。会通知邀请者、通知列表、事发群（如果可能）。</el-text
     >

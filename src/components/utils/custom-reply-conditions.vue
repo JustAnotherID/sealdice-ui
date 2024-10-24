@@ -21,8 +21,8 @@ const deleteByIndex = (index: number) => {
 </script>
 
 <template>
-  <div v-for="(cond, index) in data" :key="index" class="mb-3 pl-2 border-l-2 border-orange-500">
-    <div class="pb-2 flex justify-between border-b">
+  <div v-for="(cond, index) in data" :key="index" class="mb-3 border-l-2 border-orange-500 pl-2">
+    <div class="flex justify-between border-b pb-2">
       <el-space>
         <el-text>模式</el-text>
         <el-radio-group v-model="cond.condType" size="small">

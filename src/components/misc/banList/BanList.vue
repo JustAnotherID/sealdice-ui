@@ -136,7 +136,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <header class="flex flex-wrap-reverse gap-y-4 justify-between">
+  <header class="flex flex-wrap-reverse justify-between gap-y-4">
     <el-space>
       <el-text size="large">搜索：</el-text>
       <el-input v-model="searchBy" class="w-64" placeholder="请输入帐号或名字的一部分"></el-input>
@@ -178,7 +178,7 @@ onBeforeMount(async () => {
     <el-space :fill="true" class="w-full">
       <el-card v-for="(i, index) in groupItems" :key="i.ID" shadow="hover" class="w-full">
         <template #header>
-          <div class="flex flex-wrap gap-4 justify-between">
+          <div class="flex flex-wrap justify-between gap-4">
             <el-space alignment="center">
               <el-tag v-if="i.rankText === '禁止'" type="danger" disable-transitions>{{
                 i.rankText

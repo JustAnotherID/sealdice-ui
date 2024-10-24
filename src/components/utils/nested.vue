@@ -8,7 +8,7 @@
     :group="{ name: 'g1' }"
     item-key="name">
     <template #item="{ element: el, index }">
-      <li class="reply-item list-none mb-2">
+      <li class="reply-item mb-2 list-none">
         <foldable-card type="div" :default-fold="true" compact>
           <template #title>
             <el-checkbox v-model="el.enable">开启</el-checkbox>
@@ -25,7 +25,7 @@
           </template>
 
           <template #unfolded-extra>
-            <div class="pl-4 border-l-4 border-orange-500">
+            <div class="border-l-4 border-orange-500 pl-4">
               <div v-for="(cond, index2) in el.conditions || []" :key="index2">
                 <el-text
                   v-if="cond.condType === 'textMatch'"
@@ -56,20 +56,20 @@
             </div>
           </template>
 
-          <el-text class="block mb-2" size="large">条件（需同时满足，即 and）</el-text>
-          <div class="pl-4 border-l-4 border-orange-500">
+          <el-text class="mb-2 block" size="large">条件（需同时满足，即 and）</el-text>
+          <div class="border-l-4 border-orange-500 pl-4">
             <custom-reply-conditions v-model="el.conditions" />
             <el-button type="success" size="small" :icon="Plus" @click="addCond(el.conditions)"
               >增加</el-button
             >
           </div>
 
-          <el-text class="block my-2" size="large">结果（顺序执行）</el-text>
-          <div class="pl-4 border-l-4 border-blue-500">
+          <el-text class="my-2 block" size="large">结果（顺序执行）</el-text>
+          <div class="border-l-4 border-blue-500 pl-4">
             <div
               v-for="(i, index) in el.results || []"
               :key="index"
-              class="mb-3 pl-2 border-l-2 border-blue-500">
+              class="mb-3 border-l-2 border-blue-500 pl-2">
               <div style="display: flex; justify-content: space-between">
                 <el-space>
                   <el-text>模式</el-text>
@@ -91,7 +91,7 @@
               </div>
 
               <div v-if="['replyToSender', 'replyPrivate', 'replyGroup'].includes(i.resultType)">
-                <div class="flex justify-between my-2 mobile-changeline">
+                <div class="mobile-changeline my-2 flex justify-between">
                   <div style="display: flex; align-items: center">
                     <el-text>回复文本（随机选择）</el-text>
                   </div>
@@ -112,7 +112,7 @@
                   </el-space>
                 </div>
 
-                <div v-for="(k2, index) in i.message" :key="index" class="w-full my-2">
+                <div v-for="(k2, index) in i.message" :key="index" class="my-2 w-full">
                   <!-- 这里面是单条修改项 -->
                   <div style="display: flex">
                     <div

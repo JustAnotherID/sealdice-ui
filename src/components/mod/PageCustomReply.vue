@@ -84,7 +84,7 @@
           >注意：启用后该文件中的自定义回复才会生效</el-text
         >
       </el-space>
-      <div class="mt-4 sm:mt-0 reply-operation">
+      <div class="reply-operation mt-4 sm:mt-0">
         <div>
           <el-tooltip content="新建一个自定义回复文件。">
             <el-button type="success" plain :icon="DocumentAdd" @click="customReplyFileNew"
