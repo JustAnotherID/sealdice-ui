@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { darkTheme, lightTheme } from 'naive-ui';
 import { useStore } from '~/store';
-import MainBox from '~/MainBox.vue';
 
 const isDark = useDark();
 const store = useStore();

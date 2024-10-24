@@ -226,7 +226,7 @@
 import { DocumentChecked, QuestionFilled } from '@element-plus/icons-vue';
 import { isArray, isEqual, isObject, transform } from 'lodash-es';
 import { getCensorConfig, postCensorConfig } from '~/api/censor';
-import { useCensorStore } from '~/components/mod/censor/censor';
+import { useCensorStore } from '~/components/censor/censor';
 
 onBeforeMount(async () => {
   await refreshCensorConfig();

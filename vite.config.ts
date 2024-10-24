@@ -1,4 +1,4 @@
-import path from 'path';
+import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
@@ -9,15 +9,24 @@ import { ElementPlusResolver, NaiveUiResolver } from 'unplugin-vue-components/re
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 
-const pathSrc = path.resolve(__dirname, 'src');
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir);
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: './',
   resolve: {
-    alias: {
-      '~/': `${pathSrc}/`,
-    },
+    alias: [
+      {
+        find: /\/#\//,
+        replacement: pathResolve('types') + '/',
+      },
+      {
+        find: '~',
+        replacement: pathResolve('src') + '/',
+      },
+    ],
   },
   server: {
     proxy: {
@@ -49,6 +58,7 @@ export default defineConfig(({ mode }) => ({
       ],
     }),
     Components({
+      dirs: ['src/components', 'src/pages', 'src/views'],
       resolvers: [
         ElementPlusResolver({
           importStyle: 'css',

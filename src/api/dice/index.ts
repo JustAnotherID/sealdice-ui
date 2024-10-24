@@ -1,4 +1,4 @@
-import type { AdvancedConfig } from '~/type';
+import type { AdvancedConfig } from '#';
 import { createRequest } from '..';
 
 const baseUrl = '/dice/';

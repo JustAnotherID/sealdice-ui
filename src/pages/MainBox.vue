@@ -170,9 +170,9 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from './store';
+import { useStore } from '~/store';
 import { useMessage } from 'naive-ui';
-import { passwordHash } from './utils';
+import { passwordHash } from '~/utils';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';

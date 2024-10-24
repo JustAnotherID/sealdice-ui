@@ -24,7 +24,7 @@
   </main>
 </template>
 <script setup lang="tsx">
-import { useCensorStore } from '~/components/mod/censor/censor';
+import { useCensorStore } from '~/components/censor/censor';
 import type { Column } from 'element-plus';
 import type { CellRendererParams } from 'element-plus/es/components/table-v2/src/types';
 import { getCensorWords } from '~/api/censor';

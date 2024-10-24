@@ -76,7 +76,7 @@
 import type { UploadUserFile } from 'element-plus';
 import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { urlBase } from '~/backend';
-import { useCensorStore } from '~/components/mod/censor/censor';
+import { useCensorStore } from '~/components/censor/censor';
 import { deleteCensorFiles, getCensorFiles, uploadCensorFile } from '~/api/censor';
 
 onBeforeMount(() => {
