@@ -1,5 +1,3 @@
-import type BanConfig from './components/misc/banList/BanConfig.vue';
-
 export interface JsScriptInfo {
   name: string;
   enable: boolean;

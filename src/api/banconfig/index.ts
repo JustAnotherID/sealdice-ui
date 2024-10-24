@@ -1,4 +1,4 @@
-import type { BanConfig } from '~/type';
+import type { BanConfig } from '#';
 import { createRequest } from '..';
 import type { UploadUserFile } from 'element-plus';
 

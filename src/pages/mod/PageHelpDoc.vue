@@ -230,7 +230,7 @@
 import type { FormRules, FormInstance, ElTree } from 'element-plus';
 import { Delete, Refresh, Setting, Upload } from '@element-plus/icons-vue';
 import { trim } from 'lodash-es';
-import type { HelpDoc, HelpTextItem, HelpTextItemQuery } from '~/type.d.ts';
+import type { HelpDoc, HelpTextItem, HelpTextItemQuery } from '#';
 import {
   deleteHelpDoc,
   getHelpDocConfig,

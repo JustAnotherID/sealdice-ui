@@ -104,7 +104,7 @@
 <script setup lang="ts">
 import { QuestionFilled } from '@element-plus/icons-vue';
 import { useStore } from '~/store';
-import type { AdvancedConfig } from '~/type.d.ts';
+import type { AdvancedConfig } from '#';
 import { getCustomReplyDebug, postCustomReplyDebug } from '~/api/configs';
 
 const emit = defineEmits(['update:advanced-settings-show']);

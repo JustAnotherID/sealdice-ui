@@ -1,4 +1,4 @@
-import type { HelpDoc, HelpTextItem, HelpTextItemQuery } from '~/type';
+import type { HelpDoc, HelpTextItem, HelpTextItemQuery } from '#';
 import { createRequest } from '..';
 import type { UploadUserFile } from 'element-plus';
 
