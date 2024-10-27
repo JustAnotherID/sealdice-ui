@@ -166,6 +166,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StoryBackup: typeof import('./src/components/story/StoryBackup.vue')['default']
+    WebsiteHealthCheck: typeof import('./src/components/website-health-check.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

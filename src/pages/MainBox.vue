@@ -283,7 +283,10 @@ onBeforeMount(async () => {
   }
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+onBeforeUnmount(() => {
+  clearInterval(timerId);
+});
+
 let timerId: number;
 
 const rightbox = ref(null);

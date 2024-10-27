@@ -29,70 +29,13 @@
   <h4>状态</h4>
   <div class="flex flex-col justify-center gap-4">
     <div class="flex flex-wrap items-center gap-1">
-      <span>内存占用：</span>
-      <span class="mr-2">{{ filesize(store.curDice.baseInfo.memoryUsedSys || 0) }}</span>
-      <el-text size="small" type="info"
-        >理论内存占用，数值偏大。系统任务管理器中的「活动内存」才是实际使用的系统内存。</el-text
-      >
+      <n-text>内存占用：</n-text>
+      <n-text class="mr-2">{{ filesize(store.curDice.baseInfo.memoryUsedSys || 0) }}</n-text>
+      <n-text type="info" class="text-xs">
+        理论内存占用，数值偏大。系统任务管理器中的「活动内存」才是实际使用的系统内存。
+      </n-text>
     </div>
-
-    <div class="flex flex-wrap items-center gap-1" @click="refreshNetworkHealth">
-      <el-tooltip raw-content content="点击重新进行检测">
-        <span>网络质量：</span>
-      </el-tooltip>
-
-      <el-text type="primary" v-if="networkHealth.timestamp === 0">检测中…… 🤔</el-text>
-      <el-text
-        type="success"
-        v-else-if="networkHealth.total !== 0 && networkHealth.total === networkHealth.ok?.length"
-        >优 😄</el-text
-      >
-      <el-text
-        type="primary"
-        v-else-if="networkHealth.ok?.includes('sign') && networkHealth.ok?.includes('seal')"
-        >一般 😐️</el-text
-      >
-      <el-text
-        type="danger"
-        v-else-if="networkHealth.total !== 0 && (networkHealth.ok ?? []).length === 0"
-        >网络中断 😱</el-text
-      >
-      <template v-else>
-        <el-text type="warning" class="mr-4">差 ☹️</el-text>
-        <el-text type="warning" size="small"
-          >这意味着你可能无法正常使用内置客户端/Lagrange 连接 QQ
-          平台，有时会出现消息无法正常发送的现象。</el-text
-        >
-      </template>
-
-      <el-tooltip v-if="networkHealth.timestamp !== 0">
-        <template #content>
-          {{ dayjs.unix(networkHealth.timestamp).format('YYYY-MM-DD HH:mm:ss') }}
-        </template>
-        <el-text class="ml-auto" type="info" size="small"
-          >检测于 {{ dayjs.unix(networkHealth.timestamp).from(now) }}</el-text
-        >
-      </el-tooltip>
-    </div>
-
-    <div v-if="networkHealth.timestamp !== 0" class="mx-2 flex items-center gap-4">
-      <el-text size="small"
-        >官网
-        <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('seal'))"></component
-      ></el-text>
-      <el-text size="small"
-        >Lagrange Sign
-        <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('sign'))"></component
-      ></el-text>
-      <el-text size="small"
-        >Google
-        <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('google'))"></component
-      ></el-text>
-      <el-text size="small"
-        >GitHub
-        <component :is="getWebsiteHealthComponent(networkHealth.ok?.includes('github'))"></component
-      ></el-text>
-    </div>
+    <website-health-check />
   </div>
 
   <div class="flex items-center justify-between">
@@ -286,11 +229,10 @@
   </div> -->
 </template>
 
-<script lang="tsx" setup>
+<script lang="ts" setup>
 import { useStore } from '~/store';
 import dayjs from 'dayjs';
 import { filesize } from 'filesize';
-import { getUtilsCheckNetWorkHealth } from '~/api/utils';
 import { postUpgrade } from '~/api/dice';
 
 const store = useStore();
@@ -298,18 +240,8 @@ const store = useStore();
 const upgradeDialogVisible = ref(false);
 const autoRefresh = ref(true);
 const now = ref<dayjs.Dayjs>(dayjs());
-const networkHealth = ref({
-  total: 0,
-  ok: [],
-  timestamp: 0,
-} as {
-  total: number;
-  ok: string[];
-  timestamp: number;
-});
 
 let timerId: number;
-let checkTimerId: number;
 
 const doUpgrade = async () => {
   upgradeDialogVisible.value = false;
@@ -334,17 +266,6 @@ const scrollDown = () => {
   }
 };
 
-// const getColorByLevel = (level: string) => {
-//   switch (level) {
-//     case 'warn':
-//       return 'var(--el-color-warning)';
-//     case 'error':
-//       return 'var(--el-color-danger)';
-//     default:
-//       return '';
-//   }
-// };
-
 const getLogRowClassName = ({ row }: { row: any }) => {
   switch (row.level) {
     case 'warn':
@@ -356,32 +277,9 @@ const getLogRowClassName = ({ row }: { row: any }) => {
   }
 };
 
-const getWebsiteHealthComponent = (ok: boolean): VNode => (
-  <>
-    {ok ? (
-      <el-icon color={'var(--el-color-success)'}>
-        <i-carbon-checkmark-filled />
-      </el-icon>
-    ) : (
-      <el-icon color={'var(--el-color-danger)'}>
-        <i-carbon-close-filled />
-      </el-icon>
-    )}
-  </>
-);
-
-const refreshNetworkHealth = async () => {
-  networkHealth.value.timestamp = 0;
-  const ret = await getUtilsCheckNetWorkHealth();
-  if (ret.result) {
-    networkHealth.value = ret;
-  }
-};
-
 onBeforeMount(async () => {
   if (autoRefresh.value) {
     await store.logFetchAndClear();
-    await refreshNetworkHealth();
   }
 
   timerId = setInterval(() => {
@@ -390,17 +288,10 @@ onBeforeMount(async () => {
     }
     now.value = dayjs();
   }, 5000) as any;
-  checkTimerId = setInterval(
-    async () => {
-      await refreshNetworkHealth();
-    },
-    5 * 60 * 1000,
-  ) as any; // 5 min 一次
 });
 
 onBeforeUnmount(() => {
   clearInterval(timerId);
-  clearInterval(checkTimerId);
 });
 </script>
 
