@@ -1,10 +1,10 @@
 <template>
-  <n-layout id="root" class="mx-auto my-0 flex h-screen flex-col">
-    <n-layout-header bordered class="nav flex flex-none justify-between bg-inherit">
+  <n-layout id="root" class="mx-auto my-0 flex h-screen flex-col" position="absolute">
+    <n-layout-header bordered class="nav flex h-16 flex-none justify-between bg-inherit">
       <n-flex :size="0" align="center" style="height: 60px">
-        <div class="menu-button-wrapper mx-2">
+        <div class="menu-button-wrapper mx-2 flex justify-center">
           <n-button size="large" text @click="drawerMenu = true">
-            <n-icon color="white" size="1.5rem">
+            <n-icon size="1.5rem">
               <i-carbon-menu />
             </n-icon>
           </n-button>
@@ -83,12 +83,15 @@
       </n-flex>
     </n-layout-header>
 
-    <n-layout class="flex grow overflow-y-auto" has-sider>
+    <n-layout class="mt-16 flex grow overflow-y-auto" position="absolute" has-sider>
       <n-layout-sider bordered class="menu no-scrollbar flex-none overflow-y-auto bg-inherit">
         <Menu v-model:advancedConfigCounter="advancedConfigCounter" type="dark" />
       </n-layout-sider>
 
-      <n-layout-content class="h-auto flex-1 overflow-y-auto text-left" embedded>
+      <n-layout-content
+        class="h-auto flex-1 overflow-y-auto text-left"
+        :native-scrollbar="false"
+        embedded>
         <n-spin ref="rightbox" :show="loading" class="main-container size-full">
           <router-view
             v-if="!loading"
