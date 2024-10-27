@@ -112,7 +112,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
       },
       {
         key: '/mod/js',
-        label: () => <router-link to="/mod/js">JS扩展</router-link>,
+        label: () => <router-link to="/mod/js">JS 扩展</router-link>,
       },
       {
         key: '/mod/helpdoc',
