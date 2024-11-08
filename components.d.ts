@@ -119,7 +119,7 @@ declare module 'vue' {
     ICarbonVideo: typeof import('~icons/carbon/video')['default']
     ICarbonWarningFilled: typeof import('~icons/carbon/warning-filled')['default']
     MainBox: typeof import('./src/pages/MainBox.vue')['default']
-    Menu: typeof import('./src/components/Menu.vue')['default']
+    Menu: typeof import('./src/components/menu.vue')['default']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
