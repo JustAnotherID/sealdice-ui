@@ -2,7 +2,7 @@
 import { darkTheme, lightTheme } from 'naive-ui';
 import { useStore } from '~/store';
 
-const isDark = useDark();
+const isDark = useDark({ disableTransition: false });
 const store = useStore();
 
 const testMode = ref<boolean>(false);

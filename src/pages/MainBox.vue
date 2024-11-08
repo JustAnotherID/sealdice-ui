@@ -68,18 +68,14 @@
           </div>
         </div>
 
-        <n-switch v-model:value="isDark">
-          <template #checked-icon>
+        <n-button quaternary circle @click="toggleDark()">
+          <template #icon>
             <n-icon>
-              <i-carbon-asleep />
+              <i-carbon-asleep v-if="isDark" />
+              <i-carbon-light v-else />
             </n-icon>
           </template>
-          <template #unchecked-icon>
-            <n-icon>
-              <i-carbon-light />
-            </n-icon>
-          </template>
-        </n-switch>
+        </n-button>
       </n-flex>
     </n-layout-header>
 
@@ -182,10 +178,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { getNewUtils, postUtilsCheckNews } from '~/api/utils';
 import { checkSecurity } from '~/api/others';
 
-const isDark = useDark({
-  valueDark: 'dark',
-  valueLight: 'light',
-});
+const isDark = useDark({ disableTransition: false });
+const toggleDark = useToggle(isDark);
 const message = useMessage();
 
 dayjs.locale('zh-cn');
