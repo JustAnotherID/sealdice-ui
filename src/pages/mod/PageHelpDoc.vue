@@ -1,13 +1,11 @@
 <template>
   <header class="page-header">
-    <el-button
-      type="primary"
-      :icon="Refresh"
-      :loading="reloadLoading"
-      :disabled="reloadLoading"
-      @click="reload"
-      >重载帮助文档</el-button
-    >
+    <el-button type="primary" :loading="reloadLoading" :disabled="reloadLoading" @click="reload">
+      <template #icon>
+        <i-carbon-renew />
+      </template>
+      重载帮助文档
+    </el-button>
   </header>
 
   <el-affix v-if="needReload" :offset="70">
@@ -25,15 +23,24 @@
   <el-tabs v-model="tab" :stretch="true">
     <el-tab-pane label="文件" name="file">
       <el-space class="file-control">
-        <el-button v-show="showDeleteFile" type="danger" :icon="Delete" @click="deleteFiles"
-          >删除所选</el-button
-        >
-        <el-button type="primary" :icon="Upload" @click="uploadDialogVisible = true"
-          >上传</el-button
-        >
-        <el-button type="primary" :icon="Setting" @click="configDialogVisible = true"
-          >设置</el-button
-        >
+        <el-button v-show="showDeleteFile" type="danger" @click="deleteFiles">
+          <template #icon>
+            <i-carbon-row-delete />
+          </template>
+          删除所选
+        </el-button>
+        <el-button type="primary" @click="uploadDialogVisible = true">
+          <template #icon>
+            <i-carbon-upload />
+          </template>
+          上传
+        </el-button>
+        <el-button type="primary" @click="configDialogVisible = true">
+          <template #icon>
+            <i-carbon-settings />
+          </template>
+          设置
+        </el-button>
       </el-space>
 
       <el-dialog v-model="uploadDialogVisible" title="上传帮助文档">
@@ -69,7 +76,12 @@
               accept=".json, .xlsx"
               :auto-upload="false">
               <template #trigger>
-                <el-button type="primary" :icon="Upload">选择文件</el-button>
+                <el-button type="primary">
+                  <template #icon>
+                    <i-carbon-upload />
+                  </template>
+                  选择文件
+                </el-button>
               </template>
             </el-upload>
           </el-form-item>
@@ -228,7 +240,6 @@
 
 <script lang="ts" setup>
 import type { FormRules, FormInstance, ElTree } from 'element-plus';
-import { Delete, Refresh, Setting, Upload } from '@element-plus/icons-vue';
 import { trim } from 'lodash-es';
 import type { HelpDoc, HelpTextItem, HelpTextItemQuery } from '#';
 import {

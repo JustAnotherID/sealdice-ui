@@ -3,7 +3,6 @@ import type { Resource } from '~/store';
 import { useStore } from '~/store';
 import { filesize } from 'filesize';
 import { urlBase } from '~/backend';
-import { CopyDocument, Delete, Download, Search, Upload } from '@element-plus/icons-vue';
 import ClipboardJS from 'clipboard';
 import {
   createResource,
@@ -120,7 +119,12 @@ onBeforeMount(async () => {
         :before-upload="beforeUpload"
         :file-list="fileList"
         :show-file-list="false">
-        <el-button type="primary" :icon="Upload">上传图片</el-button>
+        <el-button type="primary">
+          <template #icon>
+            <i-carbon-upload />
+          </template>
+          上传图片
+        </el-button>
       </el-upload>
     </h3>
     <el-table v-loading="loading" :data="images" table-layout="auto">
@@ -143,40 +147,38 @@ onBeforeMount(async () => {
               type="primary"
               link
               size="small"
-              :icon="CopyDocument"
               plain
               class="resource-seal-code-copy-btn"
               :data-clipboard-text="`[图:${scope.row.path}]`"
               @click="copySealCode()">
+              <template #icon>
+                <i-carbon-copy />
+              </template>
               复制海豹码
             </el-button>
-            <el-button
-              type="primary"
-              link
-              size="small"
-              :icon="Search"
-              plain
-              @click="handleShow(scope.row)">
+            <el-button type="primary" link size="small" plain @click="handleShow(scope.row)">
+              <template #icon>
+                <i-carbon-search />
+              </template>
               详情
             </el-button>
             <el-button
               type="success"
               link
               size="small"
-              :icon="Download"
               plain
               tag="a"
               style="text-decoration: none"
               :href="`${urlBase}/sd-api/resource/download?path=${encodeURIComponent(scope.row.path)}&token=${encodeURIComponent(store.token)}`">
+              <template #icon>
+                <i-carbon-download />
+              </template>
               下载
             </el-button>
-            <el-button
-              type="danger"
-              link
-              size="small"
-              :icon="Delete"
-              plain
-              @click="deleteResource(scope.row)">
+            <el-button type="danger" link size="small" plain @click="deleteResource(scope.row)">
+              <template #icon>
+                <i-carbon-row-delete />
+              </template>
               删除
             </el-button>
           </el-space>

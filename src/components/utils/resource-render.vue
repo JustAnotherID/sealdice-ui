@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Resource } from '~/store';
-import { Microphone, Picture, VideoCamera } from '@element-plus/icons-vue';
 import { getResourceData } from '~/api/resource';
 
 const url = ref<string>('');
@@ -31,14 +30,14 @@ const props = withDefaults(
       <template #placeholder>
         <div>
           <el-icon>
-            <Picture />
+            <i-carbon-image />
           </el-icon>
         </div>
       </template>
       <template #error>
         <div>
           <el-icon>
-            <Picture />
+            <i-carbon-image />
           </el-icon>
         </div>
       </template>
@@ -46,12 +45,12 @@ const props = withDefaults(
   </template>
   <template v-else-if="data.type === 'audio'">
     <el-icon>
-      <Microphone />
+      <i-carbon-microphone />
     </el-icon>
   </template>
   <template v-else-if="data.type === 'video'">
     <el-icon>
-      <VideoCamera />
+      <i-carbon-video />
     </el-icon>
   </template>
   <template v-else>

@@ -32,12 +32,14 @@
               <el-button
                 style="text-decoration: none"
                 type="info"
-                :icon="Search"
                 size="small"
                 link
                 tag="a"
                 target="_blank"
                 href="https://toml.io/cn/v1.0.0">
+                <template #icon>
+                  <i-carbon-search />
+                </template>
                 了解 toml 格式
               </el-button>
               或自行搜索。
@@ -73,9 +75,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { Search } from '@element-plus/icons-vue';
-</script>
 <style scoped>
 .wordtips {
   background-color: #f3f5f7;

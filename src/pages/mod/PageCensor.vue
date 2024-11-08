@@ -5,8 +5,11 @@
       active-text="启用"
       inactive-text="关闭"
       @change="enableChange" />
-    <el-button v-show="censorEnable" type="primary" :icon="Refresh" @click="restartCensor"
-      >重载拦截
+    <el-button v-show="censorEnable" type="primary" @click="restartCensor">
+      <template #icon>
+        <i-carbon-renew />
+      </template>
+      重载拦截
     </el-button>
   </header>
 
@@ -41,7 +44,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Refresh } from '@element-plus/icons-vue';
 import { getCensorStatus } from '~/api/censor';
 onBeforeMount(() => {
   refreshCensorStatus();

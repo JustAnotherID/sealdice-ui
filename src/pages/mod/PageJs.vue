@@ -1,9 +1,12 @@
 <template>
   <header class="page-header">
     <el-switch v-model="jsEnable" active-text="启用" inactive-text="关闭" />
-    <el-button v-show="jsEnable" type="primary" :icon="Refresh" @click="jsReload"
-      >重载 JS</el-button
-    >
+    <el-button v-show="jsEnable" type="primary" @click="jsReload">
+      <template #icon>
+        <i-carbon-renew />
+      </template>
+      重载 JS
+    </el-button>
   </header>
 
   <el-affix v-if="needReload" :offset="70">
@@ -25,11 +28,13 @@
         <el-button
           class="button"
           type="primary"
-          :icon="DocumentChecked"
           :disabled="!jsConfigEdited"
-          @click="doJsConfigSave()"
-          >点我保存</el-button
-        >
+          @click="doJsConfigSave()">
+          <template #icon>
+            <i-carbon-save />
+          </template>
+          点我保存
+        </el-button>
       </div>
     </div>
   </el-affix>
@@ -41,13 +46,12 @@
             <div ref="editorBox"></div>
             <div>
               <div style="margin-top: 1rem">
-                <el-button
-                  type="success"
-                  :icon="CaretRight"
-                  :disabled="!jsEnable"
-                  @click="doExecute"
-                  >执行代码</el-button
-                >
+                <el-button type="success" :disabled="!jsEnable" @click="doExecute">
+                  <template #icon>
+                    <i-carbon-play />
+                  </template>
+                  执行代码
+                </el-button>
               </div>
             </div>
             <el-text type="danger" tag="p" style="padding: 1rem 0"
@@ -68,20 +72,31 @@
                 class="upload"
                 :before-upload="beforeUpload"
                 :file-list="uploadFileList">
-                <el-button type="primary" :icon="Upload">上传插件</el-button>
+                <el-button type="primary">
+                  <template #icon>
+                    <i-carbon-upload />
+                  </template>
+                  上传插件
+                </el-button>
               </el-upload>
-              <el-input v-model="jsFilter" :prefix-icon="Search" size="small" clearable />
+              <el-input v-model="jsFilter" size="small" clearable>
+                <template #prefix>
+                  <i-carbon-search />
+                </template>
+              </el-input>
               <el-button
                 type="info"
-                :icon="Link"
                 size="small"
                 link
                 tag="a"
                 target="_blank"
                 style="text-decoration: none"
-                href="https://github.com/sealdice/javascript"
-                >获取插件</el-button
-              >
+                href="https://github.com/sealdice/javascript">
+                <template #icon>
+                  <i-carbon-link />
+                </template>
+                获取插件
+              </el-button>
             </el-space>
           </header>
           <aside v-if="jsFilterCount > 0" class="mb-4">
@@ -122,11 +137,13 @@
               <template #title-extra>
                 <el-button
                   v-if="i.official && i.updateUrls && i.updateUrls.length > 0"
-                  :icon="Download"
                   type="success"
                   size="small"
                   plain
                   :loading="diffLoading">
+                  <template #icon>
+                    <i-carbon-download />
+                  </template>
                   更新
                 </el-button>
                 <el-popconfirm
@@ -136,12 +153,10 @@
                   title="更新地址由插件作者提供，是否确认要检查该插件更新？"
                   @confirm="doCheckUpdate(i)">
                   <template #reference>
-                    <el-button
-                      :icon="Download"
-                      type="success"
-                      size="small"
-                      plain
-                      :loading="diffLoading">
+                    <el-button type="success" size="small" plain :loading="diffLoading">
+                      <template #icon>
+                        <i-carbon-download />
+                      </template>
                       更新
                     </el-button>
                   </template>
@@ -149,44 +164,43 @@
                 <!--                    <el-button :icon="Setting" type="primary" size="small" plain @click="showSettingDialog = true">设置</el-button>-->
                 <el-button
                   v-if="i.builtin && i.builtinUpdated"
-                  :icon="Delete"
                   type="danger"
                   size="small"
                   plain
                   @click="doDelete(i)">
+                  <template #icon>
+                    <i-carbon-row-delete />
+                  </template>
                   卸载更新
                 </el-button>
                 <el-button
                   v-if="!i.builtin"
-                  :icon="Delete"
                   type="danger"
                   size="small"
                   plain
-                  @click="doDelete(i)">
-                  删除
-                </el-button>
+                  @click="doDelete(i)"
+                  ><template #icon> <i-carbon-row-delete /> </template>删除</el-button
+                >
               </template>
 
               <template #title-extra-error>
                 <el-space>
                   <el-button
                     v-if="i.builtin && i.builtinUpdated"
-                    :icon="Delete"
                     type="danger"
                     size="small"
                     plain
-                    @click="doDelete(i)">
-                    卸载更新
-                  </el-button>
+                    @click="doDelete(i)"
+                    ><template #icon> <i-carbon-row-delete /> </template>卸载更新</el-button
+                  >
                   <el-button
                     v-else-if="!i.builtin"
-                    :icon="Delete"
                     type="danger"
                     size="small"
                     plain
-                    @click="doDelete(i)">
-                    删除
-                  </el-button>
+                    @click="doDelete(i)"
+                    ><template #icon> <i-carbon-row-delete /> </template>删除</el-button
+                  >
                 </el-space>
               </template>
 
@@ -221,13 +235,12 @@
               <template #footer>
                 <el-space wrap>
                   <el-button @click="showDiff = false">取消</el-button>
-                  <el-button
-                    v-if="!(jsCheck.old === jsCheck.new)"
-                    type="success"
-                    :icon="DocumentChecked"
-                    @click="jsUpdate"
-                    >确认更新</el-button
-                  >
+                  <el-button v-if="!(jsCheck.old === jsCheck.new)" type="success" @click="jsUpdate">
+                    <template #icon>
+                      <i-carbon-save />
+                    </template>
+                    确认更新
+                  </el-button>
                 </el-space>
               </template>
             </el-dialog>
@@ -293,7 +306,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -311,7 +324,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -346,7 +359,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -364,7 +377,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -399,7 +412,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -417,7 +430,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -451,7 +464,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -469,7 +482,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -501,7 +514,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -519,7 +532,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -554,14 +567,14 @@
                                   "
                                   placement="bottom-start">
                                   <el-icon>
-                                    <circle-plus-filled
+                                    <i-carbon-add-filled
                                       v-if="index == 0"
                                       @click="
                                         doJsConfigAddItem(
                                           (c as unknown as JsPluginConfigItem).value,
                                         )
                                       " />
-                                    <circle-close
+                                    <i-carbon-close-outline
                                       v-else
                                       @click="
                                         doJsConfigRemoveItemAt(
@@ -600,7 +613,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -618,7 +631,7 @@
                                 false,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -682,7 +695,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -700,7 +713,7 @@
                                 true,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -752,7 +765,7 @@
                                 (c as unknown as JsPluginConfigItem).key,
                               )
                             ">
-                            <brush-filled />
+                            <i-carbon-paint-brush />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -770,7 +783,7 @@
                                 true,
                               )
                             ">
-                            <delete-filled />
+                            <i-carbon-row-delete />
                           </el-icon>
                         </el-tooltip>
                       </template>
@@ -787,20 +800,6 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  BrushFilled,
-  CaretRight,
-  CircleClose,
-  CirclePlusFilled,
-  Delete,
-  DeleteFilled,
-  DocumentChecked,
-  Download,
-  Link,
-  Refresh,
-  Search,
-  Upload,
-} from '@element-plus/icons-vue';
 import * as dayjs from 'dayjs';
 import { basicSetup, EditorView } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';

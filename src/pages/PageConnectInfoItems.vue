@@ -3,7 +3,11 @@
   <Teleport to="#root">
     <div style="position: absolute; right: 40px; bottom: 60px; z-index: 10">
       <!--    <el-button type="primary" class="btn-add" :icon="Plus" circle @click="addOne"></el-button>-->
-      <el-button type="primary" class="btn-add" :icon="Plus" circle @click="addOne"></el-button>
+      <el-button type="primary" class="btn-add" circle @click="addOne">
+        <template #icon>
+          <i-carbon-add-large />
+        </template>
+      </el-button>
     </div>
   </Teleport>
   <!-- </div> -->
@@ -30,9 +34,12 @@
               >{{ i.nickname || '<"未知">' }}({{ i.userId }})</span
             >
             <!-- <el-button class="button" type="text"  @click="doModify(i, index)">修改</el-button> -->
-            <el-button size="small" type="danger" :icon="Delete" plain @click="doRemove(i)"
-              >删除</el-button
-            >
+            <el-button size="small" type="danger" plain @click="doRemove(i)">
+              <template #icon>
+                <i-carbon-row-delete />
+              </template>
+              删除
+            </el-button>
           </div>
         </template>
 
@@ -195,8 +202,11 @@
                 size="small"
                 type="primary"
                 style="margin-left: 1rem"
-                :icon="Edit"
-                @click="askSetData(i)"></el-button>
+                @click="askSetData(i)">
+                <template #icon>
+                  <i-carbon-edit />
+                </template>
+              </el-button>
             </el-form-item>
             <el-form-item v-if="i.adapter.useInPackGoCqhttp" label="协议版本">
               <div v-if="i.adapter?.inPackGoCqHttpAppVersion === ''">未指定</div>
@@ -239,12 +249,15 @@
                 :content="i.enable ? '禁用账号后方可修改签名服务地址' : '单击修改签名服务地址'"
                 placement="bottom">
                 <el-button
-                  :icon="Edit"
                   size="small"
                   circle
                   :disabled="i.enable"
                   style="margin-left: 0.5rem"
-                  @click="showSetSignServerDialog(i)" />
+                  @click="showSetSignServerDialog(i)">
+                  <template #icon>
+                    <i-carbon-edit />
+                  </template>
+                </el-button>
               </el-tooltip>
             </el-form-item>
           </template>
@@ -371,7 +384,7 @@
             <span>版本</span>
             <el-tooltip content="只有需要升级协议版本时才指定。" style="">
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -395,7 +408,7 @@
               content="如果不知道这是什么，请选择 不使用。允许填写签名服务相关信息。"
               style="">
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -515,7 +528,7 @@
                 - 在获取到的 sign 或 token 为空（若选此建议关闭 auto-refresh-token）
               </template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -544,7 +557,7 @@
                 否则会在达到指定次数后 <strong>退出</strong> 主程序
               </template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -568,7 +581,7 @@
             <el-tooltip style="">
               <template #content> 签名服务请求超时时间（s）</template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -601,7 +614,7 @@
                 由于实现问题，当前建议关闭此项，推荐开启签名服务器的自动注册实例
               </template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -627,7 +640,7 @@
                 独立于定时刷新
               </template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -652,7 +665,7 @@
                 目前丢失 token 也不会有太大影响，可设置为 0 以关闭，推荐开启
               </template>
               <el-icon>
-                <QuestionFilled />
+                <i-carbon-help-filled />
               </el-icon>
             </el-tooltip>
           </div>
@@ -833,7 +846,7 @@
               <span>版本</span>
               <el-tooltip content="只有需要升级协议版本时才指定。" style="">
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -922,7 +935,7 @@
               <span>附加参数</span>
               <el-tooltip content="默认参数的作用为让 gocqhttp 在启动时自动更新协议" style="">
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -940,7 +953,7 @@
                 content="如果不知道这是什么，请选择 不使用。允许填写签名服务相关信息。"
                 style="">
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1060,7 +1073,7 @@
                   - 在获取到的 sign 或 token 为空（若选此建议关闭 auto-refresh-token）
                 </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1089,7 +1102,7 @@
                   否则会在达到指定次数后 <strong>退出</strong> 主程序
                 </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1113,7 +1126,7 @@
               <el-tooltip style="">
                 <template #content> 签名服务请求超时时间 (s) </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1146,7 +1159,7 @@
                   由于实现问题，当前建议关闭此项，推荐开启签名服务器的自动注册实例
                 </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1172,7 +1185,7 @@
                   独立于定时刷新
                 </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1197,7 +1210,7 @@
                   目前丢失 token 也不会有太大影响，可设置为 0 以关闭，推荐开启
                 </template>
                 <el-icon>
-                  <QuestionFilled />
+                  <i-carbon-help-filled />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -1816,7 +1829,6 @@
 import { reactive } from 'vue';
 import { useStore, goCqHttpStateCode } from '~/store';
 import type { DiceConnection } from '~/store';
-import { Plus, Edit, QuestionFilled, Delete } from '@element-plus/icons-vue';
 import { sleep } from '~/utils';
 import * as dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

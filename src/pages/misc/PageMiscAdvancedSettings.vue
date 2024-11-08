@@ -28,7 +28,7 @@
         <span>显示高级设置页</span>
         <el-tooltip raw-content content="设置是否显示高级设置页，只影响展示">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -39,7 +39,7 @@
         <span>启用高级设置</span>
         <el-tooltip raw-content content="设置是否启用高级设置，关闭时下列设置无效">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -52,7 +52,7 @@
         <span>回复调试日志</span>
         <el-tooltip raw-content content="开启自定义回复调试日志，打印字符细节">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -65,7 +65,7 @@
         <span>自定义后端 URL</span>
         <el-tooltip raw-content content="设置第三方跑团日志后端 URL">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -76,7 +76,7 @@
         <span>API 版本</span>
         <el-tooltip raw-content content="指定后端的 API 版本">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -87,7 +87,7 @@
         <span>Token</span>
         <el-tooltip raw-content content="指定传递给后端的 token">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -102,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionFilled } from '@element-plus/icons-vue';
 import { useStore } from '~/store';
 import type { AdvancedConfig } from '#';
 import { getCustomReplyDebug, postCustomReplyDebug } from '~/api/configs';

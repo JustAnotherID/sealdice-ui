@@ -2,7 +2,12 @@
   <div style="display: flex; justify-content: space-between; align-items: center">
     <h2>备份</h2>
     <div>
-      <el-button type="success" :icon="DocumentChecked" @click="doSave">保存设置</el-button>
+      <el-button type="success" @click="doSave">
+        <template #icon>
+          <i-carbon-save />
+        </template>
+        保存设置
+      </el-button>
       <el-button type="primary" @click="showBackup = true">立即备份</el-button>
     </div>
   </div>
@@ -18,7 +23,7 @@
               <el-tooltip
                 raw-content
                 content="备份间隔表达式请参阅 <a href='https://pkg.go.dev/github.com/robfig/cron' target='_blank'>cron文档</a>">
-                <el-icon><question-filled /></el-icon>
+                <el-icon><i-carbon-help-filled /></el-icon>
               </el-tooltip>
             </span>
           </template>
@@ -66,7 +71,7 @@
                 10.5h：代表保留 10.5 小时（即 10 小时 30 分）内的备份<br />
                 10h30m：保留 10 小时 30 分内备份的另一种写法
               </template>
-              <el-icon><question-filled /></el-icon>
+              <el-icon><i-carbon-help-filled /></el-icon>
             </el-tooltip>
           </span>
         </template>
@@ -79,7 +84,7 @@
             <el-tooltip
               raw-content
               content="自动备份后：在每次自动备份完成后，顺便进行备份清理。<br/>定时：按照给定的 cron 表达式，单独触发清理。">
-              <el-icon><question-filled /></el-icon>
+              <el-icon><i-carbon-help-filled /></el-icon>
             </el-tooltip>
           </span>
         </template>
@@ -95,7 +100,7 @@
             <el-tooltip
               raw-content
               content="定时间隔表达式请参阅 <a href='https://pkg.go.dev/github.com/robfig/cron' target='_blank'>cron文档</a>">
-              <el-icon><question-filled /></el-icon>
+              <el-icon><i-carbon-help-filled /></el-icon>
             </el-tooltip>
           </span>
         </template>
@@ -110,7 +115,12 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center">
     <h2>已备份文件</h2>
-    <el-button type="danger" :icon="Delete" @click="enterBatchDelete">进入批量删除页面</el-button>
+    <el-button type="danger" @click="enterBatchDelete">
+      <template #icon>
+        <i-carbon-row-delete />
+      </template>
+      进入批量删除页面
+    </el-button>
   </div>
 
   <div size="small" direction="vertical" class="backup-list" fill>
@@ -133,12 +143,11 @@
           :href="`${urlBase}/sd-api/backup/download?name=${encodeURIComponent(i.name)}&token=${encodeURIComponent(store.token)}`">
           下载 - {{ filesize(i.fileSize) }}
         </el-button>
-        <el-button
-          type="danger"
-          size="small"
-          :icon="Delete"
-          plain
-          @click="bakDeleteConfirm(i.name)"></el-button>
+        <el-button type="danger" size="small" plain @click="bakDeleteConfirm(i.name)">
+          <template #icon>
+            <i-carbon-row-delete />
+          </template>
+        </el-button>
       </el-space>
     </div>
   </div>
@@ -173,8 +182,11 @@
         <el-button
           type="danger"
           :disabled="!(selectedBaks && selectedBaks.length > 0)"
-          @click="bakBatchDeleteConfirm"
-          >删除所选
+          @click="bakBatchDeleteConfirm">
+          <template #icon>
+            <i-carbon-row-delete />
+          </template>
+          删除所选
         </el-button>
       </el-space>
     </template>
@@ -217,7 +229,6 @@ import type { CheckboxValueType } from 'element-plus';
 import { useStore } from '~/store';
 import { urlBase } from '~/backend';
 import { filesize } from 'filesize';
-import { Delete, QuestionFilled, DocumentChecked } from '@element-plus/icons-vue';
 import { sum } from 'lodash-es';
 import { dayjs } from 'element-plus';
 import {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { UploadUserFile } from 'element-plus';
-import { Download, Delete, Plus, Upload } from '@element-plus/icons-vue';
 import { urlBase } from '~/backend';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -143,7 +142,12 @@ onBeforeMount(async () => {
     </el-space>
 
     <el-space>
-      <el-button type="success" :icon="Plus" @click="dialogAddShow = true">添加</el-button>
+      <el-button type="success" @click="dialogAddShow = true">
+        <template #icon>
+          <i-carbon-add-large />
+        </template>
+        添加
+      </el-button>
       <el-upload
         action=""
         multiple
@@ -151,16 +155,23 @@ onBeforeMount(async () => {
         :show-file-list="false"
         :before-upload="beforeUpload"
         style="display: flex; align-items: center">
-        <el-button type="success" :icon="Upload" plain>导入</el-button>
+        <el-button type="success" plain>
+          <template #icon>
+            <i-carbon-upload />
+          </template>
+          导入
+        </el-button>
       </el-upload>
       <el-button
         type="primary"
-        :icon="Download"
         plain
         tag="a"
         target="_blank"
         :href="`${urlBase}/sd-api/banconfig/export`"
         style="text-decoration: none">
+        <template #icon>
+          <i-carbon-download />
+        </template>
         导出
       </el-button>
     </el-space>
@@ -197,14 +208,12 @@ onBeforeMount(async () => {
               </el-space>
             </el-space>
             <el-space>
-              <el-button
-                :icon="Delete"
-                type="danger"
-                size="small"
-                plain
-                @click="deleteOne(i, index)"
-                >删除</el-button
-              >
+              <el-button type="danger" size="small" plain @click="deleteOne(i, index)">
+                <template #icon>
+                  <i-carbon-row-delete />
+                </template>
+                删除
+              </el-button>
             </el-space>
           </div>
         </template>

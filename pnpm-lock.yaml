@@ -11,9 +11,6 @@ importers:
       '@codemirror/lang-javascript':
         specifier: ^6.2.2
         version: 6.2.2
-      '@element-plus/icons-vue':
-        specifier: ^2.3.1
-        version: 2.3.1(vue@3.5.12(typescript@5.6.3))
       '@types/qs':
         specifier: ^6.9.17
         version: 6.9.17
@@ -141,9 +138,6 @@ importers:
       eslint-plugin-vue:
         specifier: ^9.30.0
         version: 9.30.0(eslint@9.14.0(jiti@1.21.6))
-      iconify-icon:
-        specifier: ^2.1.0
-        version: 2.1.0
       naive-ui:
         specifier: ^2.40.1
         version: 2.40.1(vue@3.5.12(typescript@5.6.3))
@@ -1927,9 +1921,6 @@ packages:
   html-tags@3.3.1:
     resolution: {integrity: sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ==}
     engines: {node: '>=8'}
-
-  iconify-icon@2.1.0:
-    resolution: {integrity: sha512-lto4XU3bwTQnb+D/CsJ4dWAo0aDe+uPMxEtxyOodw9l7R9QnJUUab3GCehlw2M8mDHdeUu/ufx8PvRQiJphhXg==}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -4767,10 +4758,6 @@ snapshots:
   highlight.js@11.10.0: {}
 
   html-tags@3.3.1: {}
-
-  iconify-icon@2.1.0:
-    dependencies:
-      '@iconify/types': 2.0.0
 
   ignore@5.3.2: {}
 

@@ -3,13 +3,12 @@
     <el-switch v-model="replyEnable" active-text="启用" inactive-text="关闭" @change="switchClick"
       >总开关</el-switch
     >
-    <el-button
-      v-if="store.curDice.config.customReplyConfigEnable"
-      :icon="DocumentChecked"
-      type="primary"
-      @click="doSave"
-      >保存</el-button
-    >
+    <el-button v-if="store.curDice.config.customReplyConfigEnable" type="primary" @click="doSave">
+      <template #icon>
+        <i-carbon-save />
+      </template>
+      保存
+    </el-button>
   </header>
 
   <el-affix v-if="modified" :offset="70">
@@ -66,18 +65,23 @@
           </el-checkbox-button>
         </el-space>
         <el-space style="margin-top: 0.5rem" warp>
-          <el-button type="danger" size="small" plain :icon="Delete" @click="customReplyFileDelete"
-            >删除</el-button
-          >
+          <el-button type="danger" size="small" plain @click="customReplyFileDelete">
+            <template #icon>
+              <i-carbon-row-delete />
+            </template>
+            删除
+          </el-button>
           <el-button
             type="primary"
             size="small"
             plain
-            :icon="Download"
             tag="a"
             style="text-decoration: none"
-            :href="`${urlBase}/sd-api/configs/custom_reply/file_download?name=${encodeURIComponent(curFilename)}&token=${encodeURIComponent(store.token)}`"
-            >下载
+            :href="`${urlBase}/sd-api/configs/custom_reply/file_download?name=${encodeURIComponent(curFilename)}&token=${encodeURIComponent(store.token)}`">
+            <template #icon>
+              <i-carbon-download />
+            </template>
+            下载
           </el-button>
         </el-space>
         <el-text v-if="!cr.enable" class="mt-2" type="warning"
@@ -87,16 +91,22 @@
       <div class="reply-operation mt-4 sm:mt-0">
         <div>
           <el-tooltip content="新建一个自定义回复文件。">
-            <el-button type="success" plain :icon="DocumentAdd" @click="customReplyFileNew"
-              >新建</el-button
-            >
+            <el-button type="success" plain @click="customReplyFileNew">
+              <template #icon>
+                <i-carbon-document-add />
+              </template>
+              新建
+            </el-button>
           </el-tooltip>
         </div>
         <div>
           <el-tooltip content="通过粘贴/编辑文本来导入自定义回复。">
-            <el-button type="primary" plain :icon="Tickets" @click="dialogFormVisible = true"
-              >解析</el-button
-            >
+            <el-button type="primary" plain @click="dialogFormVisible = true">
+              <template #icon>
+                <i-carbon-document />
+              </template>
+              解析
+            </el-button>
           </el-tooltip>
         </div>
         <el-tooltip content="上传自定义回复的 .yaml 文件。">
@@ -106,7 +116,12 @@
             accept=".yaml"
             :before-upload="beforeUpload"
             :file-list="uploadFileList">
-            <el-button type="primary" plain :icon="Upload">上传</el-button>
+            <el-button type="primary" plain>
+              <template #icon>
+                <i-carbon-upload />
+              </template>
+              上传
+            </el-button>
           </el-upload>
         </el-tooltip>
       </div>
@@ -128,14 +143,12 @@
           <el-space size="large" wrap>
             <el-space size="small">
               <strong>公共条件</strong>
-              <el-button
-                type="success"
-                size="small"
-                plain
-                :icon="Plus"
-                @click="addOneCondition(conditions)"
-                >添加一项</el-button
-              >
+              <el-button type="success" size="small" plain @click="addOneCondition(conditions)">
+                <template #icon>
+                  <i-carbon-add-large />
+                </template>
+                添加一项
+              </el-button>
             </el-space>
             <el-text type="info" size="small"
               >该文件下所有的回复的执行，都需要先满足以下公共条件（需同时满足，即 and）。</el-text
@@ -164,8 +177,18 @@
 
       <nested-draggable :tasks="list" :class="cr.enable ? '' : 'disabled'" />
       <div style="display: flex; justify-content: space-between">
-        <el-button type="success" plain :icon="Plus" @click="addOne(list)">添加一项</el-button>
-        <el-button :icon="DocumentChecked" type="primary" @click="doSave">保存</el-button>
+        <el-button type="success" plain @click="addOne(list)">
+          <template #icon>
+            <i-carbon-add-large />
+          </template>
+          添加一项
+        </el-button>
+        <el-button type="primary" @click="doSave">
+          <template #icon>
+            <i-carbon-save />
+          </template>
+          保存
+        </el-button>
       </div>
     </template>
   </main>
@@ -237,16 +260,6 @@
 <script lang="ts" setup>
 import { urlBase } from '~/backend';
 import { useStore } from '~/store';
-// import nestedDraggable from '../utils/nested.vue';
-import {
-  DocumentChecked,
-  Delete,
-  Download,
-  DocumentAdd,
-  Tickets,
-  Upload,
-  Plus,
-} from '@element-plus/icons-vue';
 import {
   getCustomReply,
   getCustomReplyFileList,

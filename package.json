@@ -16,7 +16,6 @@
   "type": "module",
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
-    "@element-plus/icons-vue": "^2.3.1",
     "@types/qs": "^6.9.17",
     "@vueuse/core": "^11.2.0",
     "asmcrypto.js": "^2.3.2",
@@ -61,7 +60,6 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-tailwindcss": "^3.17.5",
     "eslint-plugin-vue": "^9.30.0",
-    "iconify-icon": "^2.1.0",
     "naive-ui": "^2.40.1",
     "npm-run-all2": "^7.0.1",
     "postcss": "^8.4.47",

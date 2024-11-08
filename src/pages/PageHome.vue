@@ -1,12 +1,10 @@
 <template>
   <Teleport v-if="store.curDice.logs.length" to="#root">
-    <el-button
-      type="default"
-      class="btn-scrolldown"
-      :icon="CaretBottom"
-      circle
-      @click="scrollDown"
-      content="最新日志"></el-button>
+    <el-button type="default" class="btn-scrolldown" circle @click="scrollDown" content="最新日志">
+      <template #icon>
+        <i-carbon-chevron-down />
+      </template>
+    </el-button>
   </Teleport>
 
   <div style="display: flex; justify-content: flex-end; align-items: center">
@@ -116,19 +114,19 @@
       <el-table-column label="时间" width="90">
         <template #default="scope">
           <div style="display: flex; align-items: center">
-            <el-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(--el-color-warning)"
-              ><timer
-            /></el-icon>
-            <el-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(--el-color-primary)"
-              ><timer
-            /></el-icon>
-            <el-icon v-else-if="scope.row.level === 'warn'" color="var(--el-color-warning)"
-              ><timer
-            /></el-icon>
-            <el-icon v-else-if="scope.row.level === 'error'" color="var(--el-color-danger)"
-              ><timer
-            /></el-icon>
-            <el-icon v-else><timer /></el-icon>
+            <el-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(--el-color-warning)">
+              <i-carbon-time />
+            </el-icon>
+            <el-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(--el-color-primary)">
+              <i-carbon-time />
+            </el-icon>
+            <el-icon v-else-if="scope.row.level === 'warn'" color="var(--el-color-warning)">
+              <i-carbon-time />
+            </el-icon>
+            <el-icon v-else-if="scope.row.level === 'error'" color="var(--el-color-danger)">
+              <i-carbon-time />
+            </el-icon>
+            <el-icon v-else><i-carbon-time /></el-icon>
             <span style="margin-left: 0.3rem">
               <span
                 v-if="scope.row.msg.startsWith('onebot | ')"
@@ -289,11 +287,9 @@
 </template>
 
 <script lang="tsx" setup>
-import { Timer, CaretBottom } from '@element-plus/icons-vue';
 import { useStore } from '~/store';
 import dayjs from 'dayjs';
 import { filesize } from 'filesize';
-import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue';
 import { getUtilsCheckNetWorkHealth } from '~/api/utils';
 import { postUpgrade } from '~/api/dice';
 
@@ -364,11 +360,11 @@ const getWebsiteHealthComponent = (ok: boolean): VNode => (
   <>
     {ok ? (
       <el-icon color={'var(--el-color-success)'}>
-        <CircleCheckFilled />
+        <i-carbon-checkmark-filled />
       </el-icon>
     ) : (
       <el-icon color={'var(--el-color-danger)'}>
-        <CircleCloseFilled />
+        <i-carbon-close-filled />
       </el-icon>
     )}
   </>

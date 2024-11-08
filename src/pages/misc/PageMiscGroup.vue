@@ -65,11 +65,11 @@
                 v-if="item.data.changed"
                 type="success"
                 size="small"
-                :icon="DocumentChecked"
                 plain
-                @click="saveOne(item.data, item.index)"
-                >保存</el-button
-              >
+                @click="saveOne(item.data, item.index)">
+                <template #icon><i-carbon-save /></template>
+                保存
+              </el-button>
               <template v-if="item.data.groupId.startsWith('QQ-Group:')">
                 <el-tooltip
                   v-for="(_, j) in item.data.diceIdExistsMap"
@@ -79,11 +79,13 @@
                   <el-button
                     type="danger"
                     size="small"
-                    :icon="Close"
                     plain
-                    @click="quitGroup(item.data, item.index, j.toString())"
-                    >退出 {{ j.toString().slice(-4) }}</el-button
-                  >
+                    @click="quitGroup(item.data, item.index, j.toString())">
+                    <template #icon>
+                      <i-carbon-close-large />
+                    </template>
+                    退出 {{ j.toString().slice(-4) }}
+                  </el-button>
                 </el-tooltip>
               </template>
             </template>
@@ -184,7 +186,6 @@
 </template>
 
 <script lang="ts" setup>
-import { DocumentChecked, Close } from '@element-plus/icons-vue';
 import * as dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { now, sortBy } from 'lodash-es';

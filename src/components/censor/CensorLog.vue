@@ -1,7 +1,12 @@
 <template>
   <div class="censor-log-container">
     <header class="censor-log-header">
-      <el-button type="primary" :icon="Refresh" @click="refreshCensorLog">刷新</el-button>
+      <el-button type="primary" @click="refreshCensorLog">
+        <template #icon>
+          <i-carbon-renew />
+        </template>
+        刷新
+      </el-button>
       <el-pagination
         class="pagination"
         layout="sizes, prev, pager, next"
@@ -63,7 +68,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs';
 import { useCensorStore } from '~/components/censor/censor';
-import { Refresh } from '@element-plus/icons-vue';
 import { getCensorLogs } from '~/api/censor';
 
 const censorStore = useCensorStore();

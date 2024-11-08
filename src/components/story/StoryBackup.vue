@@ -32,8 +32,11 @@
     <el-button
       type="danger"
       :disabled="!(selectedBackups && selectedBackups.length > 0)"
-      @click="backupBatchDeleteConfirm"
-      >删除所选
+      @click="backupBatchDeleteConfirm">
+      <template #icon>
+        <i-carbon-row-delete />
+      </template>
+      删除所选
     </el-button>
   </header>
 
@@ -51,13 +54,11 @@
             :href="`${urlBase}/sd-api/story/backup/download?name=${encodeURIComponent(backup.name)}&token=${encodeURIComponent(store.token)}`">
             下载 - {{ filesize(backup.fileSize) }}
           </el-button>
-          <el-button
-            type="danger"
-            size="small"
-            :icon="Delete"
-            plain
-            @click="bakDeleteConfirm(backup.name)"
-            >删除
+          <el-button type="danger" size="small" plain @click="bakDeleteConfirm(backup.name)">
+            <template #icon>
+              <i-carbon-row-delete />
+            </template>
+            删除
           </el-button>
         </el-space>
       </div>
@@ -67,7 +68,6 @@
 
 <script setup lang="ts">
 import type { CheckboxValueType } from 'element-plus';
-import { Delete } from '@element-plus/icons-vue';
 import { filesize } from 'filesize';
 import { useStore } from '~/store';
 import type { Backup } from '~/api/story';

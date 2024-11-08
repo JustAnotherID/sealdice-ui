@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ArrowDown, ArrowRight, CircleClose } from '@element-plus/icons-vue';
-
 const props = withDefaults(
   defineProps<{
     shadow?: 'always' | 'never' | 'hover';
@@ -69,7 +67,8 @@ defineExpose({ open, close });
               <el-button link size="small" @click="folded = !folded">
                 <template #icon>
                   <el-icon color="var(--el-color-info)">
-                    <component :is="folded ? ArrowRight : ArrowDown" />
+                    <i-carbon-chevron-right v-if="folded" />
+                    <i-carbon-chevron-down v-else />
                   </el-icon>
                 </template>
               </el-button>
@@ -108,7 +107,7 @@ defineExpose({ open, close });
           <div class="title-warp">
             <el-space alignment="center">
               <el-icon size="20" color="var(--el-color-danger)">
-                <circle-close />
+                <i-carbon-close-outline />
               </el-icon>
               <del>
                 <el-text size="large" tag="b">{{ errTitle }}</el-text>

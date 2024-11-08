@@ -16,11 +16,14 @@
           <template #title-extra>
             <el-space size="large" alignment="center">
               <el-icon class="handle">
-                <rank />
+                <i-carbon-move />
               </el-icon>
-              <el-button :icon="Delete" plain type="danger" size="small" @click="deleteItem(index)"
-                >删除</el-button
-              >
+              <el-button plain type="danger" size="small" @click="deleteItem(index)">
+                <template #icon>
+                  <i-carbon-row-delete />
+                </template>
+                删除
+              </el-button>
             </el-space>
           </template>
 
@@ -59,9 +62,12 @@
           <el-text class="mb-2 block" size="large">条件（需同时满足，即 and）</el-text>
           <div class="border-l-4 border-orange-500 pl-4">
             <custom-reply-conditions v-model="el.conditions" />
-            <el-button type="success" size="small" :icon="Plus" @click="addCond(el.conditions)"
-              >增加</el-button
-            >
+            <el-button type="success" size="small" @click="addCond(el.conditions)">
+              <template #icon>
+                <i-carbon-add-large />
+              </template>
+              增加
+            </el-button>
           </div>
 
           <el-text class="my-2 block" size="large">结果（顺序执行）</el-text>
@@ -82,11 +88,13 @@
 
                 <el-button
                   type="danger"
-                  :icon="Delete"
                   size="small"
                   plain
                   @click="deleteAnyItem(el.results, index)">
-                  <template v-if="notMobile" #default> 删除结果 </template>
+                  <template #icon>
+                    <i-carbon-row-delete />
+                  </template>
+                  <template v-if="notMobile" #default>删除结果</template>
                 </el-button>
               </div>
 
@@ -101,7 +109,7 @@
                       <el-tooltip
                         raw-content
                         content="文本将在此延迟后发送，单位秒，可小数。<br />注意随机延迟仍会被加入，如果你希望保证发言顺序，记得考虑这点。">
-                        <el-icon><question-filled /></el-icon>
+                        <el-icon><i-carbon-help-filled /></el-icon>
                       </el-tooltip>
                     </el-text>
                     <el-input
@@ -130,8 +138,8 @@
                         "
                         placement="bottom-start">
                         <el-icon>
-                          <circle-plus-filled v-if="index == 0" @click="addItem(i.message)" />
-                          <circle-close v-else @click="removeItem(i.message, index)" />
+                          <i-carbon-add-filled v-if="index == 0" @click="addItem(i.message)" />
+                          <i-carbon-close-outline v-else @click="removeItem(i.message, index)" />
                         </el-icon>
                       </el-tooltip>
                     </div>
@@ -146,9 +154,12 @@
                 </div>
               </div>
             </div>
-            <el-button type="success" size="small" :icon="Plus" @click="addResult(el.results)"
-              >增加</el-button
-            >
+            <el-button type="success" size="small" @click="addResult(el.results)">
+              <template #icon>
+                <i-carbon-add-large />
+              </template>
+              增加
+            </el-button>
           </div>
         </foldable-card>
       </li>
@@ -157,14 +168,6 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  CirclePlusFilled,
-  CircleClose,
-  QuestionFilled,
-  Rank,
-  Delete,
-  Plus,
-} from '@element-plus/icons-vue';
 import draggable from 'vuedraggable';
 import { breakpointsTailwind } from '@vueuse/core';
 

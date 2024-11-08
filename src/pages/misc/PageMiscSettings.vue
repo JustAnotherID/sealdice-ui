@@ -12,7 +12,7 @@
         <div>
           <span>重载脚本 (临时)</span>
           <el-tooltip content="用于误操作或被抢占 master。执行这条指令可以直接获取 master 权限并踢掉其他所有人，指令有效期 20 分钟">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -27,7 +27,7 @@
           <span>Master 解锁码</span>
           <el-tooltip
             content="用于误操作或被抢占master。执行这条指令可以直接获取master权限并踢掉其他所有人，指令有效期20分钟">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -44,7 +44,7 @@
           <el-tooltip
             raw-content
             content="单行格式: QQ:12345<br>也可添加群ID, 在指定的群中所有人均视为有Master权限">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -64,10 +64,10 @@
                 :content="index === 0 ? '点击添加项目' : '点击删除你不想要的项'"
                 placement="bottom-start">
                 <el-icon>
-                  <circle-plus-filled
+                  <i-carbon-add-filled
                     v-if="index == 0"
                     @click="config.diceMasters = addItem(config.diceMasters)" />
-                  <circle-close v-else @click="removeItem(config.diceMasters, index)" />
+                  <i-carbon-close-outline v-else @click="removeItem(config.diceMasters, index)" />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -76,7 +76,7 @@
       </template>
       <template v-else>
         <el-icon>
-          <circle-plus-filled @click="config.diceMasters = addItem(config.diceMasters)" />
+          <i-carbon-add-filled @click="config.diceMasters = addItem(config.diceMasters)" />
         </el-icon>
       </template>
     </el-form-item>
@@ -88,7 +88,7 @@
           <el-tooltip
             raw-content
             content="会对以下消息进行通知:<br>加群邀请、好友邀请、进入群组、被踢出群、被禁言、自动激活、指令退群<br>单行格式: QQ:12345 QQ-Group:12345 Mail:abc@foo.bar<br>通知列表中的QQ号在发件时会自动转换成对应邮箱">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -109,10 +109,10 @@
                 :content="index === 0 ? '点击添加项目' : '点击删除你不想要的项'"
                 placement="bottom-start">
                 <el-icon>
-                  <circle-plus-filled
+                  <i-carbon-add-filled
                     v-if="index == 0"
                     @click="config.noticeIds = addItem(config.noticeIds)" />
-                  <circle-close v-else @click="removeItem(config.noticeIds, index)" />
+                  <i-carbon-close-outline v-else @click="removeItem(config.noticeIds, index)" />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -121,7 +121,7 @@
       </template>
       <template v-else>
         <el-icon>
-          <circle-plus-filled @click="config.noticeIds = addItem(config.noticeIds)" />
+          <i-carbon-add-filled @click="config.noticeIds = addItem(config.noticeIds)" />
         </el-icon>
       </template>
     </el-form-item>
@@ -133,7 +133,7 @@
           <el-tooltip
             raw-content
             content="为处理某些平台通知频繁引起的问题，启用后<b>只会通过邮件</b>进行通知">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip></div
       ></template>
       <el-checkbox v-model="config.mailEnable" label="开启" />
@@ -143,7 +143,7 @@
         ><div>
           <span>发件邮箱</span>
           <el-tooltip raw-content content="特别提醒：QQ号被冻结后对应账号的邮箱也无法使用">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip></div
       ></template>
       <el-input v-model="config.mailFrom" style="width: 12rem" />
@@ -155,7 +155,7 @@
           <el-tooltip
             raw-content
             content="请注意不一定是密码，例如 QQ邮箱就需要在设置界面生成授权码">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip></div
       ></template>
       <el-input v-model="config.mailPassword" style="width: 12rem" />
@@ -165,7 +165,7 @@
         ><div>
           <span>SMTP 地址</span>
           <el-tooltip raw-content content="例如 smtp.qq.com">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip></div
       ></template>
       <el-input v-model="config.mailSmtp" style="width: 12rem" />
@@ -175,7 +175,7 @@
         <div>
           <el-text>发送测试邮件</el-text>
           <el-tooltip content="向通知列表发送测试邮件，便于检查邮件相关配置">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -187,7 +187,7 @@
         <div>
           <span>私骰模式</span>
           <el-tooltip raw-content content="只允许信任用户拉入群聊">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -201,7 +201,7 @@
           <el-tooltip
             raw-content
             content="默认开启。允许任何人执行bot on/off和ext on/off，否则只有邀请者、管理员和master进行操作">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -212,7 +212,7 @@
         <div>
           <span>启用戳一戳</span>
           <el-tooltip raw-content content="默认开启。仅QQ平台，关闭后不回应戳一戳。">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -232,7 +232,7 @@
           <el-tooltip
             raw-content
             content="默认开启。开启后只有master和信任用户可使用.text指令。如果你不了解这个指令，一定要开启。">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -244,7 +244,7 @@
         <div>
           <span>忽略.bot 裸指令</span>
           <el-tooltip raw-content content="默认关闭。开启后在群聊中只有@骰子才会响应.bot">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -256,7 +256,7 @@
         <div>
           <span>存活确认 (骰狗)</span>
           <el-tooltip raw-content content="定期向通知列表发送消息，以便于骰主知晓存活状态">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -270,7 +270,7 @@
           <el-tooltip
             raw-content
             content="间隔写法请参阅 <a href='https://pkg.go.dev/github.com/robfig/cron' target='_blank'>cron文档</a>。注意:重启骰子后重新计时。">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -282,7 +282,7 @@
         ><div>
           <span>日志记录提示</span>
           <el-tooltip raw-content content="每记录N条文本后，主动发送一条提醒信息，避免忘记log off">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip></div
       ></template>
       <div>
@@ -315,7 +315,7 @@
           <el-tooltip
             raw-content
             content="默认关闭。开启后会对使用指令过快的用户和群组进行警告，警告后继续使用指令会增加怒气值，只对QQ平台有效">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -329,7 +329,7 @@
       </template>
       个人速率
       <el-tooltip raw-content content="支持以下格式: <br/>@every 3s 每3秒一个<br/>3 每秒3个">
-        <el-icon><question-filled /></el-icon>
+        <el-icon><i-carbon-help-filled /></el-icon>
       </el-tooltip>
       <el-input v-model="config.personalReplenishRate" clearable style="width: 14rem" />
       <br />
@@ -343,7 +343,7 @@
     <el-form-item>
       群组速率
       <el-tooltip raw-content content="支持以下格式: <br/>@every 3s 每3秒一个<br/>3 每秒3个">
-        <el-icon><question-filled /></el-icon>
+        <el-icon><i-carbon-help-filled /></el-icon>
       </el-tooltip>
       <el-input v-model="config.groupReplenishRate" clearable style="width: 14rem" />
       <br />
@@ -379,7 +379,7 @@
           <el-tooltip
             raw-content
             content="0.0.0.0:3211 主要用于服务器，代表可以在公网中用你的手机和电脑访问 <br>127.0.0.1:3211 主要用于自己的电脑/手机，只能在当前设备上管理海豹<br>注意：重启骰子后生效！<br>另，想开多个海豹必须修改端口号！">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -399,7 +399,7 @@
         <div>
           <span>UI 界面密码</span>
           <el-tooltip content="公网用户一定要加，登录后会自动记住一段时间！">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -413,7 +413,7 @@
         <div>
           <span>总开关</span>
           <el-tooltip raw-content content="如果关闭，将忽略任何频道消息">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -425,7 +425,7 @@
         <div>
           <span>自动 bot on</span>
           <el-tooltip raw-content content="如果开启，需要在每一个子频道手动bot off，推荐关闭">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -439,7 +439,7 @@
           <el-tooltip
             raw-content
             content="是否记录频道消息到日志，如果频道较多，可能造成严重刷屏。<br>若关闭则仅在日志记录指令，推荐关闭">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -452,7 +452,7 @@
         <div>
           <span>COC 默认房规</span>
           <el-tooltip raw-content content="可设置为0-5，以及dg（DeltaGreen）">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -464,7 +464,7 @@
         <div>
           <span>COC 制卡上限</span>
           <el-tooltip raw-content content=".coc n中n的最大值，1-12之间，默认5">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -476,7 +476,7 @@
         <div>
           <span>骰点轮数上限</span>
           <el-tooltip raw-content content=".r n#中n的最大值，1-25之间，默认12">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -497,13 +497,18 @@
         <div>
           <span>固件升级</span>
           <el-tooltip raw-content content="使用海豹安装包进行覆盖升级">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
       <el-space v-if="store.curDice.baseInfo.containerMode" wrap>
         <el-tooltip content="容器模式下固件升级被禁用，请手动拉取最新镜像">
-          <el-button type="primary" :icon="Upload" disabled>上传压缩包</el-button>
+          <el-button type="primary" disabled>
+            <template #icon>
+              <i-carbon-upload />
+            </template>
+            上传压缩包
+          </el-button>
         </el-tooltip>
         <el-text type="warning" size="small">容器模式下固件升级被禁用，请手动拉取最新镜像</el-text>
       </el-space>
@@ -515,7 +520,12 @@
         :before-upload="beforeUpload"
         :file-list="fileList"
         :disabled="!isUploadEnable">
-        <el-button type="primary" :icon="Upload" :disabled="!isUploadEnable">上传压缩包</el-button>
+        <el-button type="primary" :disabled="!isUploadEnable">
+          <template #icon>
+            <i-carbon-upload />
+          </template>
+          上传压缩包
+        </el-button>
       </el-upload>
     </el-form-item>
 
@@ -533,7 +543,7 @@
           <el-tooltip
             raw-content
             content="加好友时必须输入正确的验证信息才能通过<br>注意：若使用“回答问题并由我确认”，只写问题答案，有多个答案用空格隔开：<br>问题1答案 问题2答案<br>注意问题答案中本身不能有空格">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -553,7 +563,7 @@
           <el-tooltip
             raw-content
             content="每天凌晨4时检查所有群聊的不活跃天数, 若超过设定天数则自动退群<br>设置为0以关闭该功能">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -585,7 +595,7 @@
           <el-tooltip
             raw-content
             content="默认开启。建议开启，这可以防止用户改名为指令(如.bot)，并利用播报去唤醒其他骰子造成刷屏。">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -606,7 +616,7 @@
         <div>
           <span>指令前缀</span>
           <el-tooltip content="举例：添加!作为指令前缀，运行 !r 可以骰点">
-            <el-icon><question-filled /></el-icon>
+            <el-icon><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </div>
       </template>
@@ -627,10 +637,10 @@
                 :content="index === 0 ? '点击添加项目' : '点击删除你不想要的项目'"
                 placement="bottom-start">
                 <el-icon>
-                  <circle-plus-filled
+                  <i-carbon-add-filled
                     v-if="index == 0"
                     @click="config.commandPrefix = addItem(config.commandPrefix)" />
-                  <circle-close v-else @click="removeItem(config.commandPrefix, index)" />
+                  <i-carbon-close-outline v-else @click="removeItem(config.commandPrefix, index)" />
                 </el-icon>
               </el-tooltip>
             </div>
@@ -639,7 +649,7 @@
       </template>
       <template v-else>
         <el-icon>
-          <circle-plus-filled @click="config.commandPrefix = addItem(config.commandPrefix)" />
+          <i-carbon-add-filled @click="config.commandPrefix = addItem(config.commandPrefix)" />
         </el-icon>
       </template>
     </el-form-item>
@@ -675,7 +685,6 @@
 </template>
 
 <script lang="ts" setup>
-import { CirclePlusFilled, CircleClose, QuestionFilled, Upload } from '@element-plus/icons-vue';
 import { cloneDeep, toNumber } from 'lodash-es';
 import { postMailTest, postUploadToUpgrade } from '~/api/dice';
 import { useStore } from '~/store';

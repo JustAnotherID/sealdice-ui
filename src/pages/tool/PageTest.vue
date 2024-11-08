@@ -43,7 +43,9 @@
       <el-button class="ml-2.5 min-w-12" type="primary" @click="doSend">发送</el-button>
       <el-popover placement="top" trigger="click">
         <template #reference>
-          <el-button :icon="Plus" circle />
+          <el-button circle>
+            <i-carbon-add-large />
+          </el-button>
         </template>
         <el-space class="flex w-full flex-col justify-center" fill>
           <el-button text :disabled="deckReloading" @click="reloadDeck">重载牌堆</el-button>
@@ -61,7 +63,6 @@
 import { useStore } from '~/store';
 import imgSeal from '~/assets/seal.png';
 import imgMe from '~/assets/me.jpg';
-import { Plus } from '@element-plus/icons-vue';
 import { getRecentMessage, postExec } from '~/api/dice';
 import { reloadDeck as postReloadDeck } from '~/api/deck';
 import { reloadHelpDoc } from '~/api/helpdoc';

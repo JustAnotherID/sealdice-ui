@@ -2,14 +2,12 @@
   <el-affix :offset="70" v-if="modified">
     <div class="page-header tip-danger">
       <el-text type="danger" size="large" tag="strong">内容已修改，不要忘记保存！</el-text>
-      <el-button
-        class="button"
-        type="primary"
-        :icon="DocumentChecked"
-        @click="save"
-        :disabled="!modified"
-        >点我保存</el-button
-      >
+      <el-button class="button" type="primary" @click="save" :disabled="!modified">
+        <template #icon>
+          <i-carbon-save />
+        </template>
+        点我保存
+      </el-button>
     </div>
   </el-affix>
 
@@ -28,7 +26,7 @@
           <!-- 权重选择：默认 1，权重—致则没有优先级。数字越小，优先级越高 -->
           <!-- <div>文件备份：已修改的指令统一存在于路径/路径 1/路径 2/文件名，如有需要替换文件即可</div> -->
           <div>
-            遇到有此标记 (<el-icon><brush-filled /></el-icon>)
+            遇到有此标记 (<el-icon><i-carbon-paint-brush /></el-icon>)
             的条目，说明和默认值不同，是一个自定义条目
           </div>
           <div style="margin-top: 1rem">
@@ -91,11 +89,11 @@
   <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center">
     <div>
       <el-text>搜索：</el-text>
-      <el-input
-        :prefix-icon="Search"
-        style="display: inline"
-        v-model="currentFilterName"
-        clearable></el-input>
+      <el-input style="display: inline" v-model="currentFilterName" clearable>
+        <template #prefix>
+          <i-carbon-search />
+        </template>
+      </el-input>
     </div>
     <!-- 这个按钮颜色还是淡一些不然喧宾夺主 -->
     <!-- 偷偷加个淡点的颜色回来（） -->
@@ -150,7 +148,7 @@
                       v-if="store.curDice.customTextsHelpInfo[category][k.toString()].extraText"
                       :content="store.curDice.customTextsHelpInfo[category][k.toString()].extraText"
                       raw-content>
-                      <el-icon><question-filled /></el-icon>
+                      <el-icon><i-carbon-help-filled /></el-icon>
                     </el-tooltip>
                   </span>
 
@@ -163,7 +161,7 @@
                       <el-icon
                         style="float: right; margin-left: 1rem"
                         @click="askDeleteValue(category, k.toString())">
-                        <delete-filled />
+                        <i-carbon-row-delete />
                       </el-icon>
                     </el-tooltip>
                   </template>
@@ -174,7 +172,7 @@
                       <el-icon
                         style="float: right; margin-left: 1rem"
                         @click="askResetValue(category, k.toString())">
-                        <brush-filled />
+                        <i-carbon-paint-brush />
                       </el-icon>
                     </el-tooltip>
                   </template>
@@ -201,8 +199,8 @@
                       "
                       placement="bottom-start">
                       <el-icon>
-                        <circle-plus-filled v-if="index == 0" @click="addItem(k)" />
-                        <circle-close v-else @click="removeItem(v, index)" />
+                        <i-carbon-add-filled v-if="index == 0" @click="addItem(k)" />
+                        <i-carbon-close-outline v-else @click="removeItem(v, index)" />
                       </el-icon>
                     </el-tooltip>
                   </el-col>
@@ -224,21 +222,21 @@
                           v-if="getPreviewCheckErr(k, k2[0])"
                           class="text-red-500"
                           style="margin-left: 0.1rem; margin-top: 0.1rem">
-                          <el-icon><CircleCloseFilled /></el-icon>
+                          <el-icon><i-carbon-close-filled /></el-icon>
                         </span>
                         <template v-else>
                           <span
                             v-if="getPreview(k, k2[0]).version == 'v2'"
                             class="text-blue-500"
                             style="margin-left: 0.1rem; margin-top: 0.1rem">
-                            <el-icon><SuccessFilled /></el-icon>
+                            <el-icon><i-carbon-checkmark-filled /></el-icon>
                           </span>
 
                           <span
                             v-if="getPreview(k, k2[0]).version == 'v1'"
                             class="text-yellow-500"
                             style="margin-left: 0.1rem; margin-top: 0.1rem">
-                            <el-icon><SuccessFilled /></el-icon>
+                            <el-icon><i-carbon-checkmark-filled /></el-icon>
                           </span>
                         </template>
                       </el-tooltip>
@@ -302,17 +300,6 @@
 
 <script setup lang="tsx">
 import { useStore } from '~/store';
-import {
-  BrushFilled,
-  CircleClose,
-  CirclePlusFilled,
-  DeleteFilled,
-  DocumentChecked,
-  QuestionFilled,
-  Search,
-  SuccessFilled,
-  CircleCloseFilled,
-} from '@element-plus/icons-vue';
 import {
   cloneDeep,
   filter,

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { Back, Delete, Select, Upload } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import randomColor from 'randomcolor';
@@ -334,21 +333,22 @@ onBeforeMount(async () => {
             </el-form-item>
           </el-form>
           <ElButtonGroup style="margin-top: 5px; display: block">
-            <ElButton
-              type="primary"
-              size="small"
-              :icon="Select"
-              @click="logs.forEach(v => (v.pitch = !v.pitch))"
-              >全选
+            <ElButton type="primary" size="small" @click="logs.forEach(v => (v.pitch = !v.pitch))">
+              <template #icon>
+                <i-carbon-checkmark />
+              </template>
+              全选
             </ElButton>
             <ElButton
               v-show="logs.filter(v => v.pitch).length > 0"
               type="danger"
               size="small"
-              :icon="Delete"
-              @click="DelLogs()"
-              >删除所选</ElButton
-            >
+              @click="DelLogs()">
+              <template #icon>
+                <i-carbon-row-delete />
+              </template>
+              删除所选
+            </ElButton>
           </ElButtonGroup>
           <template v-for="i in logs" :key="i.id">
             <foldable-card style="margin-top: 10px">
@@ -364,11 +364,17 @@ onBeforeMount(async () => {
               <template #action>
                 <ElButton size="small" plain @click="openItem(i)">查看</ElButton>
                 <!--<ElButton>下载到本地</ElButton>-->
-                <ElButton size="small" type="primary" :icon="Upload" plain @click="UploadLog(i)"
-                  >提取日志
+                <ElButton size="small" type="primary" plain @click="UploadLog(i)">
+                  <template #icon>
+                    <i-carbon-upload />
+                  </template>
+                  提取日志
                 </ElButton>
-                <ElButton size="small" type="danger" :icon="Delete" plain @click="DelLog(i)"
-                  >删除
+                <ElButton size="small" type="danger" plain @click="DelLog(i)">
+                  <template #icon>
+                    <i-carbon-row-delete />
+                  </template>
+                  删除
                 </ElButton>
               </template>
 
@@ -412,7 +418,12 @@ onBeforeMount(async () => {
           <template #header>
             <div style="display: flex; justify-content: space-between; align-items: center">
               <strong style="margin: 10px 0">跑团日志 / Story</strong>
-              <ElButton type="primary" :icon="Back" @click="closeItem()">返回列表</ElButton>
+              <ElButton type="primary" @click="closeItem()">
+                <template #icon>
+                  <i-carbon-chevron-left />
+                </template>
+                返回列表
+              </ElButton>
             </div>
           </template>
           <ElCollapse>

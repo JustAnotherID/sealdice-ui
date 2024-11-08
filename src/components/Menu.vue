@@ -4,15 +4,6 @@
 </template>
 
 <script lang="tsx" setup>
-import {
-  Connection,
-  EditPen,
-  HomeFilled,
-  Operation,
-  Setting,
-  Star,
-  Tools,
-} from '@element-plus/icons-vue';
 import { useStore } from '~/store';
 import type { ComputedRef, ModelRef } from 'vue';
 import type { MenuOption } from 'naive-ui';
@@ -66,7 +57,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: () => <router-link to="/home">主页</router-link>,
     icon: () => (
       <n-icon>
-        <HomeFilled />
+        <i-carbon-home />
       </n-icon>
     ),
   },
@@ -75,7 +66,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: () => <router-link to="/connect">账号设置</router-link>,
     icon: () => (
       <n-icon>
-        <Connection />
+        <i-carbon-link />
       </n-icon>
     ),
   },
@@ -84,7 +75,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: '自定义文案',
     icon: () => (
       <n-icon>
-        <Setting />
+        <i-carbon-edit />
       </n-icon>
     ),
     children: customTextOptions.value,
@@ -94,7 +85,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: '扩展功能',
     icon: () => (
       <n-icon>
-        <EditPen />
+        <i-carbon-settings />
       </n-icon>
     ),
     children: [
@@ -129,7 +120,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: '综合设置',
     icon: () => (
       <n-icon>
-        <Operation />
+        <i-carbon-settings-adjust />
       </n-icon>
     ),
     children: miscOptions.value,
@@ -139,7 +130,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: '辅助工具',
     icon: () => (
       <n-icon>
-        <Tools />
+        <i-carbon-tool-kit />
       </n-icon>
     ),
     children: [
@@ -158,7 +149,7 @@ const options: ComputedRef<MenuOption[]> = computed(() => [
     label: () => <router-link to="/about">关于</router-link>,
     icon: () => (
       <n-icon>
-        <Star />
+        <i-carbon-star />
       </n-icon>
     ),
   },

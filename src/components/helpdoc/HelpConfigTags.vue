@@ -20,13 +20,17 @@
     <el-button v-if="inputVisible" size="small" plain @click="handleInputConfirm(group.key)"
       >确定</el-button
     >
-    <el-button v-else size="small" plain :icon="Plus" @click="showInput">新别名</el-button>
+    <el-button v-else size="small" plain @click="showInput">
+      <template #icon>
+        <i-carbon-add-large />
+      </template>
+      新别名
+    </el-button>
   </el-space>
 </template>
 
 <script setup lang="ts">
 import type { ElInput, ElSpace } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
 
 const { group, aliases } = defineProps<{
   group: {

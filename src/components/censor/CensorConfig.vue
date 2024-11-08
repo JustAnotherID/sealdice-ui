@@ -1,6 +1,11 @@
 <template>
   <header>
-    <el-button type="primary" :icon="DocumentChecked" @click="submit">保存设置</el-button>
+    <el-button type="primary" @click="submit">
+      <template #icon>
+        <i-carbon-save />
+      </template>
+      保存设置
+    </el-button>
     <el-text v-if="modified" style="margin-left: 1rem" type="danger" size="large" tag="strong">
       内容已修改，不要忘记保存！
     </el-text>
@@ -33,7 +38,7 @@
             >不为空时会发送拦截提示。
           </template>
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -51,7 +56,7 @@
         <el-text>匹配拼音</el-text>
         <el-tooltip content="匹配敏感词拼音，勾选大小写敏感时该项无效。">
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -63,7 +68,7 @@
         <el-tooltip
           content='判断敏感词时，忽略过滤字符。如敏感词为"114514"，指定过滤字符为空白，则"114   514"也会命中敏感词。'>
           <el-icon>
-            <question-filled />
+            <i-carbon-help-filled />
           </el-icon>
         </el-tooltip>
       </template>
@@ -223,7 +228,6 @@
 </template>
 
 <script lang="ts" setup>
-import { DocumentChecked, QuestionFilled } from '@element-plus/icons-vue';
 import { isArray, isEqual, isObject, transform } from 'lodash-es';
 import { getCensorConfig, postCensorConfig } from '~/api/censor';
 import { useCensorStore } from '~/components/censor/censor';

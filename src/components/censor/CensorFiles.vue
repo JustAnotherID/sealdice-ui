@@ -6,7 +6,12 @@
       multiple
       accept="application/text,.txt,application/toml,.toml"
       :before-upload="beforeUpload">
-      <el-button type="primary" :icon="Upload">导入</el-button>
+      <el-button type="primary">
+        <template #icon>
+          <i-carbon-upload />
+        </template>
+        导入
+      </el-button>
     </el-upload>
     <el-space>
       <el-button
@@ -16,8 +21,10 @@
         target="_blank"
         link
         size="small"
-        :href="`${urlBase}/sd-api/censor/files/template/toml`"
-        :icon="Download">
+        :href="`${urlBase}/sd-api/censor/files/template/toml`">
+        <template #icon>
+          <i-carbon-download />
+        </template>
         下载 toml 词库模板
       </el-button>
       <el-button
@@ -27,9 +34,11 @@
         target="_blank"
         link
         size="small"
-        :href="`${urlBase}/sd-api/censor/files/template/txt`"
-        :icon="Download"
-        >下载 txt 词库模板
+        :href="`${urlBase}/sd-api/censor/files/template/txt`">
+        <template #icon>
+          <i-carbon-save />
+        </template>
+        下载 txt 词库模板
       </el-button>
     </el-space>
   </header>
@@ -58,12 +67,10 @@
       </el-table-column>
       <el-table-column fixed="right">
         <template #default="scope">
-          <el-button
-            size="small"
-            type="danger"
-            :icon="Delete"
-            plain
-            @click="deleteFile(scope.row.key)">
+          <el-button size="small" type="danger" plain @click="deleteFile(scope.row.key)">
+            <template #icon>
+              <i-carbon-row-delete />
+            </template>
             删除
           </el-button>
         </template>
@@ -74,7 +81,6 @@
 
 <script setup lang="ts">
 import type { UploadUserFile } from 'element-plus';
-import { Delete, Download, Upload } from '@element-plus/icons-vue';
 import { urlBase } from '~/backend';
 import { useCensorStore } from '~/components/censor/censor';
 import { deleteCensorFiles, getCensorFiles, uploadCensorFile } from '~/api/censor';

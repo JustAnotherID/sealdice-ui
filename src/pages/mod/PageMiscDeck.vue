@@ -1,6 +1,11 @@
 <template>
   <header class="page-header">
-    <el-button type="primary" :icon="Refresh" @click="doBackup">重载牌堆</el-button>
+    <el-button type="primary" @click="doBackup">
+      <template #icon>
+        <i-carbon-renew />
+      </template>
+      重载牌堆
+    </el-button>
   </header>
 
   <el-tabs v-model="mode" :stretch="true">
@@ -13,20 +18,31 @@
             multiple
             :before-upload="beforeUpload"
             :file-list="fileList">
-            <el-button type="primary" :icon="Upload">上传牌堆</el-button>
+            <el-button type="primary">
+              <template #icon>
+                <i-carbon-upload />
+              </template>
+              上传牌堆
+            </el-button>
           </el-upload>
-          <el-input v-model="filter" :prefix-icon="Search" size="small" clearable />
+          <el-input v-model="filter" size="small" clearable>
+            <template #prefix>
+              <i-carbon-search />
+            </template>
+          </el-input>
           <el-button
             class="link-button"
             type="info"
-            :icon="Link"
             size="small"
             link
             tag="a"
             target="_blank"
-            href="https://github.com/sealdice/draw"
-            >获取牌堆</el-button
-          >
+            href="https://github.com/sealdice/draw">
+            <template #icon>
+              <i-carbon-link />
+            </template>
+            获取牌堆
+          </el-button>
         </el-space>
         <el-space>
           <el-text type="info" size="small">目前支持 json/yaml/deck/toml 格式的牌堆</el-text>
@@ -38,7 +54,7 @@
               <br />
               toml 牌堆：海豹支持的新牌堆格式。格式更加友好，还提供了包括云牌组在内的更多功能支持。
             </template>
-            <el-icon size="small"><question-filled /></el-icon>
+            <el-icon size="small"><i-carbon-help-filled /></el-icon>
           </el-tooltip>
         </el-space>
       </header>
@@ -59,9 +75,9 @@
               <el-tag
                 size="small"
                 :type="i.fileFormat === 'toml' ? 'success' : 'primary'"
-                disable-transitions
-                >{{ i.fileFormat }}</el-tag
-              >
+                disable-transitions>
+                {{ i.fileFormat }}
+              </el-tag>
             </el-space>
           </template>
 
@@ -73,18 +89,27 @@
               title="更新地址由牌堆作者提供，是否确认要检查该牌堆更新？"
               @confirm="doCheckUpdate(i)">
               <template #reference>
-                <el-button :icon="Download" type="success" size="small" plain :loading="diffLoading"
-                  >更新</el-button
-                >
+                <el-button type="success" size="small" plain :loading="diffLoading">
+                  <template #icon>
+                    <i-carbon-download />
+                  </template>
+                  更新
+                </el-button>
               </template>
             </el-popconfirm>
-            <el-button :icon="Delete" type="danger" size="small" plain @click="doDelete(i)">
+            <el-button type="danger" size="small" plain @click="doDelete(i)">
+              <template #icon>
+                <i-carbon-row-delete />
+              </template>
               删除
             </el-button>
           </template>
 
           <template #title-extra-error>
-            <el-button :icon="Delete" type="danger" size="small" plain @click="doDelete(i)">
+            <el-button type="danger" size="small" plain @click="doDelete(i)">
+              <template #icon>
+                <i-carbon-row-delete />
+              </template>
               删除
             </el-button>
           </template>
@@ -92,11 +117,11 @@
           <template #description>
             <el-space size="small" direction="vertical" alignment="normal">
               <el-text v-if="i.cloud" type="primary" size="small">
-                <el-icon><MostlyCloudy /></el-icon>
+                <el-icon><i-carbon-cloud /></el-icon>
                 作者提供云端内容，请自行鉴别安全性
               </el-text>
               <el-text v-if="i.fileFormat === 'jsonc'" type="warning" size="small">
-                <el-icon><Warning /></el-icon>
+                <el-icon><i-carbon-warning-filled /></el-icon>
                 注意：该牌堆的格式并非标准 JSON，而是允许尾逗号与注释语法的扩展 JSON
               </el-text>
             </el-space>
@@ -156,11 +181,10 @@
       <template #footer>
         <el-space wrap>
           <el-button @click="showDiff = false">取消</el-button>
-          <el-button
-            v-if="!(deckCheck.old === deckCheck.new)"
-            type="success"
-            :icon="DocumentChecked"
-            @click="deckUpdate">
+          <el-button v-if="!(deckCheck.old === deckCheck.new)" type="success" @click="deckUpdate">
+            <template #icon>
+              <i-carbon-save />
+            </template>
             确认更新
           </el-button>
         </el-space>
@@ -170,18 +194,6 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  QuestionFilled,
-  Upload,
-  Download,
-  Refresh,
-  Search,
-  Link,
-  Delete,
-  MostlyCloudy,
-  DocumentChecked,
-  Warning,
-} from '@element-plus/icons-vue';
 import { getBackupConfig } from '~/api/backup';
 import {
   checkDeckUpdate,

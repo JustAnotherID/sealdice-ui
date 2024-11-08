@@ -3,13 +3,13 @@
     style="margin-left: 1rem; display: flex; justify-content: space-between; align-items: center">
     <el-text v-if="changed" type="primary" size="large">
       <el-icon>
-        <QuestionFilled />
+        <i-carbon-help-filled />
       </el-icon>
       变更如下：
     </el-text>
     <el-text v-else type="info" size="large">
       <el-icon>
-        <InfoFilled />
+        <i-carbon-information-filled />
       </el-icon>
       无变更
     </el-text>
@@ -21,7 +21,7 @@
   <div v-show="split" style="display: flex; justify-content: space-around; align-items: center">
     <h3 style="padding-left: 2rem">原内容</h3>
     <el-icon>
-      <ArrowRightBold />
+      <i-carbon-chevron-right />
     </el-icon>
     <h3 style="padding-right: 2rem">新内容</h3>
   </div>
@@ -36,8 +36,6 @@
 </template>
 
 <script lang="ts" setup>
-import { InfoFilled, QuestionFilled, ArrowRightBold } from '@element-plus/icons-vue';
-
 interface Props {
   old: string;
   new: string;

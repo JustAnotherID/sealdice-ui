@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DocumentChecked } from '@element-plus/icons-vue';
 import { getBanConfig, setBanConfig } from '~/api/banconfig';
 import type { BanConfig } from '#';
 
@@ -36,7 +35,12 @@ watch(
 
 <template>
   <header>
-    <el-button type="primary" :icon="DocumentChecked" @click="banConfigSave">保存设置</el-button>
+    <el-button type="primary" @click="banConfigSave">
+      <template #icon>
+        <i-carbon-save />
+      </template>
+      保存设置
+    </el-button>
     <el-text v-if="modified" style="margin-left: 1rem" type="danger" size="large" tag="strong">
       内容已修改，不要忘记保存！
     </el-text>

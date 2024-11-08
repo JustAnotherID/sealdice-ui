@@ -37,9 +37,9 @@
       <n-flex v-show="store.canAccess" align="center" size="medium">
         <div style="cursor: pointer">
           <n-badge :show="!newsChecked" value="new">
-            <n-button text @click="dialogFeed = true">
+            <n-button text @click="dialogFeed = true" :type="newsChecked ? 'default' : 'error'">
               <n-icon size="1.75rem">
-                <i-bi-newspaper />
+                <i-carbon-notification />
               </n-icon>
             </n-button>
           </n-badge>
@@ -71,12 +71,12 @@
         <n-switch v-model:value="isDark">
           <template #checked-icon>
             <n-icon>
-              <i-bi-moon />
+              <i-carbon-asleep />
             </n-icon>
           </template>
           <template #unchecked-icon>
             <n-icon>
-              <i-bi-sun />
+              <i-carbon-light />
             </n-icon>
           </template>
         </n-switch>
@@ -161,7 +161,7 @@
       <n-button type="primary" @click="checkNews">
         <template #icon>
           <n-icon>
-            <i-bi-check />
+            <i-carbon-checkmark />
           </n-icon>
         </template>
         确认已读
