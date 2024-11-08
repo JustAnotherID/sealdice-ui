@@ -15,7 +15,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-config-provider :theme="isDark ? darkTheme : lightTheme" class="mx-auto w-full h-full">
+  <n-config-provider :theme="isDark ? darkTheme : lightTheme" class="mx-auto size-full">
     <n-dialog-provider>
       <n-message-provider>
         <n-modal-provider>

@@ -1,6 +1,6 @@
 <template>
-  <n-layout id="root" class="mx-auto my-0 h-screen flex flex-col">
-    <n-layout-header bordered class="nav bg-inherit flex-none text-white flex justify-between">
+  <n-layout id="root" class="mx-auto my-0 flex h-screen flex-col">
+    <n-layout-header bordered class="nav flex flex-none justify-between bg-inherit">
       <n-flex :size="0" align="center" style="height: 60px">
         <div class="menu-button-wrapper mx-2">
           <n-button size="large" text @click="drawerMenu = true">
@@ -83,13 +83,13 @@
       </n-flex>
     </n-layout-header>
 
-    <n-layout class="flex-grow overflow-y-auto flex" has-sider>
-      <n-layout-sider bordered class="menu bg-inherit flex-none overflow-y-auto no-scrollbar">
+    <n-layout class="flex grow overflow-y-auto" has-sider>
+      <n-layout-sider bordered class="menu no-scrollbar flex-none overflow-y-auto bg-inherit">
         <Menu v-model:advancedConfigCounter="advancedConfigCounter" type="dark" />
       </n-layout-sider>
 
-      <n-layout-content class="h-auto text-left flex-1 overflow-y-auto" embedded>
-        <n-spin ref="rightbox" :show="loading" class="main-container w-full h-full">
+      <n-layout-content class="h-auto flex-1 overflow-y-auto text-left" embedded>
+        <n-spin ref="rightbox" :show="loading" class="main-container size-full">
           <router-view
             v-if="!loading"
             @update:advanced-settings-show="(show: boolean) => refreshAdvancedSettings(show)" />
@@ -103,7 +103,7 @@
       <template #header>
         <n-flex size="small">
           <n-flex :size="0" :v-show="store.canAccess" align="flex-start" vertical>
-            <span class="text-base cursor-pointer" @click="enableAdvancedConfig">SealDice</span>
+            <span class="cursor-pointer text-base" @click="enableAdvancedConfig">SealDice</span>
             <span v-if="store.diceServers.length > 0" class="text-xs">
               {{ store.diceServers[0].baseInfo.OS }} - {{ store.diceServers[0].baseInfo.arch }}
             </span>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex h-full flex-col">
     <div class="mb-3 flex justify-end">
       <div class="flex justify-center">
         <el-text>测试模式：</el-text>
@@ -45,7 +45,7 @@
         <template #reference>
           <el-button :icon="Plus" circle />
         </template>
-        <el-space class="w-full flex flex-col justify-center" fill>
+        <el-space class="flex w-full flex-col justify-center" fill>
           <el-button text :disabled="deckReloading" @click="reloadDeck">重载牌堆</el-button>
           <el-button text :disabled="jsReloading" @click="reloadJs">重载 JS</el-button>
           <el-button text :disabled="helpdocReloading" @click="reloadHelpdoc"

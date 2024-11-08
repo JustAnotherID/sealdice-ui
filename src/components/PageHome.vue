@@ -30,7 +30,7 @@
 
   <h4>状态</h4>
   <div class="flex flex-col justify-center gap-4">
-    <div class="flex items-center flex-wrap gap-1">
+    <div class="flex flex-wrap items-center gap-1">
       <span>内存占用：</span>
       <span class="mr-2">{{ filesize(store.curDice.baseInfo.memoryUsedSys || 0) }}</span>
       <el-text size="small" type="info"
@@ -38,7 +38,7 @@
       >
     </div>
 
-    <div class="flex items-center flex-wrap gap-1" @click="refreshNetworkHealth">
+    <div class="flex flex-wrap items-center gap-1" @click="refreshNetworkHealth">
       <el-tooltip raw-content content="点击重新进行检测">
         <span>网络质量：</span>
       </el-tooltip>
@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <div class="flex justify-between items-center">
+  <div class="flex items-center justify-between">
     <h4>日志</h4>
     <el-checkbox v-model="autoRefresh">保持刷新</el-checkbox>
   </div>
@@ -108,7 +108,7 @@
     >
   </el-divider>
 
-  <div class="hidden md:block p-0 logs">
+  <div class="logs hidden p-0 md:block">
     <el-table
       :data="store.curDice.logs"
       :row-class-name="getLogRowClassName"
@@ -193,7 +193,7 @@
   </div>
   <el-table
     :data="store.curDice.logs"
-    class="md:hidden w-full logs"
+    class="logs w-full md:hidden"
     :row-class-name="getLogRowClassName"
     :header-cell-style="{ backgroundColor: '#f3f5f7' }">
     <el-table-column label="时间" width="60">

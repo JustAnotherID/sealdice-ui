@@ -127,7 +127,7 @@
           show-checkbox>
           <template #default="{ node, data }">
             <div class="file-line">
-              <div class="flex file-info">
+              <div class="file-info flex">
                 <span class="mr-px">
                   <i-bi-folder2 v-if="data.isDir" color="#303133" />
                   <i-bi-filetype-json v-else-if="data.type === '.json'" color="#E6A23C" />

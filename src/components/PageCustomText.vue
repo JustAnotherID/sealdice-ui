@@ -214,7 +214,7 @@
                       v-model="k2[0]"
                       @change="doChanged(category, k.toString())"></el-input>
 
-                    <div class="absolute right-1 bottom-0" v-if="getPreview(k, k2[0])">
+                    <div class="absolute bottom-0 right-1" v-if="getPreview(k, k2[0])">
                       <el-tooltip placement="bottom-start">
                         <template #content>
                           <component :is="getPreviewInfo(k, k2[0])"></component>
@@ -563,19 +563,19 @@ const getPreviewInfo = (k: string, text: string) => {
     return (
       <div style="max-width: 80vw" class="whitespace-nowrap break-words">
         <div>
-          <span class="bg-blue-50 text-blue-600 preview-tip-label">引擎版本</span>
+          <span class="preview-tip-label bg-blue-50 text-blue-600">引擎版本</span>
           {version}
         </div>
         <div class="whitespace-pre-wrap">
-          <span class="bg-blue-500 preview-tip-label text-center">V2 预览</span>
+          <span class="preview-tip-label bg-blue-500 text-center">V2 预览</span>
           {info.textV2 || info.errV2}
         </div>
         <div class="whitespace-pre-wrap">
-          <span class="bg-orange-600 text-white preview-tip-label text-center">V1 预览</span>
+          <span class="preview-tip-label bg-orange-600 text-center text-white">V1 预览</span>
           {info.textV1 || info.errV1}
         </div>
         <div>
-          <span class="bg-blue-50 text-blue-600 preview-tip-label">存在预设</span>
+          <span class="preview-tip-label bg-blue-50 text-blue-600">存在预设</span>
           {exists} [存在时预览较为可靠]
         </div>
       </div>
