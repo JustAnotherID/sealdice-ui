@@ -87,8 +87,13 @@
       <n-layout-content
         class="h-auto flex-1 overflow-y-auto text-left"
         :native-scrollbar="false"
+        content-class="h-full"
         embedded>
-        <n-spin ref="rightbox" :show="loading" class="main-container size-full">
+        <n-spin
+          ref="rightbox"
+          :show="loading"
+          class="main-container size-full"
+          content-class="h-full">
           <router-view
             v-if="!loading"
             @update:advanced-settings-show="(show: boolean) => refreshAdvancedSettings(show)" />

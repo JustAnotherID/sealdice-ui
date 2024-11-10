@@ -1,16 +1,16 @@
 <template>
   <div class="flex h-full flex-col">
-    <div class="mb-3 flex justify-end">
-      <div class="flex justify-center">
-        <el-text>测试模式：</el-text>
-        <el-radio-group v-model="mode" size="small">
-          <el-radio-button value="private">私聊</el-radio-button>
-          <el-radio-button value="group">群</el-radio-button>
-        </el-radio-group>
-      </div>
+    <div class="flex justify-end">
+      <n-flex align="center">
+        <n-text>测试模式：</n-text>
+        <n-radio-group v-model:value="mode" size="small">
+          <n-radio-button label="私聊" value="private" />
+          <n-radio-button label="群聊" value="group" />
+        </n-radio-group>
+      </n-flex>
     </div>
 
-    <div ref="chat" class="flex-1 overflow-y-auto">
+    <n-scrollbar ref="chat" trigger="none" class="flex-1 p-4">
       <div
         :key="index"
         v-for="(i, index) in store.talkLogs"
@@ -18,43 +18,40 @@
         class="talk-item"
         :class="!i.isSeal ? 'mine' : ''">
         <div class="left">
-          <el-avatar
-            :shape="i.isSeal ? 'circle' : 'square'"
-            :size="60"
-            :src="i.isSeal ? imgSeal : imgMe" />
+          <n-avatar :round="i.isSeal" :size="60" :src="i.isSeal ? imgSeal : imgMe" />
         </div>
         <div class="right">
-          <div class="name">{{ i.isSeal ? '海豹核心' : i.name }}</div>
-          <div class="content">{{ i.content }}</div>
+          <n-text>{{ i.isSeal ? '海豹核心' : i.name }}</n-text>
+          <div class="content">
+            <n-text>{{ i.content }}</n-text>
+          </div>
         </div>
       </div>
-    </div>
+    </n-scrollbar>
 
     <div class="flex items-center">
-      <el-autocomplete
+      <n-auto-complete
         ref="autocomplete"
-        v-model="input"
-        class="flex-1"
-        :fetch-suggestions="querySearch"
-        :trigger-on-focus="false"
+        v-model:value="input"
+        :options="querySearch"
         placeholder="来试一试，回车键发送"
-        @select="inputChanged"
+        @on-select="inputChanged"
         @keyup.enter="doSend" />
-      <el-button class="ml-2.5 min-w-12" type="primary" @click="doSend">发送</el-button>
-      <el-popover placement="top" trigger="click">
-        <template #reference>
-          <el-button circle>
+      <n-button class="mx-2 min-w-12" type="primary" @click="doSend">发送</n-button>
+      <n-popover placement="top">
+        <template #trigger>
+          <n-button secondary vertical circle>
             <i-carbon-add-large />
-          </el-button>
+          </n-button>
         </template>
-        <el-space class="flex w-full flex-col justify-center" fill>
-          <el-button text :disabled="deckReloading" @click="reloadDeck">重载牌堆</el-button>
-          <el-button text :disabled="jsReloading" @click="reloadJs">重载 JS</el-button>
-          <el-button text :disabled="helpdocReloading" @click="reloadHelpdoc"
-            >重载帮助文件</el-button
-          >
-        </el-space>
-      </el-popover>
+        <n-flex vertical justify="center" class="flex w-full flex-col justify-center">
+          <n-button quaternary :disabled="deckReloading" @click="reloadDeck">重载牌堆</n-button>
+          <n-button quaternary :disabled="jsReloading" @click="reloadJs">重载 JS</n-button>
+          <n-button quaternary :disabled="helpdocReloading" @click="reloadHelpdoc">
+            重载帮助文件
+          </n-button>
+        </n-flex>
+      </n-popover>
     </div>
   </div>
 </template>
@@ -67,7 +64,9 @@ import { getRecentMessage, postExec } from '~/api/dice';
 import { reloadDeck as postReloadDeck } from '~/api/deck';
 import { reloadHelpDoc } from '~/api/helpdoc';
 import { reloadJS } from '~/api/js';
+import { NAutoComplete, NScrollbar, useThemeVars } from 'naive-ui';
 const store = useStore();
+const themeVars = useThemeVars();
 
 const mode = ref<'private' | 'group'>('private');
 
@@ -88,9 +87,9 @@ onBeforeMount(async () => {
       if (msg.length) {
         // 拉下滚动条
         nextTick(() => {
-          const el = chat.value as any;
-          if (el) {
-            el.scrollTop = el.scrollHeight;
+          const c = chat.value;
+          if (c) {
+            c.scrollTo({ position: 'bottom', silent: false } as any);
           }
         });
       }
@@ -106,14 +105,13 @@ onBeforeUnmount(() => {
 const restaurants = ref<RestaurantItem[]>([]);
 
 interface RestaurantItem {
+  label: string;
   value: string;
-  link: string;
 }
 
 const input = ref('');
 
-const chat = ref(null);
-const autocomplete = ref(null);
+const chat = ref<InstanceType<typeof NScrollbar>>();
 
 let lastTime = 0;
 
@@ -136,12 +134,6 @@ const doSend = async () => {
     });
     try {
       await postExec(text, mode.value);
-      // for (let i of ret) {
-      //   store.talkLogs.push({
-      //     content: i.message,
-      //     isSeal: true
-      //   })
-      // }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       store.talkLogs.push({
@@ -153,38 +145,28 @@ const doSend = async () => {
     }
 
     nextTick(() => {
-      const el = chat.value as any;
-      if (el) {
-        el.scrollTop = el.scrollHeight;
-      }
-
-      const elAc = autocomplete.value as any;
-      if (elAc) {
-        elAc.suggestions = [];
+      const c = chat.value;
+      if (c) {
+        c.scrollTo({ position: 'bottom', silent: false } as any);
       }
       input.value = '';
     });
   }
 };
 
-const querySearch = (queryString: string, cb: any) => {
-  // console.log(queryString, input.value)
-  const results = input.value ? restaurants.value.filter(createFilter(input.value)) : [];
-  // call callback function to return suggestions
-  cb(results);
-};
+const querySearch = computed(() => {
+  const results = input.value
+    ? restaurants.value.filter(elem => elem.value.toLowerCase().indexOf(input.value) === 0)
+    : [];
+  return results;
+});
 
-const createFilter = (queryString: string) => {
-  return (restaurant: RestaurantItem) => {
-    return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
-  };
-};
 const loadAll = () => {
   const raw =
-    '死亡豁免 spellslots character dlongrest 法术位 longrest botlist 查询 setcoc 咕咕 master 长休 角色 dcast reply dbuff gugu roll buff send name char drcv jrrp help find text cast draw init deck drav dndx rch dst drc rah log dnd rhd coc rhx ext dss rcv set rav bot li st st en ti ri sc ra rc rc ds rh rd pc nn ch rx ss r';
+    '死亡豁免 spellslots character dlongrest 法术位 longrest botlist 查询 setcoc 咕咕 master 长休 角色 dcast reply dbuff gugu roll buff send name char drcv jrrp help find text cast draw init deck drav dndx rch dst drc rah log dnd rhd coc rhx ext dss rcv set rav bot li st st en ti ri sc ra rc ds rh rd pc nn ch rx ss r';
   const ret = [];
   for (const i of raw.split(' ')) {
-    ret.push({ value: '.' + i, link: '' });
+    ret.push({ label: '.' + i, value: '.' + i });
   }
   ret.reverse();
   return ret;
@@ -228,16 +210,6 @@ const reloadHelpdoc = async () => {
 </script>
 
 <style scoped lang="css">
-.about {
-  background-color: #fff;
-  padding: 2rem;
-  line-height: 2rem;
-  text-align: left;
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.12),
-    0 0 6px rgba(0, 0, 0, 0.04);
-}
-
 .talk-item {
   display: flex;
   margin-bottom: 2rem;
@@ -245,7 +217,7 @@ const reloadHelpdoc = async () => {
   &.mine {
     direction: rtl;
     & > .right > .content {
-      background-color: #26c5fd;
+      background-color: v-bind('themeVars.infoColorSuppl');
       direction: ltr;
     }
   }
@@ -257,10 +229,9 @@ const reloadHelpdoc = async () => {
       font-size: smaller;
       line-height: 2rem;
       min-height: 2rem;
-      color: #707070;
     }
     & > .content {
-      background-color: #fff;
+      background-color: v-bind('themeVars.cardColor');
       padding: 0.7rem;
       border-radius: 9px;
       white-space: pre-wrap;
