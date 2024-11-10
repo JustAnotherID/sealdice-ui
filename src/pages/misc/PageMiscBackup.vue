@@ -1,227 +1,224 @@
 <template>
   <div style="display: flex; justify-content: space-between; align-items: center">
     <h2>备份</h2>
-    <div>
-      <el-button type="success" @click="doSave">
+    <n-flex>
+      <n-button type="success" @click="doSave">
         <template #icon>
           <i-carbon-save />
         </template>
         保存设置
-      </el-button>
-      <el-button type="primary" @click="showBackup = true">立即备份</el-button>
-    </div>
+      </n-button>
+      <n-button type="info" @click="showBackup = true">立即备份</n-button>
+    </n-flex>
   </div>
   <div>
-    <el-form label-position="left">
+    <n-form label-placement="left" label-width="5.5rem" label-align="left">
       <h3>自动备份</h3>
-      <el-checkbox v-model="cfg.autoBackupEnable">开启</el-checkbox>
+      <n-checkbox v-model:checked="cfg.autoBackupEnable">开启</n-checkbox>
       <div v-if="cfg.autoBackupEnable" style="margin-top: 1rem">
-        <el-form-item>
+        <n-form-item>
           <template #label>
-            <span
-              >备份间隔
-              <el-tooltip
-                raw-content
-                content="备份间隔表达式请参阅 <a href='https://pkg.go.dev/github.com/robfig/cron' target='_blank'>cron文档</a>">
-                <el-icon><i-carbon-help-filled /></el-icon>
-              </el-tooltip>
-            </span>
+            <span>备份间隔</span>
+            <n-tooltip>
+              <template #trigger>
+                <n-icon><i-carbon-help-filled /></n-icon>
+              </template>
+              备份间隔表达式请参阅
+              <a href="https://pkg.go.dev/github.com/robfig/cron" target="_blank">cron 文档</a>
+            </n-tooltip>
           </template>
-          <el-input v-model="cfg.autoBackupTime" style="width: 12rem"></el-input>
-        </el-form-item>
-        <el-form-item label="备份范围">
-          <el-checkbox-group v-model="cfg.autoBackupSelectionList">
-            <el-checkbox label="基础（含自定义回复）" value="base" checked disabled />
-            <el-checkbox label="JS 插件" value="js" />
-            <el-checkbox label="牌堆" value="deck" />
-            <el-checkbox label="帮助文档" value="helpdoc" />
-            <el-checkbox label="敏感词库" value="censor" />
-            <el-checkbox label="人名信息" value="name" />
-            <el-checkbox label="图片" value="image" />
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="备份文件名预览">
-          <el-text type="info"
-            >bak_{{ now }}_auto_r{{
-              cfg.autoBackupSelection.toString(16)
-            }}_&lt;随机值&gt;.zip</el-text
-          >
-        </el-form-item>
+          <n-input v-model:value="cfg.autoBackupTime" style="width: 12rem" />
+        </n-form-item>
+        <n-form-item label="备份范围">
+          <n-checkbox-group v-model:value="cfg.autoBackupSelectionList">
+            <n-checkbox label="基础（含自定义回复）" value="base" checked disabled />
+            <n-checkbox label="JS 插件" value="js" />
+            <n-checkbox label="牌堆" value="deck" />
+            <n-checkbox label="帮助文档" value="helpdoc" />
+            <n-checkbox label="敏感词库" value="censor" />
+            <n-checkbox label="人名信息" value="name" />
+            <n-checkbox label="图片" value="image" />
+          </n-checkbox-group>
+        </n-form-item>
+        <n-form-item label="备份文件名预览">
+          <n-text type="info">
+            bak_{{ now }}_auto_r{{ cfg.autoBackupSelection.toString(16) }}_&lt;随机值&gt;.zip
+          </n-text>
+        </n-form-item>
       </div>
       <h3>自动清理</h3>
-      <el-form-item label="清理模式">
-        <el-radio-group v-model="cfg.backupCleanStrategy">
-          <el-radio-button :value="0">关闭</el-radio-button>
-          <el-radio-button :value="1">保留一定数量</el-radio-button>
-          <el-radio-button :value="2">保留一定时间内</el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item v-if="cfg.backupCleanStrategy === 1" label="保留数量">
-        <el-input-number v-model="cfg.backupCleanKeepCount" :min="1" :step="1" />
-      </el-form-item>
-      <el-form-item v-if="cfg.backupCleanStrategy === 2">
+      <n-form-item label="清理模式">
+        <n-radio-group v-model:value="cfg.backupCleanStrategy" size="small">
+          <n-radio-button :value="0">关闭</n-radio-button>
+          <n-radio-button :value="1">保留一定数量</n-radio-button>
+          <n-radio-button :value="2">保留一定时间内</n-radio-button>
+        </n-radio-group>
+      </n-form-item>
+      <n-form-item v-if="cfg.backupCleanStrategy === 1" label="保留数量">
+        <n-input-number v-model:value="cfg.backupCleanKeepCount" :min="1" :step="1" />
+      </n-form-item>
+      <n-form-item v-if="cfg.backupCleanStrategy === 2">
         <template #label>
-          <span
-            >保留时间
-            <el-tooltip>
-              <template #content>
-                请输入带时间单位的时间间隔。支持的时间单位只有 h m s（分别代表小时、分钟、秒）。<br />
-                示例：<br />
-                720h：代表保留 720 小时（即 30 天）内的备份<br />
-                10.5h：代表保留 10.5 小时（即 10 小时 30 分）内的备份<br />
-                10h30m：保留 10 小时 30 分内备份的另一种写法
-              </template>
-              <el-icon><i-carbon-help-filled /></el-icon>
-            </el-tooltip>
-          </span>
+          <span>保留时间</span>
+          <n-tooltip>
+            <template #trigger>
+              <n-icon><i-carbon-help-filled /></n-icon>
+            </template>
+            请输入带时间单位的时间间隔。支持的时间单位只有 h m s（分别代表小时、分钟、秒）。<br />
+            示例：<br />
+            720h：代表保留 720 小时（即 30 天）内的备份<br />
+            10.5h：代表保留 10.5 小时（即 10 小时 30 分）内的备份<br />
+            10h30m：保留 10 小时 30 分内备份的另一种写法
+          </n-tooltip>
         </template>
-        <el-input v-model="cfg.backupCleanKeepDur" style="width: 12rem" />
-      </el-form-item>
-      <el-form-item v-if="cfg.backupCleanStrategy !== 0">
+        <n-input v-model:value="cfg.backupCleanKeepDur" style="width: 12rem" placeholder="" />
+      </n-form-item>
+      <n-form-item v-if="cfg.backupCleanStrategy !== 0">
         <template #label>
-          <span
-            >触发方式
-            <el-tooltip
-              raw-content
-              content="自动备份后：在每次自动备份完成后，顺便进行备份清理。<br/>定时：按照给定的 cron 表达式，单独触发清理。">
-              <el-icon><i-carbon-help-filled /></el-icon>
-            </el-tooltip>
-          </span>
+          <span>触发方式</span>
+          <n-tooltip raw-content content="">
+            <template #trigger>
+              <n-icon><i-carbon-help-filled /></n-icon>
+            </template>
+            自动备份后：在每次自动备份完成后，顺便进行备份清理。<br />
+            定时：按照给定的 cron 表达式，单独触发清理。
+          </n-tooltip>
         </template>
-        <el-checkbox-group v-model="backupCleanTriggers">
-          <el-checkbox :label="CleanTrigger.AfterAutoBackup">自动备份后</el-checkbox>
-          <el-checkbox :label="CleanTrigger.Cron">定时</el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item v-if="cfg.backupCleanStrategy !== 0">
+        <n-checkbox-group v-model:value="backupCleanTriggers">
+          <n-checkbox :value="CleanTrigger.AfterAutoBackup">自动备份后</n-checkbox>
+          <n-checkbox :value="CleanTrigger.Cron">定时</n-checkbox>
+        </n-checkbox-group>
+      </n-form-item>
+      <n-form-item v-if="cfg.backupCleanStrategy !== 0">
         <template #label>
-          <span
-            >定时间隔
-            <el-tooltip
-              raw-content
-              content="定时间隔表达式请参阅 <a href='https://pkg.go.dev/github.com/robfig/cron' target='_blank'>cron文档</a>">
-              <el-icon><i-carbon-help-filled /></el-icon>
-            </el-tooltip>
-          </span>
+          <span>定时间隔</span>
+          <n-tooltip>
+            <template #trigger>
+              <n-icon><i-carbon-help-filled /></n-icon>
+            </template>
+            定时间隔表达式请参阅
+            <a href="https://pkg.go.dev/github.com/robfig/cron" target="_blank">cron 文档</a>
+          </n-tooltip>
         </template>
-        <el-input v-model="cfg.backupCleanCron" style="width: 12rem" />
-      </el-form-item>
-    </el-form>
+        <n-input v-model:value="cfg.backupCleanCron" style="width: 12rem" placeholder="" />
+      </n-form-item>
+    </n-form>
     <h4>如何恢复备份？</h4>
-    <div>
-      将骰子彻底关闭，解压备份压缩包到骰子目录。若提示“是否覆盖？”选择“全部”即可(覆盖data目录)。
-    </div>
+    <n-text>
+      将骰子彻底关闭，解压备份压缩包到骰子目录。若提示“是否覆盖？”选择“全部”即可 (覆盖 data 目录)。
+    </n-text>
   </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center">
     <h2>已备份文件</h2>
-    <el-button type="danger" @click="enterBatchDelete">
+    <n-button type="error" @click="enterBatchDelete">
       <template #icon>
         <i-carbon-row-delete />
       </template>
       进入批量删除页面
-    </el-button>
+    </n-button>
   </div>
 
-  <div size="small" direction="vertical" class="backup-list" fill>
-    <div
-      v-for="i in data.items"
-      :key="i.name"
-      class="backup-line flex flex-wrap justify-between gap-2">
-      <div class="flex flex-col">
-        <el-text class="self-start" size="large">{{ i.name }}</el-text>
-        <el-text v-if="(i?.selection ?? 0) >= 0" class="self-start" size="small" type="info"
-          >此备份包含：{{ parseSelectionDesc(i.selection).join('、') }}</el-text
-        >
-        <el-text v-else class="self-start" size="small" type="warning">此备份内容无法识别</el-text>
-      </div>
-      <el-space size="small" wrap class="justify-end">
-        <el-button
-          size="small"
-          tag="a"
-          style="text-decoration: none; width: 8rem"
-          :href="`${urlBase}/sd-api/backup/download?name=${encodeURIComponent(i.name)}&token=${encodeURIComponent(store.token)}`">
-          下载 - {{ filesize(i.fileSize) }}
-        </el-button>
-        <el-button type="danger" size="small" plain @click="bakDeleteConfirm(i.name)">
-          <template #icon>
-            <i-carbon-row-delete />
-          </template>
-        </el-button>
-      </el-space>
+  <n-list>
+    <n-list-item v-for="i in data.items" :key="i.name">
+      <n-flex align="center" justify="space-between" class="mx-4">
+        <div class="flex flex-col">
+          <n-text class="self-start text-base">{{ i.name }}</n-text>
+          <n-text v-if="(i?.selection ?? 0) >= 0" class="self-start text-xs" type="info">
+            此备份包含：{{ parseSelectionDesc(i.selection).join('、') }}
+          </n-text>
+          <n-text v-else class="self-start text-xs" type="warning">此备份内容无法识别</n-text>
+        </div>
+        <n-flex size="small" justify="end">
+          <n-button
+            secondary
+            size="tiny"
+            tag="a"
+            style="text-decoration: none; width: 8rem"
+            :href="`${urlBase}/sd-api/backup/download?name=${encodeURIComponent(i.name)}&token=${encodeURIComponent(store.token)}`">
+            下载 - {{ filesize(i.fileSize) }}
+          </n-button>
+          <n-button type="error" size="tiny" secondary @click="bakDeleteConfirm(i.name)">
+            <template #icon>
+              <i-carbon-row-delete />
+            </template>
+          </n-button>
+        </n-flex>
+      </n-flex>
+    </n-list-item>
+  </n-list>
+
+  <n-modal v-model:show="showBatchDelete" preset="card" title="批量删除备份" class="diff-dialog">
+    <div>
+      <n-alert :closable="false" class="mb-4">
+        默认勾选最近的 5 个备份之前的历史备份，可自行调整。
+      </n-alert>
+      <n-flex size="large" align="center" class="mb-2">
+        <n-checkbox
+          v-model:checked="checkAllBaks"
+          :indeterminate="isIndeterminate"
+          @change="handleCheckAllChange">
+          {{ checkAllBaks ? '取消全选' : '全选' }}
+        </n-checkbox>
+        <n-text type="info" class="text-xs">
+          已勾选 {{ selectedBaks.length }} 个备份，共
+          {{ filesize(selectedBaks.map(bak => bak.fileSize).reduce((a, b) => a + b, 0)) }}
+        </n-text>
+      </n-flex>
+      <n-checkbox-group v-model:value="selectedBaks" @change="handleCheckedBakChange">
+        <n-list :show-divider="false">
+          <n-list-item v-for="i of data.items" :key="i.name">
+            <n-checkbox :value="i">
+              {{ i.name }}
+            </n-checkbox>
+          </n-list-item>
+        </n-list>
+      </n-checkbox-group>
     </div>
-  </div>
-
-  <el-dialog v-model="showBatchDelete" title="批量删除备份" class="diff-dialog">
-    <el-alert
-      :closable="false"
-      style="margin-bottom: 1.5rem"
-      title="默认勾选最近的 5 个备份之前的历史备份，可自行调整。"></el-alert>
-    <el-space size="large" alignment="center" style="margin-bottom: 1rem">
-      <el-checkbox
-        v-model="checkAllBaks"
-        :indeterminate="isIndeterminate"
-        @change="handleCheckAllChange"
-        >{{ checkAllBaks ? '取消全选' : '全选' }}</el-checkbox
-      >
-      <el-text type="info" size="small"
-        >已勾选 {{ selectedBaks.length }} 个备份，共
-        {{ filesize(selectedBaks.map(bak => bak.fileSize).reduce((a, b) => a + b, 0)) }}</el-text
-      >
-    </el-space>
-    <el-checkbox-group v-model="selectedBaks" @change="handleCheckedBakChange">
-      <div v-for="i of data.items" :key="i.name">
-        <el-checkbox :label="i">
-          <template #default>{{ i.name }}</template>
-        </el-checkbox>
-      </div>
-    </el-checkbox-group>
     <template #footer>
-      <el-space wrap>
-        <el-button @click="showBatchDelete = false">取消</el-button>
-        <el-button
-          type="danger"
+      <n-flex wrap>
+        <n-button @click="showBatchDelete = false">取消</n-button>
+        <n-button
+          type="error"
           :disabled="!(selectedBaks && selectedBaks.length > 0)"
           @click="bakBatchDeleteConfirm">
           <template #icon>
             <i-carbon-row-delete />
           </template>
           删除所选
-        </el-button>
-      </el-space>
+        </n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 
-  <el-dialog v-model="showBackup" title="立即备份" class="diff-dialog">
-    <el-space direction="vertical" alignment="flex-start">
-      <div>
+  <n-modal v-model:show="showBackup" title="立即备份" preset="card" class="diff-dialog">
+    <n-flex vertical>
+      <n-flex vertical>
         <span>备份范围：</span>
-        <el-checkbox-group v-model="backupSelections">
-          <el-checkbox label="基础（含自定义回复）" value="base" checked disabled />
-          <el-checkbox label="JS 插件" value="js" />
-          <el-checkbox label="牌堆" value="deck" />
-          <el-checkbox label="帮助文档" value="helpdoc" />
-          <el-checkbox label="敏感词库" value="censor" />
-          <el-checkbox label="人名信息" value="name" />
-          <el-checkbox label="图片" value="image" />
-        </el-checkbox-group>
-      </div>
-      <div class="flex flex-wrap">
+        <n-checkbox-group v-model:value="backupSelections">
+          <n-checkbox label="基础（含自定义回复）" value="base" checked disabled />
+          <n-checkbox label="JS 插件" value="js" />
+          <n-checkbox label="牌堆" value="deck" />
+          <n-checkbox label="帮助文档" value="helpdoc" />
+          <n-checkbox label="敏感词库" value="censor" />
+          <n-checkbox label="人名信息" value="name" />
+          <n-checkbox label="图片" value="image" />
+        </n-checkbox-group>
+      </n-flex>
+      <n-flex align="center">
         <span>备份文件名预览：</span>
-        <el-text type="info"
-          >bak_{{ now }}_r{{
-            formatSelection(backupSelections).toString(16)
-          }}_&lt;随机值&gt;.zip</el-text
-        >
-      </div>
-    </el-space>
+        <n-text type="info">
+          bak_{{ now }}_r{{ formatSelection(backupSelections).toString(16) }}_&lt;随机值&gt;.zip
+        </n-text>
+      </n-flex>
+    </n-flex>
     <template #footer>
-      <el-space wrap>
-        <el-button @click="showBackup = false">取消</el-button>
-        <el-button type="primary" @click="doBackup">立即备份</el-button>
-      </el-space>
+      <n-flex wrap>
+        <n-button @click="showBackup = false">取消</n-button>
+        <n-button type="info" @click="doBackup">立即备份</n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 </template>
 
 <script lang="ts" setup>
@@ -239,7 +236,10 @@ import {
   postDoBackup,
   setBackupConfig,
 } from '~/api/backup';
+import { useDialog, useMessage } from 'naive-ui';
 
+const message = useMessage();
+const dialog = useDialog();
 const store = useStore();
 
 const data = ref<{
@@ -371,24 +371,26 @@ const configGet = async () => {
 };
 
 const bakDeleteConfirm = async (name: string) => {
-  const ret = await ElMessageBox.confirm('确认删除？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  dialog.warning({
+    title: '提示',
+    content: `确认删除「${name}」？`,
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      const r = await postBackupDel(name);
+      if (!r.success) {
+        message.error('删除失败');
+      } else {
+        message.success('已删除');
+      }
+    },
   });
-  if (ret) {
-    const r = await postBackupDel(name);
-    if (!r.success) {
-      ElMessage.error('删除失败');
-    } else {
-      ElMessage.success('已删除');
-    }
-  }
   await refreshList();
 };
 
 const showBatchDelete = ref<boolean>(false);
-const selectedBaks = ref<any[]>([]); // 他不是string[]，是备份项的一种格式
+const selectedBaks = ref<any[]>([]); // 他不是 string[]，是备份项的一种格式
 const checkAllBaks = ref(false);
 const isIndeterminate = ref(true);
 
@@ -409,21 +411,23 @@ const handleCheckedBakChange = (value: CheckboxValueType[]) => {
 };
 
 const bakBatchDeleteConfirm = async () => {
-  const ret = await ElMessageBox.confirm('确认删除所选备份？删除的内容无法找回！', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  dialog.warning({
+    title: '提示',
+    content: '确认删除所选备份？删除的内容无法找回！',
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      const res = await postBackupBatchDel(selectedBaks.value.map(bak => bak.name));
+      if (res.result) {
+        message.success('已删除所选备份');
+      } else {
+        message.error('有备份删除失败！失败文件：\n' + res.fails.join('\n'));
+      }
+      showBatchDelete.value = false;
+      await refreshList();
+    },
   });
-  if (ret) {
-    const res = await postBackupBatchDel(selectedBaks.value.map(bak => bak.name));
-    if (res.result) {
-      ElMessage.success('已删除所选备份');
-    } else {
-      ElMessage.error('有备份删除失败！失败文件：\n' + res.fails.join('\n'));
-    }
-  }
-  showBatchDelete.value = false;
-  await refreshList();
 };
 
 const doBackup = async () => {
@@ -431,15 +435,15 @@ const doBackup = async () => {
   showBackup.value = false;
   await refreshList();
   if (ret.testMode) {
-    ElMessage.success('展示模式无法备份');
+    message.success('展示模式无法备份');
   } else {
-    ElMessage.success('已进行备份');
+    message.success('已进行备份');
   }
 };
 
 const doSave = async () => {
   await setBackupConfig(cfg.value);
-  ElMessage.success('已保存');
+  message.success('已保存');
 };
 
 const enum CleanTrigger {
@@ -455,9 +459,11 @@ watch(backupCleanTriggers, newStrategies => {
   cfg.value.backupCleanTrigger = sum(newStrategies);
 });
 
+let timerId: number;
+
 const refreshNow = async () => {
   now.value = dayjs().format('YYMMDD_HHmmss');
-  await setTimeout(refreshNow, 1000);
+  timerId = setTimeout(refreshNow, 1000);
 };
 
 onBeforeMount(async () => {
@@ -465,19 +471,8 @@ onBeforeMount(async () => {
   await refreshList();
   await refreshNow();
 });
+
+onBeforeUnmount(() => {
+  clearTimeout(timerId);
+});
 </script>
-
-<style lang="css">
-.backup-list {
-  display: flex;
-  flex-direction: column;
-
-  .backup-line {
-    padding: 5px 0;
-  }
-
-  .backup-line:not(:first-child) {
-    border-top: 1px solid var(--el-border-color);
-  }
-}
-</style>
