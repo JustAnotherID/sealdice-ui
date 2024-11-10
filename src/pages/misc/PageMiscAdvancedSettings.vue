@@ -1,13 +1,13 @@
 <template>
-  <el-affix v-if="modified" :offset="60">
-    <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">内容已修改，不要忘记保存！</el-text>
-    </div>
-  </el-affix>
+  <n-affix v-if="modified" :top="60" class="w-full">
+    <tip-box type="error" class="tip-danger">
+      <n-text type="error" size="large" tag="strong">内容已修改，不要忘记保存！</n-text>
+    </tip-box>
+  </n-affix>
 
   <h2 class="h-2">高级设置</h2>
-  <div class="tip-danger">
-    <el-text>
+  <tip-box type="warning" class="my-4">
+    <n-text>
       此处是面向开发者或进阶用户的隐藏设置页，下列的设置项可能会对海豹核心的功能造成重大影响。<br />
       一些尚在测试的不稳定设置项，以及
       <strong>普通骰主无需关注</strong> 的设置项会被放在此处。<br />
@@ -15,90 +15,111 @@
       <br />
       <strong>除非你知道自己在做什么，否则不要修改此处的任何设置项！</strong><br />
       <br />
-      <em
-        >如果你误操作修改了此处设置，希望恢复默认，请手动删除
-        <code>data/default/advanced.yaml</code> 文件。</em
-      >
-    </el-text>
-  </div>
+      <em>
+        如果你误操作修改了此处设置，希望恢复默认，请手动删除
+        <n-text code>data/default/advanced.yaml</n-text>
+        文件。
+      </em>
+    </n-text>
+  </tip-box>
 
-  <el-form label-width="130px">
-    <el-form-item label="显示高级设置页">
+  <n-form label-placement="left" label-width="auto">
+    <n-form-item label="显示高级设置页">
       <template #label>
         <span>显示高级设置页</span>
-        <el-tooltip raw-content content="设置是否显示高级设置页，只影响展示">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          设置是否显示高级设置页，只影响展示
+        </n-tooltip>
       </template>
-      <el-switch v-model="config.show" />
-    </el-form-item>
-    <el-form-item label="启用高级设置">
+      <n-switch v-model:value="config.show" />
+    </n-form-item>
+    <n-form-item label="启用高级设置">
       <template #label>
         <span>启用高级设置</span>
-        <el-tooltip raw-content content="设置是否启用高级设置，关闭时下列设置无效">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          设置是否启用高级设置，关闭时下列设置无效
+        </n-tooltip>
       </template>
-      <el-switch v-model="config.enable" />
-    </el-form-item>
+      <n-switch v-model:value="config.enable" />
+    </n-form-item>
 
     <h3>自定义回复</h3>
-    <el-form-item label="开启回复调试日志">
+    <n-form-item label="开启回复调试日志">
       <template #label>
         <span>回复调试日志</span>
-        <el-tooltip raw-content content="开启自定义回复调试日志，打印字符细节">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          开启自定义回复调试日志，打印字符细节
+        </n-tooltip>
       </template>
-      <el-checkbox v-model="replyDebugMode">开启</el-checkbox>
-    </el-form-item>
+      <n-checkbox v-model:checked="replyDebugMode">开启</n-checkbox>
+    </n-form-item>
 
     <h3>跑团日志</h3>
-    <el-form-item label="自定义后端 URL">
+    <n-form-item label="自定义后端 URL">
       <template #label>
         <span>自定义后端 URL</span>
-        <el-tooltip raw-content content="设置第三方跑团日志后端 URL">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          设置第三方跑团日志后端 URL
+        </n-tooltip>
       </template>
-      <el-input v-model="config.storyLogBackendUrl" style="width: 30rem" />
-    </el-form-item>
-    <el-form-item label="API 版本">
+      <n-input v-model:value="config.storyLogBackendUrl" placeholder="" style="width: 30rem" />
+    </n-form-item>
+    <n-form-item label="API 版本">
       <template #label>
         <span>API 版本</span>
-        <el-tooltip raw-content content="指定后端的 API 版本">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          指定后端的 API 版本
+        </n-tooltip>
       </template>
-      <el-input v-model="config.storyLogApiVersion" style="width: 10rem" />
-    </el-form-item>
-    <el-form-item label="Token">
+      <n-input v-model:value="config.storyLogApiVersion" placeholder="" style="width: 10rem" />
+    </n-form-item>
+    <n-form-item label="Token">
       <template #label>
         <span>Token</span>
-        <el-tooltip raw-content content="指定传递给后端的 token">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          指定传递给后端的 token
+        </n-tooltip>
       </template>
-      <el-input v-model="config.storyLogBackendToken" style="width: 30rem" />
-    </el-form-item>
+      <n-input v-model:value="config.storyLogBackendToken" placeholder="" style="width: 30rem" />
+    </n-form-item>
 
-    <el-form-item v-if="modified" label="" label-width="1rem" style="margin-top: 3rem">
-      <el-button type="danger" @click="submitGiveup">放弃改动</el-button>
-      <el-button type="success" @click="submit">保存设置</el-button>
-    </el-form-item>
-  </el-form>
+    <n-form-item v-if="modified" label="" label-width="1rem" class="mt-4">
+      <n-flex>
+        <n-button type="error" @click="submitGiveup">放弃改动</n-button>
+        <n-button type="success" @click="submit">保存设置</n-button>
+      </n-flex>
+    </n-form-item>
+  </n-form>
 </template>
 
 <script setup lang="ts">
