@@ -3,14 +3,14 @@ const mode = ref<string>('list');
 </script>
 
 <template>
-  <el-tabs v-model="mode" :stretch="true">
-    <el-tab-pane label="黑白名单" name="list">
+  <n-tabs v-model:value="mode" justify-content="space-evenly">
+    <n-tab-pane tab="黑白名单" name="list">
       <ban-list />
-    </el-tab-pane>
-    <el-tab-pane label="拉黑设置" name="config">
+    </n-tab-pane>
+    <n-tab-pane tab="拉黑设置" name="config">
       <ban-config />
-    </el-tab-pane>
-  </el-tabs>
+    </n-tab-pane>
+  </n-tabs>
 </template>
 
 <style scoped lang="css"></style>

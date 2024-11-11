@@ -4,8 +4,12 @@ import { urlBase } from '~/backend';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { getBanConfigList, importBanConfig, postMapAddOne, postMapDelOne } from '~/api/banconfig';
+import { type UploadFileInfo, useDialog, useMessage } from 'naive-ui';
 
 dayjs.extend(relativeTime);
+
+const message = useMessage();
+const dialog = useDialog();
 
 const recordList = ref<any[]>([]);
 const recordPage = ref({
@@ -42,7 +46,7 @@ const doAdd = async () => {
     addData.value.reason,
   );
   await refreshList();
-  ElMessage.success('已保存');
+  message.success('已保存');
   dialogAddShow.value = false;
 };
 
@@ -103,29 +107,30 @@ const refreshList = async () => {
   recordPage.value.no = 1;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const deleteOne = async (i: any, index: number) => {
-  const res = await ElMessageBox.confirm('是否删除此记录？', '删除', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+const deleteOne = async (i: any) => {
+  dialog.warning({
+    title: '删除',
+    content: '是否删除此记录？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      await postMapDelOne(i);
+      await refreshList();
+      message.success('已保存');
+    },
   });
-  if (res) {
-    await postMapDelOne(i);
-    await refreshList();
-    ElMessage.success('已保存');
-  }
 };
 
-const beforeUpload = async (file: UploadUserFile) => {
+const beforeUpload = async (data: { file: UploadFileInfo }) => {
+  const file = data.file.file as File;
   const c = await importBanConfig(file);
   if (c.result) {
-    ElMessage.success('导入黑白名单完成');
+    message.success('导入黑白名单完成');
     await nextTick(async () => {
       await refreshList();
     });
   } else {
-    ElMessage.error('导入黑白名单失败！' + c.err);
+    message.error('导入黑白名单失败！' + c.err);
   }
 };
 
@@ -136,157 +141,157 @@ onBeforeMount(async () => {
 
 <template>
   <header class="flex flex-wrap-reverse justify-between gap-y-4">
-    <el-space>
-      <el-text size="large">搜索：</el-text>
-      <el-input v-model="searchBy" class="w-64" placeholder="请输入帐号或名字的一部分"></el-input>
-    </el-space>
+    <n-flex size="small" align="center">
+      <n-text class="text-base">搜索：</n-text>
+      <span>
+        <n-input v-model:value="searchBy" class="w-64" placeholder="请输入帐号或名字的一部分" />
+      </span>
+    </n-flex>
 
-    <el-space>
-      <el-button type="success" @click="dialogAddShow = true">
+    <n-flex align="center">
+      <n-button type="success" secondary @click="dialogAddShow = true">
         <template #icon>
           <i-carbon-add-large />
         </template>
         添加
-      </el-button>
-      <el-upload
-        action=""
-        multiple
-        accept="application/json,.json"
-        :show-file-list="false"
-        :before-upload="beforeUpload"
-        style="display: flex; align-items: center">
-        <el-button type="success" plain>
-          <template #icon>
-            <i-carbon-upload />
-          </template>
-          导入
-        </el-button>
-      </el-upload>
-      <el-button
-        type="primary"
-        plain
+      </n-button>
+      <span>
+        <n-upload
+          action=""
+          multiple
+          accept="application/json,.json"
+          :show-file-list="false"
+          @before-upload="beforeUpload">
+          <n-button type="info" secondary>
+            <template #icon>
+              <n-icon><i-carbon-upload /></n-icon>
+            </template>
+            导入
+          </n-button>
+        </n-upload>
+      </span>
+      <n-button
+        secondary
+        type="info"
         tag="a"
         target="_blank"
         :href="`${urlBase}/sd-api/banconfig/export`"
         style="text-decoration: none">
         <template #icon>
-          <i-carbon-download />
+          <n-icon><i-carbon-download /></n-icon>
         </template>
         导出
-      </el-button>
-    </el-space>
+      </n-button>
+    </n-flex>
   </header>
 
-  <el-space class="my-2">
-    <el-text size="large">级别：</el-text>
-    <el-checkbox v-model="showBanned">拉黑</el-checkbox>
-    <el-checkbox v-model="showWarn">警告</el-checkbox>
-    <el-checkbox v-model="showTrusted">信任</el-checkbox>
-    <el-checkbox v-model="showOthers">其它</el-checkbox>
-  </el-space>
+  <n-flex align="center" class="my-2">
+    <n-text class="text-base">级别：</n-text>
+    <n-checkbox v-model:checked="showBanned">拉黑</n-checkbox>
+    <n-checkbox v-model:checked="showWarn">警告</n-checkbox>
+    <n-checkbox v-model:checked="showTrusted">信任</n-checkbox>
+    <n-checkbox v-model:checked="showOthers">其它</n-checkbox>
+  </n-flex>
 
   <main class="mt-4">
-    <el-space :fill="true" class="w-full">
-      <el-card v-for="(i, index) in groupItems" :key="i.ID" shadow="hover" class="w-full">
-        <template #header>
-          <div class="flex flex-wrap justify-between gap-4">
-            <el-space alignment="center">
-              <el-tag v-if="i.rankText === '禁止'" type="danger" disable-transitions>{{
-                i.rankText
-              }}</el-tag>
-              <el-tag v-else-if="i.rankText === '警告'" type="warning" disable-transitions>{{
-                i.rankText
-              }}</el-tag>
-              <el-tag v-else-if="i.rankText === '信任'" type="success" disable-transitions>{{
-                i.rankText
-              }}</el-tag>
-              <el-tag v-else disable-transitions>{{ i.rankText }}</el-tag>
-              <el-space size="small" alignment="center" wrap>
-                <el-text size="large" tag="strong">{{ i.ID }}</el-text>
-                <el-text>「{{ i.name }}」</el-text>
-                <el-text size="small" tag="em">怒气值：{{ i.score }}</el-text>
-              </el-space>
-            </el-space>
-            <el-space>
-              <el-button type="danger" size="small" plain @click="deleteOne(i, index)">
+    <n-list>
+      <!-- eslint-disable-next-line vue/no-unused-vars-->
+      <n-list-item v-for="(i, index) in groupItems" :key="i.ID" shadow="hover" class="w-full">
+        <n-thing class="mx-4 my-2">
+          <template #header>
+            <n-flex size="small" align="center">
+              <n-tag v-if="i.rankText === '禁止'" type="error" :bordered="false">
+                {{ i.rankText }}
+              </n-tag>
+              <n-tag v-else-if="i.rankText === '警告'" type="warning" :bordered="false">
+                {{ i.rankText }}
+              </n-tag>
+              <n-tag v-else-if="i.rankText === '信任'" type="success" :bordered="false">
+                {{ i.rankText }}
+              </n-tag>
+              <n-tag v-else :bordered="false">{{ i.rankText }}</n-tag>
+              <n-text tag="strong" class="text-base">{{ i.ID }}</n-text>
+            </n-flex>
+          </template>
+          <template #header-extra>
+            <n-flex justify="flex-end">
+              <n-button type="error" size="small" secondary @click="deleteOne(i)">
                 <template #icon>
-                  <i-carbon-row-delete />
+                  <n-icon><i-carbon-row-delete /></n-icon>
                 </template>
                 删除
-              </el-button>
-            </el-space>
-          </div>
-        </template>
-        <el-space style="display: block" direction="vertical">
-          <div v-for="(j, index) in i.reasons" :key="index">
-            <el-space size="small" wrap>
-              <el-tooltip
-                raw-content
-                :content="dayjs.unix(i.times[index]).format('YYYY-MM-DD HH:mm:ssZ[Z]')">
-                <el-tag size="small" type="info" disable-transitions>{{
-                  dayjs.unix(i.times[index]).fromNow()
-                }}</el-tag>
-              </el-tooltip>
-              <el-text>在&lt;{{ i.places[index] }}>，原因：「{{ j }}」</el-text>
-            </el-space>
-          </div>
-        </el-space>
-      </el-card>
-    </el-space>
+              </n-button>
+            </n-flex>
+          </template>
+          <template #description>
+            <n-flex size="small" align="center" wrap>
+              <n-text class="text-sm">「{{ i.name }}」</n-text>
+              <n-text tag="em" class="text-sm">怒气值：{{ i.score }}</n-text>
+            </n-flex>
+          </template>
+          <n-flex vertical>
+            <div v-for="(j, index) in i.reasons" :key="index">
+              <n-flex size="small">
+                <n-tooltip>
+                  <template #trigger>
+                    <n-tag size="small" type="info" :bordered="false">
+                      {{ dayjs.unix(i.times[index]).fromNow() }}
+                    </n-tag>
+                  </template>
+                  {{ dayjs.unix(i.times[index]).format('YYYY-MM-DD HH:mm:ssZ[Z]') }}
+                </n-tooltip>
+                <n-text>在&lt;{{ i.places[index] }}>，原因：「{{ j }}」</n-text>
+              </n-flex>
+            </div>
+          </n-flex>
+        </n-thing>
+      </n-list-item>
+    </n-list>
   </main>
 
   <footer class="mt-4 flex justify-center">
-    <el-pagination
-      v-model:current-page="recordPage.no"
+    <n-pagination
+      v-model:page="recordPage.no"
       v-model:page-size="recordPage.pageSize"
-      class="bg-[#f3f5f7]"
-      type="small"
-      :pager-count="3"
-      layout="prev, pager, next, total"
-      background
-      hide-on-single-page
-      :total="filteredRecordList.length" />
+      show-size-picker
+      :page-sizes="[10, 20, 30, 50]"
+      :page-slot="5"
+      :item-count="filteredRecordList.length" />
   </footer>
 
-  <el-dialog
-    v-model="dialogAddShow"
-    title="添加用户/群组"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="false"
-    class="the-dialog">
-    <el-form label-width="6rem">
-      <el-form-item label="用户ID" required>
-        <el-input
-          v-model="addData.id"
-          placeholder="必须为 QQ:12345 或 QQ-Group:12345 格式"></el-input>
-      </el-form-item>
-      <el-form-item label="名称">
-        <el-input v-model="addData.name" placeholder="自动"></el-input>
-      </el-form-item>
-      <el-form-item label="原因">
-        <el-input v-model="addData.reason" placeholder="骰主后台设置"></el-input>
-      </el-form-item>
-      <el-form-item label="身份">
-        <el-radio-group v-model="addData.rank">
-          <el-radio
-            v-for="item in [
-              { label: '禁用', value: -30 },
-              { label: '信任', value: 30 },
-            ]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" />
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
+  <n-modal v-model:show="dialogAddShow" preset="card" title="添加用户/群组" :closable="false">
+    <n-flex>
+      <n-form label-placement="left" label-width="auto">
+        <n-form-item label="用户ID" required>
+          <n-input
+            v-model:value="addData.id"
+            placeholder="必须为 QQ:12345 或 QQ-Group:12345 格式" />
+        </n-form-item>
+        <n-form-item label="名称">
+          <n-input v-model:value="addData.name" placeholder="自动" />
+        </n-form-item>
+        <n-form-item label="原因">
+          <n-input v-model:value="addData.reason" placeholder="骰主后台设置" />
+        </n-form-item>
+        <n-form-item label="身份">
+          <n-radio-group v-model:value="addData.rank">
+            <n-radio
+              v-for="item in [
+                { label: '禁用', value: -30 },
+                { label: '信任', value: 30 },
+              ]"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value" />
+          </n-radio-group>
+        </n-form-item>
+      </n-form>
+    </n-flex>
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogAddShow = false">取消</el-button>
-        <el-button type="success" @click="doAdd">添加</el-button>
-      </span>
+      <n-flex>
+        <n-button @click="dialogAddShow = false">取消</n-button>
+        <n-button type="success" @click="doAdd">添加</n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 </template>
-
-<style scoped lang="css"></style>
