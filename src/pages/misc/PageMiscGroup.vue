@@ -1,187 +1,142 @@
 <template>
   <h2>群管理</h2>
-  <div style="display: flex">
-    <span style="margin-right: 1rem; white-space: nowrap">平台：</span>
-    <span style="margin-right: -0.2rem">
-      <el-checkbox-group v-model="checkList">
-        <el-checkbox label="QQ-Group:">QQ 群</el-checkbox>
-        <el-checkbox label="QQ-CH-Group:">QQ 频道</el-checkbox>
-        <el-checkbox label="DISCORD-CH-Group:">Discord 频道</el-checkbox>
-        <el-checkbox label="DODO-Group:">Dodo 频道</el-checkbox>
-        <el-checkbox label="KOOK-CH-Group:">KOOK 频道</el-checkbox>
-        <el-checkbox label="DINGTALK-Group:">钉钉群</el-checkbox>
-        <el-checkbox label="SLACK-CH-Group:">Slack 频道</el-checkbox>
-        <el-checkbox label="TG-Group:">TG 群</el-checkbox>
-        <el-checkbox label="SEALCHAT-Group:">Sealchat 频道</el-checkbox>
-      </el-checkbox-group>
-    </span>
-  </div>
-  <div>
-    <span style="margin-right: 1rem">其他：</span>
-    <el-checkbox v-model="orderByTimeDesc">按最后使用时间降序</el-checkbox>
-    <el-checkbox v-model="filter30daysUnused">30 天未使用</el-checkbox>
-  </div>
-  <div>
-    <span style="margin-right: 1rem">搜索：</span>
-    <el-input
-      v-model="searchBy"
-      style="max-width: 15rem"
-      placeholder="请输入帐号或群名的一部分"></el-input>
-  </div>
+  <n-flex vertical>
+    <n-flex align="center">
+      <n-text class="text-base">平台：</n-text>
+      <n-checkbox-group v-model:value="checkList">
+        <n-checkbox value="QQ-Group:">QQ 群</n-checkbox>
+        <n-checkbox value="QQ-CH-Group:">QQ 频道</n-checkbox>
+        <n-checkbox value="DISCORD-CH-Group:">Discord 频道</n-checkbox>
+        <n-checkbox value="DODO-Group:">Dodo 频道</n-checkbox>
+        <n-checkbox value="KOOK-CH-Group:">KOOK 频道</n-checkbox>
+        <n-checkbox value="DINGTALK-Group:">钉钉群</n-checkbox>
+        <n-checkbox value="SLACK-CH-Group:">Slack 频道</n-checkbox>
+        <n-checkbox value="TG-Group:">TG 群</n-checkbox>
+        <n-checkbox value="SEALCHAT-Group:">Sealchat 频道</n-checkbox>
+      </n-checkbox-group>
+    </n-flex>
+    <n-flex align="center">
+      <n-text class="text-base">其他：</n-text>
+      <n-checkbox v-model:checked="orderByTimeDesc">按最后使用时间降序</n-checkbox>
+      <n-checkbox v-model:checked="filter30daysUnused">30 天未使用</n-checkbox>
+    </n-flex>
+    <n-flex align="center">
+      <n-text class="text-base">搜索：</n-text>
+      <n-input
+        v-model:value="searchBy"
+        style="max-width: 15rem"
+        placeholder="请输入帐号或群名的一部分" />
+    </n-flex>
+  </n-flex>
 
   <div style="margin-top: 2rem">
     <div v-bind="containerProps" style="height: calc(100vh - 22.5rem)">
       <div v-bind="wrapperProps">
-        <div v-for="item in list" :key="item.index" style="">
+        <div v-for="item in list" :key="item.index">
           <foldable-card style="margin-top: 1rem">
             <template #title>
-              <el-space class="item-header" size="large" alignment="center">
-                <el-switch
-                  v-model="item.data.active"
-                  style="
-                    --el-switch-on-color: var(--el-color-success);
-                    --el-switch-off-color: var(--el-color-danger);
-                  "
-                  @click="item.data.changed = true" />
-                <el-space size="small" wrap>
-                  <el-text
-                    style="
-                      max-width: 23rem;
-                      overflow: hidden;
-                      white-space: nowrap;
-                      text-overflow: ellipsis;
-                    "
-                    size="large"
-                    tag="strong"
-                    >{{ item.data.groupId }}</el-text
-                  >
-                  <el-text>「{{ item.data.groupName || '未获取到' }}」</el-text>
-                </el-space>
-              </el-space>
+              <n-flex class="item-header" size="large" align="center">
+                <n-switch
+                  v-model:value="item.data.active"
+                  @update-value="item.data.changed = true" />
+                <n-flex size="small" wrap>
+                  <n-text
+                    class="hidden max-w-96 text-ellipsis whitespace-nowrap text-base"
+                    tag="strong">
+                    {{ item.data.groupId }}
+                  </n-text>
+                  <n-text>「{{ item.data.groupName || '未获取到' }}」</n-text>
+                </n-flex>
+              </n-flex>
             </template>
 
             <template #title-extra>
-              <el-button
-                v-if="item.data.changed"
-                type="success"
-                size="small"
-                plain
-                @click="saveOne(item.data, item.index)">
-                <template #icon><i-carbon-save /></template>
-                保存
-              </el-button>
-              <template v-if="item.data.groupId.startsWith('QQ-Group:')">
-                <el-tooltip
-                  v-for="(_, j) in item.data.diceIdExistsMap"
-                  :key="j"
-                  raw-content
-                  :content="j.toString() + '<br>有二次确认'">
-                  <el-button
-                    type="danger"
-                    size="small"
-                    plain
-                    @click="quitGroup(item.data, item.index, j.toString())">
-                    <template #icon>
-                      <i-carbon-close-large />
+              <n-flex>
+                <n-button
+                  v-if="item.data.changed"
+                  type="success"
+                  size="tiny"
+                  secondary
+                  @click="saveOne(item.data, item.index)">
+                  <template #icon>
+                    <n-icon> <i-carbon-save /></n-icon>
+                  </template>
+                  保存
+                </n-button>
+                <template v-if="item.data.groupId.startsWith('QQ-Group:')">
+                  <n-tooltip v-for="(_, j) in item.data.diceIdExistsMap" :key="j">
+                    <template #trigger>
+                      <n-button
+                        type="error"
+                        size="tiny"
+                        secondary
+                        @click="quitGroup(item.data, item.index, j.toString())">
+                        <template #icon>
+                          <n-icon><i-carbon-close-large /></n-icon>
+                        </template>
+                        退出 {{ j.toString().slice(-4) }}
+                      </n-button>
                     </template>
-                    退出 {{ j.toString().slice(-4) }}
-                  </el-button>
-                </el-tooltip>
-              </template>
+                    {{ j.toString() }}<br />有二次确认
+                  </n-tooltip>
+                </template>
+              </n-flex>
             </template>
 
-            <el-descriptions>
-              <el-descriptions-item label="上次使用">{{
-                item.data.recentDiceSendTime
-                  ? dayjs.unix(item.data.recentDiceSendTime).fromNow()
-                  : '从未'
-              }}</el-descriptions-item>
-              <el-descriptions-item label="入群时间">{{
-                item.data.enteredTime ? dayjs.unix(item.data.enteredTime).fromNow() : '未知'
-              }}</el-descriptions-item>
-              <el-descriptions-item label="邀请人">{{
-                item.data.inviteUserId || '未知'
-              }}</el-descriptions-item>
-              <el-descriptions-item label="Log状态">{{
-                item.data.logOn ? '开启' : '关闭'
-              }}</el-descriptions-item>
-              <el-descriptions-item label="迎新">{{
-                item.data.showGroupWelcome ? '开启' : '关闭'
-              }}</el-descriptions-item>
-              <el-descriptions-item />
-              <el-descriptions-item :span="3" label="启用扩展">
-                <span v-if="item.data.tmpExtList">
-                  <el-tag
+            <n-descriptions label-placement="left" :column="3" separator=" ">
+              <n-descriptions-item label="上次使用">
+                {{
+                  item.data.recentDiceSendTime
+                    ? dayjs.unix(item.data.recentDiceSendTime).fromNow()
+                    : '从未'
+                }}
+              </n-descriptions-item>
+              <n-descriptions-item label="入群时间">
+                {{ item.data.enteredTime ? dayjs.unix(item.data.enteredTime).fromNow() : '未知' }}
+              </n-descriptions-item>
+              <n-descriptions-item label="邀请人">
+                {{ item.data.inviteUserId || '未知' }}
+              </n-descriptions-item>
+              <n-descriptions-item label="Log状态">
+                {{ item.data.logOn ? '开启' : '关闭' }}
+              </n-descriptions-item>
+              <n-descriptions-item label="迎新">
+                {{ item.data.showGroupWelcome ? '开启' : '关闭' }}
+              </n-descriptions-item>
+              <n-descriptions-item />
+              <n-descriptions-item :span="3" label="启用扩展">
+                <n-flex size="small" v-if="item.data.tmpExtList">
+                  <n-tag
                     :key="group"
                     v-for="group of item.data.tmpExtList"
                     size="small"
-                    style="margin-right: 0.5rem"
-                    disable-transitions
-                    >{{ group }}</el-tag
-                  >
-                </span>
-                <el-text v-else>'未知'</el-text>
-              </el-descriptions-item>
-            </el-descriptions>
+                    type="info"
+                    :bordered="false">
+                    {{ group }}
+                  </n-tag>
+                </n-flex>
+                <n-text v-else>'未知'</n-text>
+              </n-descriptions-item>
+            </n-descriptions>
 
             <template #unfolded-extra>
-              <el-descriptions>
-                <el-descriptions-item :span="2" label="上次使用"
-                  >{{
+              <n-descriptions label-placement="left" separator=" ">
+                <n-descriptions-item :span="2" label="上次使用">
+                  {{
                     item.data.recentDiceSendTime
                       ? dayjs.unix(item.data.recentDiceSendTime).fromNow()
                       : '从未'
                   }}
-                </el-descriptions-item>
-                <el-descriptions-item label="邀请人">{{
-                  item.data.inviteUserId || '未知'
-                }}</el-descriptions-item>
-              </el-descriptions>
+                </n-descriptions-item>
+                <n-descriptions-item label="邀请人">
+                  {{ item.data.inviteUserId || '未知' }}
+                </n-descriptions-item>
+              </n-descriptions>
             </template>
           </foldable-card>
         </div>
       </div>
     </div>
-
-    <!-- <el-card shadow="hover" v-for="(i, index) in groupItems" style="margin-top: 1rem;">
-      <template #header>
-        <div class="item-header">
-          <el-space size="large" alignment="center">
-            <el-switch v-model="i.active" @click="i.changed = true"
-              style="--el-switch-on-color: var(--el-color-success); --el-switch-off-color: var(--el-color-danger)" />
-            <el-space size="small" wrap>
-              <el-text size="large" tag="strong">{{ i.groupId }}</el-text>
-              <el-text>「{{ i.groupName || '未获取到' }}」</el-text>
-            </el-space>
-          </el-space>
-          <el-space>
-            <el-button type="success" size="small" :icon="DocumentChecked" plain v-if="i.changed"
-              @click="saveOne(i, index)">保存</el-button>
-            <el-tooltip v-for="_, j in i.diceIdExistsMap" raw-content :content="j.toString() + '<br>有二次确认'">
-              <el-button type="danger" size="small" :icon="Close" plain @click="quitGroup(i, index, j.toString())">退出
-                {{ j.toString().slice(-4) }}</el-button>
-            </el-tooltip>
-          </el-space>
-        </div>
-      </template>
-      <el-descriptions>
-        <el-descriptions-item label="上次使用">{{ i.recentDiceSendTime ? dayjs.unix(i.recentDiceSendTime).fromNow() : '从未'
-        }}</el-descriptions-item>
-        <el-descriptions-item label="入群时间">{{ i.enteredTime ? dayjs.unix(i.enteredTime).fromNow() : '未知'
-        }}</el-descriptions-item>
-        <el-descriptions-item label="邀请人">{{ i.inviteUserId || '未知' }}</el-descriptions-item>
-        <el-descriptions-item label="Log 状态">{{ i.logOn ? '开启' : '关闭' }}</el-descriptions-item>
-        <el-descriptions-item label="迎新">{{ i.showGroupWelcome ? '开启' : '关闭' }}</el-descriptions-item>
-        <el-descriptions-item />
-        <el-descriptions-item :span="3" label="启用扩展">
-          <span v-if="i.tmpExtList">
-            <el-tag size="small" v-for="group of i.tmpExtList" style="margin-right: 0.5rem;" disable-transitions>{{ group
-            }}</el-tag>
-          </span>
-          <el-text v-else>'未知'</el-text>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card> -->
   </div>
 </template>
 
@@ -190,6 +145,10 @@ import * as dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { now, sortBy } from 'lodash-es';
 import { getGroupList, postQuitGroup, setGroup } from '~/api/group';
+import { useDialog, useMessage } from 'naive-ui';
+
+const message = useMessage();
+const dialog = useDialog();
 
 dayjs.extend(relativeTime);
 
@@ -263,7 +222,7 @@ const saveOne = async (i: any, index: number) => {
   // console.log(222, i, index)
   await setGroup(i);
   i.changed = false;
-  ElMessage.success('已保存');
+  message.success('已保存');
 };
 
 const quitGroup = async (i: any, index: number, diceId: string) => {
@@ -312,12 +271,8 @@ const quitGroup = async (i: any, index: number, diceId: string) => {
     }
 
     await refreshList();
-    ElMessage.success('退出完成');
-
-    ElMessage({
-      type: 'success',
-      message: '成功！',
-    });
+    message.success('退出完成');
+    message.success('成功！');
   });
 };
 
