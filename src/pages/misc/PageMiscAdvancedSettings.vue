@@ -1,7 +1,7 @@
 <template>
-  <n-affix v-if="modified" :top="60" class="w-full">
-    <tip-box type="error" class="tip-danger">
-      <n-text type="error" size="large" tag="strong">内容已修改，不要忘记保存！</n-text>
+  <n-affix v-if="modified" :top="120" :trigger-top="60" class="w-full">
+    <tip-box type="error">
+      <n-text type="error" tag="strong" class="text-lg">内容已修改，不要忘记保存！</n-text>
     </tip-box>
   </n-affix>
 
@@ -189,5 +189,3 @@ const submitGiveup = async () => {
   });
 };
 </script>
-
-<style scoped lang="css"></style>
