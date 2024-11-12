@@ -1,86 +1,82 @@
 <template>
-  <header>
-    <el-button type="primary" @click="submit">
+  <header class="flex items-center">
+    <n-button type="info" secondary @click="submit">
       <template #icon>
         <i-carbon-save />
       </template>
       保存设置
-    </el-button>
-    <el-text v-if="modified" style="margin-left: 1rem" type="danger" size="large" tag="strong">
+    </n-button>
+    <n-text v-if="modified" type="error" tag="strong" class="ml-4 text-base">
       内容已修改，不要忘记保存！
-    </el-text>
+    </n-text>
   </header>
-  <el-form label-width="130px">
+  <n-form label-placement="left" label-width="auto">
     <h4>匹配选项</h4>
-    <el-form-item>
+    <n-form-item>
       <template #label>
-        <el-text>拦截范围</el-text>
-        <el-tooltip raw-content content="">
-          <template #content>
-            发出的消息：拦截骰子发出的内容，进行检查。未通过检查，替换为<el-tag
-              size="small"
-              type="info"
-              disable-transitions
-              >拦截_完全拦截_发出的消息</el-tag
-            >的内容。<br />
-            收到的指令：拦截骰子收到的命令文本进行检查，如收到「.rd
-            进行一次骰点」时，会检查其中的「进行一次骰点」，未通过检查则发送<el-tag
-              size="small"
-              type="info"
-              disable-transitions
-              >拦截_完全拦截_收到的指令</el-tag
-            >的内容<br />
-            收到的所有消息：会对所有收到的消息(所有群内聊天)进行检查，未通过检查默认不做响应，如<el-tag
-              size="small"
-              type="info"
-              disable-transitions
-              >拦截_完全拦截_收到的所有消息</el-tag
-            >不为空时会发送拦截提示。
+        <n-text>拦截范围</n-text>
+        <n-tooltip raw-content content="">
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
           </template>
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+          发出的消息： 拦截骰子发出的内容，进行检查。未通过检查，替换为
+          <n-tag size="small" type="info" :bordered="false">拦截_完全拦截_发出的消息</n-tag>
+          的内容。<br />
+          收到的指令： 拦截骰子收到的命令文本进行检查，如收到「.rd
+          进行一次骰点」时，会检查其中的「进行一次骰点」，未通过检查则发送
+          <n-tag size="small" type="info" :bordered="false">拦截_完全拦截_收到的指令</n-tag>
+          的内容<br />
+          收到的所有消息： 会对所有收到的消息(所有群内聊天)进行检查，未通过检查默认不做响应，如
+          <n-tag size="small" type="info" :bordered="false">拦截_完全拦截_收到的所有消息</n-tag>
+          不为空时会发送拦截提示。
+        </n-tooltip>
       </template>
-      <el-radio-group v-model="config.mode" size="small">
-        <el-radio-button :value="Mode.ReplyOutput">{{ '发出的消息' }}</el-radio-button>
-        <el-radio-button :value="Mode.CommandInput">{{ '收到的指令' }}</el-radio-button>
-        <el-radio-button :value="Mode.AllInput">{{ '收到的所有消息(慎用)' }}</el-radio-button>
-      </el-radio-group>
-    </el-form-item>
-    <el-form-item label="大小写敏感">
-      <el-checkbox v-model="config.caseSensitive" label="开启" />
-    </el-form-item>
-    <el-form-item>
+      <n-radio-group v-model:value="config.mode" size="small">
+        <n-radio :value="Mode.ReplyOutput">{{ '发出的消息' }}</n-radio>
+        <n-radio :value="Mode.CommandInput">{{ '收到的指令' }}</n-radio>
+        <n-radio :value="Mode.AllInput">{{ '收到的所有消息(慎用)' }}</n-radio>
+      </n-radio-group>
+    </n-form-item>
+    <n-form-item label="大小写敏感">
+      <n-checkbox v-model:checked="config.caseSensitive" label="开启" />
+    </n-form-item>
+    <n-form-item>
       <template #label>
-        <el-text>匹配拼音</el-text>
-        <el-tooltip content="匹配敏感词拼音，勾选大小写敏感时该项无效。">
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-text>匹配拼音</n-text>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          匹配敏感词拼音，勾选大小写敏感时该项无效。
+        </n-tooltip>
       </template>
-      <el-checkbox v-model="config.matchPinyin" label="开启" />
-    </el-form-item>
-    <el-form-item>
+      <n-checkbox v-model:checked="config.matchPinyin" label="开启" />
+    </n-form-item>
+    <n-form-item>
       <template #label>
-        <el-text>过滤字符正则</el-text>
-        <el-tooltip
-          content='判断敏感词时，忽略过滤字符。如敏感词为"114514"，指定过滤字符为空白，则"114   514"也会命中敏感词。'>
-          <el-icon>
-            <i-carbon-help-filled />
-          </el-icon>
-        </el-tooltip>
+        <n-text>过滤字符正则</n-text>
+        <n-tooltip>
+          <template #trigger>
+            <n-icon>
+              <i-carbon-help-filled />
+            </n-icon>
+          </template>
+          <!-- eslint-disable-next-line prettier/prettier-->
+          判断敏感词时，忽略过滤字符。如敏感词为"114514"，指定过滤字符为空白，则"114&nbsp;&nbsp;&nbsp;514"也会命中敏感词。
+        </n-tooltip>
       </template>
-      <el-input v-model="config.filterRegex" style="width: 12rem" />
-    </el-form-item>
-  </el-form>
-  <div>
-    <h4 style="display: inline">响应设置</h4>
-    <el-text style="display: block; margin: 1rem 0" type="warning" size="small"></el-text>
-    <el-text style="display: block; margin: 1rem 0" type="warning" size="small">
+      <n-input v-model:value="config.filterRegex" placeholder="" style="width: 12rem" />
+    </n-form-item>
+  </n-form>
+  <h4>响应设置</h4>
+  <tip-box type="warning" class="my-4">
+    <n-text type="warning">
       <span>提示：</span>
-      <ul>
+      <ul class="ml-4 list-disc">
         <li><p>超过阈值时，对应用户该等级的计数会被清空重新计算。</p></li>
         <li>
           <p>
@@ -89,148 +85,159 @@
           </p>
         </li>
       </ul>
-    </el-text>
-  </div>
-  <el-form>
-    <el-form-item>
+    </n-text>
+  </tip-box>
+  <n-form label-placement="left" label-width="auto">
+    <n-form-item>
       <template #label>
-        <el-tag type="info" style="align-self: center">提醒</el-tag>
+        <n-tag type="default" :bordered="false">提醒</n-tag>
       </template>
-      <el-space wrap>
-        <el-text>用户触发超过</el-text>
-        <el-input-number
-          v-model="config.levelConfig.notice.threshold"
-          style="margin: 0 0.5rem"
-          size="small"
-          :step="1"
-          :min="0"
-          step-strictly />
-        <el-text>次时：</el-text>
-      </el-space>
-      <el-space direction="vertical" alignment="normal">
-        <div>
-          <el-checkbox-group v-model="config.levelConfig.notice.handlers">
-            <el-checkbox v-for="handle in defaultHandles" :key="handle.key" :label="handle.key">
-              {{ handle.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-          <el-text>怒气值</el-text>
-          <el-input-number
-            v-model="config.levelConfig.notice.score"
-            style="margin-left: 1rem"
+      <n-flex align="center">
+        <n-flex align="center" wrap>
+          <n-text>用户触发超过</n-text>
+          <n-input-number
+            v-model:value="config.levelConfig.notice.threshold"
+            class="w-28"
             size="small"
             :step="1"
             :min="0"
-            step-strictly />
-        </div>
-      </el-space>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <el-tag size="small" style="align-self: center">注意</el-tag>
-      </template>
-      <el-space wrap>
-        <el-text>用户触发超过</el-text>
-        <el-input-number
-          v-model="config.levelConfig.caution.threshold"
-          style="margin: 0 0.5rem"
-          size="small"
-          :step="1"
-          :min="0"
-          step-strictly />
-        <el-text>次时：</el-text>
-      </el-space>
-      <el-space direction="vertical" alignment="normal">
-        <div>
-          <el-checkbox-group v-model="config.levelConfig.caution.handlers">
-            <el-checkbox v-for="handle in defaultHandles" :key="handle.key" :label="handle.key">
+            :precision="0" />
+          <n-text>次时：</n-text>
+        </n-flex>
+        <n-flex justify="center" vertical wrap>
+          <n-checkbox-group v-model:value="config.levelConfig.notice.handlers">
+            <n-checkbox v-for="handle in defaultHandles" :key="handle.key" :value="handle.key">
               {{ handle.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-          <el-text>怒气值</el-text>
-          <el-input-number
-            v-model="config.levelConfig.caution.score"
-            style="margin-left: 1rem"
+            </n-checkbox>
+          </n-checkbox-group>
+          <n-flex align="center">
+            <n-text>怒气值</n-text>
+            <n-input-number
+              v-model:value="config.levelConfig.notice.score"
+              class="w-28"
+              size="small"
+              :step="1"
+              :min="0"
+              :precision="0" />
+          </n-flex>
+        </n-flex>
+      </n-flex>
+    </n-form-item>
+    <n-form-item>
+      <template #label>
+        <n-tag type="info" :bordered="false">注意</n-tag>
+      </template>
+      <n-flex align="center">
+        <n-flex align="center" wrap>
+          <n-text>用户触发超过</n-text>
+          <n-input-number
+            v-model:value="config.levelConfig.caution.threshold"
+            class="w-28"
             size="small"
             :step="1"
             :min="0"
-            step-strictly />
-        </div>
-      </el-space>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <el-tag type="warning" size="small" style="align-self: center">警告</el-tag>
-      </template>
-      <el-space wrap>
-        <el-text>用户触发超过</el-text>
-        <el-input-number
-          v-model="config.levelConfig.warning.threshold"
-          style="margin: 0 0.5rem"
-          size="small"
-          :step="1"
-          :min="0"
-          step-strictly />
-        <el-text>次时：</el-text>
-      </el-space>
-      <el-space direction="vertical" alignment="normal">
-        <div>
-          <el-checkbox-group v-model="config.levelConfig.warning.handlers">
-            <el-checkbox v-for="handle in defaultHandles" :key="handle.key" :label="handle.key">
+            :precision="0" />
+          <n-text>次时：</n-text>
+        </n-flex>
+        <n-flex justify="center" vertical wrap>
+          <n-checkbox-group v-model:value="config.levelConfig.caution.handlers">
+            <n-checkbox v-for="handle in defaultHandles" :key="handle.key" :value="handle.key">
               {{ handle.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-          <el-text>怒气值</el-text>
-          <el-input-number
-            v-model="config.levelConfig.warning.score"
-            style="margin-left: 1rem"
+            </n-checkbox>
+          </n-checkbox-group>
+          <n-flex align="center">
+            <n-text>怒气值</n-text>
+            <n-input-number
+              v-model:value="config.levelConfig.caution.score"
+              class="w-28"
+              size="small"
+              :step="1"
+              :min="0"
+              :precision="0" />
+          </n-flex>
+        </n-flex>
+      </n-flex>
+    </n-form-item>
+    <n-form-item>
+      <template #label>
+        <n-tag type="warning" :bordered="false">警告</n-tag>
+      </template>
+      <n-flex align="center">
+        <n-flex align="center" wrap>
+          <n-text>用户触发超过</n-text>
+          <n-input-number
+            v-model:value="config.levelConfig.warning.threshold"
+            class="w-28"
             size="small"
             :step="1"
             :min="0"
-            step-strictly />
-        </div>
-      </el-space>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <el-tag type="danger" size="small" style="align-self: center">危险</el-tag>
-      </template>
-      <el-space wrap>
-        <el-text>用户触发超过</el-text>
-        <el-input-number
-          v-model="config.levelConfig.danger.threshold"
-          style="margin: 0 0.5rem"
-          size="small"
-          :step="1"
-          :min="0"
-          step-strictly />
-        <el-text>次时：</el-text>
-      </el-space>
-      <el-space direction="vertical" alignment="normal">
-        <div>
-          <el-checkbox-group v-model="config.levelConfig.danger.handlers">
-            <el-checkbox v-for="handle in defaultHandles" :key="handle.key" :label="handle.key">
+            :precision="0" />
+          <n-text>次时：</n-text>
+        </n-flex>
+        <n-flex justify="center" vertical wrap>
+          <n-checkbox-group v-model:value="config.levelConfig.warning.handlers">
+            <n-checkbox v-for="handle in defaultHandles" :key="handle.key" :value="handle.key">
               {{ handle.name }}
-            </el-checkbox>
-          </el-checkbox-group>
-          <el-text>怒气值</el-text>
-          <el-input-number
-            v-model="config.levelConfig.danger.score"
-            style="margin-left: 1rem"
+            </n-checkbox>
+          </n-checkbox-group>
+          <n-flex align="center">
+            <n-text>怒气值</n-text>
+            <n-input-number
+              v-model:value="config.levelConfig.warning.score"
+              class="w-28"
+              size="small"
+              :step="1"
+              :min="0"
+              :precision="0" />
+          </n-flex>
+        </n-flex>
+      </n-flex>
+    </n-form-item>
+    <n-form-item>
+      <template #label>
+        <n-tag type="error" :bordered="false">危险</n-tag>
+      </template>
+      <n-flex align="center">
+        <n-flex align="center" wrap>
+          <n-text>用户触发超过</n-text>
+          <n-input-number
+            v-model:value="config.levelConfig.danger.threshold"
+            class="w-28"
             size="small"
             :step="1"
             :min="0"
-            step-strictly />
-        </div>
-      </el-space>
-    </el-form-item>
-  </el-form>
+            :precision="0" />
+          <n-text>次时：</n-text>
+        </n-flex>
+        <n-flex justify="center" vertical wrap>
+          <n-checkbox-group v-model:value="config.levelConfig.danger.handlers">
+            <n-checkbox v-for="handle in defaultHandles" :key="handle.key" :value="handle.key">
+              {{ handle.name }}
+            </n-checkbox>
+          </n-checkbox-group>
+          <n-flex align="center">
+            <n-text>怒气值</n-text>
+            <n-input-number
+              v-model:value="config.levelConfig.danger.score"
+              class="w-28"
+              size="small"
+              :step="1"
+              :min="0"
+              :precision="0" />
+          </n-flex>
+        </n-flex>
+      </n-flex>
+    </n-form-item>
+  </n-form>
 </template>
 
 <script lang="ts" setup>
 import { isArray, isEqual, isObject, transform } from 'lodash-es';
+import { useMessage } from 'naive-ui';
 import { getCensorConfig, postCensorConfig } from '~/api/censor';
 import { useCensorStore } from '~/components/censor/censor';
+
+const message = useMessage();
 
 onBeforeMount(async () => {
   await refreshCensorConfig();
@@ -342,9 +349,9 @@ const submit = async () => {
 
   const resp = await postCensorConfig(modify);
   if (resp.result) {
-    ElMessage.success('保存设置成功');
+    message.success('保存设置成功');
   } else {
-    ElMessage.error('保存设置失败，' + resp.err);
+    message.error('保存设置失败，' + resp.err);
   }
 
   await refreshCensorConfig();

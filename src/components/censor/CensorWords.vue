@@ -1,13 +1,21 @@
 <template>
-  <el-space class="flex justify-between" alignment="flex-end">
+  <n-flex justify="space-between">
     <h4>敏感词列表</h4>
-    <el-space>
-      <el-text v-if="filterCount > 0" size="small" type="info">已过滤 {{ filterCount }} 条</el-text>
-      <el-input v-model="filter" size="small" clearable />
-    </el-space>
-  </el-space>
+    <n-flex align="center">
+      <n-text v-if="filterCount > 0" type="info" class="text-xs">
+        已过滤 {{ filterCount }} 条
+      </n-text>
+      <span>
+        <n-input v-model:value="filter" size="small" placeholder="" clearable>
+          <template #prefix>
+            <n-icon><i-carbon-search /></n-icon>
+          </template>
+        </n-input>
+      </span>
+    </n-flex>
+  </n-flex>
 
-  <main style="margin-top: 1rem">
+  <main class="mt-2">
     <div class="w-full">
       <el-auto-resizer>
         <template #default="{ width }">

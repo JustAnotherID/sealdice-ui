@@ -1,45 +1,42 @@
 <template>
-  <header class="page-header">
-    <el-switch
-      v-model="censorEnable"
-      active-text="启用"
-      inactive-text="关闭"
-      @change="enableChange" />
-    <el-button v-show="censorEnable" type="primary" @click="restartCensor">
+  <n-flex align="center" justify="space-between" wrap>
+    <n-switch v-model:value="censorEnable" @update:value="enableChange">
+      <template #checked>启用</template>
+      <template #unchecked>关闭</template>
+    </n-switch>
+    <n-button v-show="censorEnable" type="primary" @click="restartCensor">
       <template #icon>
         <i-carbon-renew />
       </template>
       重载拦截
-    </el-button>
-  </header>
+    </n-button>
+  </n-flex>
 
-  <el-affix v-if="censorStore.needReload" :offset="60">
-    <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">存在修改，需要重载后生效！</el-text>
-    </div>
-  </el-affix>
+  <n-affix v-if="censorStore.needReload" :top="60">
+    <tip-box type="error">
+      <n-text type="error" class="text-base" tag="strong">存在修改，需要重载后生效！</n-text>
+    </tip-box>
+  </n-affix>
 
   <template v-if="censorEnable">
-    <el-tabs v-model="tab" stretch>
-      <el-tab-pane label="拦截设置" name="setting">
-        <censor-config></censor-config>
-      </el-tab-pane>
+    <n-tabs v-model:value="tab" justify-content="space-evenly">
+      <n-tab-pane tab="拦截设置" name="setting">
+        <censor-config />
+      </n-tab-pane>
 
-      <el-tab-pane label="敏感词管理" name="word">
-        <censor-word-tip></censor-word-tip>
-        <censor-files></censor-files>
-        <censor-words></censor-words>
-      </el-tab-pane>
+      <n-tab-pane tab="敏感词管理" name="word">
+        <censor-word-tip />
+        <censor-files />
+        <censor-words />
+      </n-tab-pane>
 
-      <el-tab-pane label="拦截日志" name="log">
-        <censor-log></censor-log>
-      </el-tab-pane>
-    </el-tabs>
+      <n-tab-pane tab="拦截日志" name="log">
+        <censor-log />
+      </n-tab-pane>
+    </n-tabs>
   </template>
   <template v-else>
-    <el-text type="danger" size="large" style="font-size: 1.5rem; display: block; margin-top: 1rem"
-      >请先启用拦截！
-    </el-text>
+    <n-text type="error" class="mt-4 block text-2xl">请先启用拦截！</n-text>
   </template>
 </template>
 

@@ -1,46 +1,45 @@
 <template>
   <h4>词库列表</h4>
   <header class="page-header">
-    <el-upload
+    <n-upload
       action=""
       multiple
       accept="application/text,.txt,application/toml,.toml"
-      :before-upload="beforeUpload">
-      <el-button type="primary">
+      @before-upload="beforeUpload"
+      :show-file-list="false">
+      <n-button type="info" secondary>
         <template #icon>
-          <i-carbon-upload />
+          <n-icon><i-carbon-upload /></n-icon>
         </template>
         导入
-      </el-button>
-    </el-upload>
-    <el-space>
-      <el-button
-        style="text-decoration: none"
-        type="success"
+      </n-button>
+    </n-upload>
+    <n-flex>
+      <n-button
+        type="primary"
+        size="tiny"
+        text
         tag="a"
         target="_blank"
-        link
-        size="small"
         :href="`${urlBase}/sd-api/censor/files/template/toml`">
         <template #icon>
-          <i-carbon-download />
+          <n-icon><i-carbon-download /></n-icon>
         </template>
         下载 toml 词库模板
-      </el-button>
-      <el-button
-        style="text-decoration: none"
-        type="success"
+      </n-button>
+      <n-button
+        type="primary"
+        size="tiny"
+        text
         tag="a"
         target="_blank"
-        link
-        size="small"
         :href="`${urlBase}/sd-api/censor/files/template/txt`">
         <template #icon>
-          <i-carbon-save />
+          <n-icon><i-carbon-save /></n-icon>
         </template>
         下载 txt 词库模板
-      </el-button>
-    </el-space>
+      </n-button>
+    </n-flex>
   </header>
   <main style="margin-top: 1rem">
     <el-table table-layout="auto" :data="files">
@@ -80,10 +79,12 @@
 </template>
 
 <script setup lang="ts">
-import type { UploadUserFile } from 'element-plus';
 import { urlBase } from '~/backend';
 import { useCensorStore } from '~/components/censor/censor';
 import { deleteCensorFiles, getCensorFiles, uploadCensorFile } from '~/api/censor';
+import { useMessage, type UploadFileInfo } from 'naive-ui';
+
+const message = useMessage();
 
 onBeforeMount(() => {
   refreshFiles();
@@ -118,17 +119,15 @@ const refreshFiles = async () => {
   }
 };
 
-const beforeUpload = async (file: UploadUserFile) => {
-  const fd = new FormData();
-  fd.append('file', file as unknown as Blob);
-
-  const c = await uploadCensorFile(file as unknown as File);
+const beforeUpload = async (data: { file: UploadFileInfo }) => {
+  const file = data.file.file;
+  const c = await uploadCensorFile(file as File);
   if (c.result) {
     await refreshFiles();
-    ElMessage.success('上传完成，请在全部操作完成后，手动重载拦截');
+    message.success('上传完成，请在全部操作完成后，手动重载拦截');
     censorStore.markReload();
   } else {
-    ElMessage.error('上传失败！' + c.err);
+    message.error('上传失败！' + c.err);
   }
 };
 
@@ -140,10 +139,10 @@ const deleteFile = async (key: string) => {
   }).then(async () => {
     const c: { result: true } | { result: false; err: string } = await deleteCensorFiles([key]);
     if (c.result) {
-      ElMessage.success('删除词库完成，请在全部操作完成后，手动重载拦截');
+      message.success('删除词库完成，请在全部操作完成后，手动重载拦截');
       censorStore.markReload();
     } else {
-      ElMessage.error('删除词库失败！' + c.err);
+      message.error('删除词库失败！' + c.err);
     }
   });
 };

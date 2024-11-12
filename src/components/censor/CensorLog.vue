@@ -1,12 +1,12 @@
 <template>
   <div class="censor-log-container">
     <header class="censor-log-header">
-      <el-button type="primary" @click="refreshCensorLog">
+      <n-button type="info" secondary @click="refreshCensorLog">
         <template #icon>
-          <i-carbon-renew />
+          <n-icon><i-carbon-renew /></n-icon>
         </template>
         刷新
-      </el-button>
+      </n-button>
       <el-pagination
         class="pagination"
         layout="sizes, prev, pager, next"
@@ -69,7 +69,9 @@
 import dayjs from 'dayjs';
 import { useCensorStore } from '~/components/censor/censor';
 import { getCensorLogs } from '~/api/censor';
+import { useMessage } from 'naive-ui';
 
+const message = useMessage();
 const censorStore = useCensorStore();
 
 interface CensorLog {
@@ -119,7 +121,7 @@ const refreshCensorLog = async () => {
     logs.value = c.data;
     logQuery.value.total = c.total;
   } else {
-    ElMessage.error('无法获取拦截日志');
+    message.error('无法获取拦截日志');
   }
 };
 
