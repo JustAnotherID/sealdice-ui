@@ -1,133 +1,121 @@
 <template>
   <header class="page-header">
-    <el-button type="primary" :loading="reloadLoading" :disabled="reloadLoading" @click="reload">
+    <n-button type="primary" :loading="reloadLoading" :disabled="reloadLoading" @click="reload">
       <template #icon>
-        <i-carbon-renew />
+        <n-icon><i-carbon-renew /></n-icon>
       </template>
       重载帮助文档
-    </el-button>
+    </n-button>
   </header>
 
-  <el-affix v-if="needReload" :offset="70">
-    <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">存在修改，需要重载后生效！</el-text>
-    </div>
-  </el-affix>
+  <n-affix v-if="needReload" :top="60">
+    <tip-box type="error">
+      <n-text type="error" class="text-base" tag="strong">存在修改，需要重载后生效！</n-text>
+    </tip-box>
+  </n-affix>
 
-  <el-affix v-if="configNeedSave" :offset="70">
-    <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">设置存在修改，别忘记保存！</el-text>
-    </div>
-  </el-affix>
+  <n-affix v-if="configNeedSave" :top="60">
+    <tip-box type="error">
+      <n-text type="error" class="text-base" tag="strong">设置存在修改，别忘记保存！</n-text>
+    </tip-box>
+  </n-affix>
 
-  <el-tabs v-model="tab" :stretch="true">
-    <el-tab-pane label="文件" name="file">
-      <el-space class="file-control">
-        <el-button v-show="showDeleteFile" type="danger" @click="deleteFiles">
+  <n-tabs v-model:value="tab" justify-content="space-evenly">
+    <n-tab-pane tab="文件" name="file">
+      <n-flex justify="end" class="mb-4 flex-1">
+        <n-button v-show="showDeleteFile" type="error" secondary @click="deleteFiles">
           <template #icon>
-            <i-carbon-row-delete />
+            <n-icon><i-carbon-row-delete /></n-icon>
           </template>
           删除所选
-        </el-button>
-        <el-button type="primary" @click="uploadDialogVisible = true">
+        </n-button>
+        <n-button type="info" secondary @click="uploadDialogVisible = true">
           <template #icon>
-            <i-carbon-upload />
+            <n-icon><i-carbon-upload /></n-icon>
           </template>
           上传
-        </el-button>
-        <el-button type="primary" @click="configDialogVisible = true">
+        </n-button>
+        <n-button type="info" secondary @click="configDialogVisible = true">
           <template #icon>
-            <i-carbon-settings />
+            <n-icon><i-carbon-settings /></n-icon>
           </template>
           设置
-        </el-button>
-      </el-space>
+        </n-button>
+      </n-flex>
 
-      <el-dialog v-model="uploadDialogVisible" title="上传帮助文档">
-        <el-alert
-          v-show="uploadForm.group === 'default'"
-          style="margin-bottom: 20px"
-          type="warning"
-          :closable="false">
+      <n-modal
+        v-model:show="uploadDialogVisible"
+        preset="card"
+        title="上传帮助文档"
+        :closable="false">
+        <n-alert v-show="uploadForm.group === 'default'" type="warning" class="mb-4">
           更具体的分组能提供组内搜索命令
-          <el-tag size="small" type="info">.find#&lt;分组&gt; &lt;搜索内容&gt;</el-tag
-          >，是否一定要选择默认分组？
-        </el-alert>
-        <el-form ref="uploadFormRef" label-position="top" :model="uploadForm" :rules="uploadRules">
-          <el-form-item label="分组" prop="group">
-            <el-select
-              v-model="uploadForm.group"
+          <n-tag size="small" :bordered="false">.find#&lt;分组&gt; &lt;搜索内容&gt;</n-tag>
+          ，是否一定要选择默认分组？
+        </n-alert>
+        <n-form ref="uploadFormRef" v-model:model="uploadForm" :rules="uploadRules">
+          <n-form-item label="分组" prop="group">
+            <n-select
+              v-model:value="uploadForm.group"
               placeholder="选择分组"
               filterable
               clearable
-              allow-create>
-              <el-option
-                v-for="group in docGroups"
-                :key="group.key"
-                :label="group.label"
-                :value="group.key" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="帮助文档" prop="files">
-            <el-upload
-              :on-change="fileChange"
+              :options="docGroups"
+              tag />
+          </n-form-item>
+          <n-form-item label="帮助文档" prop="files">
+            <n-upload
+              @on-change="fileChange"
               :file-list="uploadForm.files"
               multiple
-              accept=".json, .xlsx"
-              :auto-upload="false">
-              <template #trigger>
-                <el-button type="primary">
-                  <template #icon>
-                    <i-carbon-upload />
-                  </template>
-                  选择文件
-                </el-button>
-              </template>
-            </el-upload>
-          </el-form-item>
-        </el-form>
+              accept=".json, .xlsx">
+              <n-button type="primary">
+                <template #icon>
+                  <n-icon><i-carbon-upload /></n-icon>
+                </template>
+                选择文件
+              </n-button>
+            </n-upload>
+          </n-form-item>
+        </n-form>
         <template #footer>
-          <el-space>
-            <el-button @click="uploadDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="submitUpload(uploadFormRef)">上传</el-button>
-          </el-space>
+          <n-flex>
+            <n-button @click="uploadDialogVisible = false">取消</n-button>
+            <n-button type="primary" @click="submitUpload(uploadFormRef)">上传</n-button>
+          </n-flex>
         </template>
-      </el-dialog>
+      </n-modal>
 
-      <el-dialog v-model="configDialogVisible" title="设置帮助文档">
-        <el-alert
-          v-show="configNeedSave"
-          style="margin-bottom: 20px"
-          type="warning"
-          :closable="false">
+      <n-modal
+        v-model:show="configDialogVisible"
+        preset="card"
+        title="设置帮助文档"
+        :closable="false">
+        <n-alert v-show="configNeedSave" type="warning" class="mb-4">
           设置存在修改，别忘记保存！
-        </el-alert>
-        <h3>分组别名</h3>
-        <el-form>
-          <el-form-item
-            v-for="group in docGroups"
-            :key="group.key"
-            :label="group.label"
-            label-width="50px">
+        </n-alert>
+        <h4>分组别名</h4>
+        <n-form label-placement="left">
+          <n-form-item v-for="group in docGroups" :key="group.value" :label="group.label">
             <HelpConfigTags
               :group="group"
               :aliases="helpAliases"
               @add-alias="addAlias"
               @remove-alias="removeAlias" />
-          </el-form-item>
-        </el-form>
+          </n-form-item>
+        </n-form>
         <template #footer>
-          <el-space>
-            <el-button @click="configDialogClose">取消</el-button>
-            <el-button type="primary" @click="summitConfig">保存</el-button>
-          </el-space>
+          <n-flex justify="end">
+            <n-button @click="configDialogClose">取消</n-button>
+            <n-button type="primary" @click="summitConfig">保存</n-button>
+          </n-flex>
         </template>
-      </el-dialog>
+      </n-modal>
 
       <main>
         <header class="file-tree-title">
-          <el-text size="large" tag="b">文件名</el-text>
-          <el-text size="large" tag="b">分组</el-text>
+          <n-text size="large" tag="b">文件名</n-text>
+          <n-text size="large" tag="b">分组</n-text>
         </header>
         <el-tree
           ref="fileTreeRef"
@@ -162,40 +150,40 @@
           </template>
         </el-tree>
       </main>
-    </el-tab-pane>
+    </n-tab-pane>
 
-    <el-tab-pane label="词条" name="item">
+    <n-tab-pane tab="词条" name="item">
       <main class="item-list-container">
         <header>
-          <el-form :inline="true" :model="textItemQuery">
-            <el-form-item label="序号">
-              <el-input v-model="textItemQuery.id" clearable />
-            </el-form-item>
-            <el-form-item label="分组" j>
-              <el-select
-                v-model="textItemQuery.group"
+          <n-form
+            v-model:model="textItemQuery"
+            size="small"
+            class="flex flex-wrap"
+            label-width="auto"
+            label-placement="left"
+            inline>
+            <n-form-item label="序号">
+              <n-input-number v-model:value="textItemQuery.id" placeholder="" clearable />
+            </n-form-item>
+            <n-form-item label="分组" j>
+              <n-select
+                v-model:value="textItemQuery.group"
                 placeholder="选择分组"
                 filterable
                 clearable
-                style="width: 10rem">
-                <el-option
-                  v-for="group in [{ key: 'builtin', label: '内置' }, ...docGroups]"
-                  :key="group.key"
-                  :label="group.label"
-                  :value="group.key" />
-              </el-select>
-              <!-- <el-input v-model="textItemQuery.group" clearable /> -->
-            </el-form-item>
-            <el-form-item label="来源文件">
-              <el-input v-model="textItemQuery.from" clearable />
-            </el-form-item>
-            <el-form-item label="词条名">
-              <el-input v-model="textItemQuery.title" clearable />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="refreshTextItems">搜索</el-button>
-            </el-form-item>
-          </el-form>
+                :options="[{ value: 'builtin', label: '内置' }, ...docGroups]">
+              </n-select>
+            </n-form-item>
+            <n-form-item label="来源文件">
+              <n-input v-model:value="textItemQuery.from" placeholder="" clearable />
+            </n-form-item>
+            <n-form-item label="词条名">
+              <n-input v-model:value="textItemQuery.title" placeholder="" clearable />
+            </n-form-item>
+            <n-form-item>
+              <n-button type="info" secondary @click="refreshTextItems">搜索</n-button>
+            </n-form-item>
+          </n-form>
         </header>
         <el-table
           class="item-list"
@@ -222,20 +210,20 @@
           <el-table-column prop="packageName" label="分类" />
         </el-table>
         <footer>
-          <el-pagination
+          <n-pagination
             class="item-list-pagination"
-            :page-size="20"
-            :current-page="textItemQuery.pageNum"
-            :total="textItemQuery.total"
-            :pager-count="5"
-            layout="prev, pager, next"
-            background
-            hide-on-single-page
-            @current-change="handleCurrentPageChange" />
+            v-model:page="textItemQuery.pageNum"
+            v-model:page-size="textItemQuery.pageSize"
+            show-size-picker
+            :page-sizes="[10, 20, 30, 50]"
+            :page-slot="5"
+            :item-count="textItemQuery.total"
+            @change="handleCurrentPageChange"
+            @page-size-change="handleCurrentPageChange" />
         </footer>
       </main>
-    </el-tab-pane>
-  </el-tabs>
+    </n-tab-pane>
+  </n-tabs>
 </template>
 
 <script lang="ts" setup>
@@ -253,8 +241,8 @@ import {
 } from '~/api/helpdoc';
 
 interface Group {
-  key: string;
   label: string;
+  value: string;
 }
 
 const tab = ref('file');
@@ -404,13 +392,13 @@ const refreshFileTree = async () => {
       return e;
     });
     docGroups.value = [
-      { label: '默认', key: 'default' },
+      { label: '默认', value: 'default' },
       ...resp.data
         .filter(entry => {
           return entry.isDir;
         })
         .map(entry => {
-          return { label: entry.name, key: entry.name };
+          return { label: entry.name, value: entry.name };
         }),
     ];
   } else {
@@ -539,13 +527,6 @@ onBeforeMount(async () => {
       text-overflow: ellipsis;
     }
   }
-}
-
-.file-control {
-  margin-bottom: 20px;
-  flex: 1;
-  display: flex;
-  justify-content: right;
 }
 
 .file-tree-title {

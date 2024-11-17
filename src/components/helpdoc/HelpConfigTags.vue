@@ -1,32 +1,36 @@
 <template>
-  <el-space ref="tagsRef" wrap>
-    <el-tag type="success" disable-transitions>{{ group.key }}</el-tag>
-    <el-tag
-      v-for="a in aliases.get(group.key)"
+  <n-flex align="center" ref="tagsRef" wrap>
+    <n-tag type="success" size="small" :bordered="false">{{ group.value }}</n-tag>
+    <n-tag
+      size="small"
+      v-for="a in aliases.get(group.value)"
       :key="a"
       closable
-      disable-transitions
-      @close="handleClose(group.key, a)">
+      :bordered="false"
+      @close="handleClose(group.value, a)">
       {{ a }}
-    </el-tag>
+    </n-tag>
 
-    <el-input
+    <n-input
       v-if="inputVisible"
       ref="inputRef"
-      v-model="inputValue"
-      size="small"
-      @keyup.enter="handleInputConfirm(group.key)"
-      @blur="handleInputConfirm(group.key)" />
-    <el-button v-if="inputVisible" size="small" plain @click="handleInputConfirm(group.key)"
-      >确定</el-button
-    >
-    <el-button v-else size="small" plain @click="showInput">
+      v-model:value="inputValue"
+      size="tiny"
+      autosize
+      style="min-width: 6rem"
+      placeholder=""
+      @keyup.enter="handleInputConfirm(group.value)"
+      @blur="handleInputConfirm(group.value)" />
+    <n-button v-if="inputVisible" size="tiny" tertiary @click="handleInputConfirm(group.value)">
+      确定
+    </n-button>
+    <n-button v-else size="tiny" tertiary @click="showInput">
       <template #icon>
-        <i-carbon-add-large />
+        <n-icon><i-carbon-add-large /></n-icon>
       </template>
       新别名
-    </el-button>
-  </el-space>
+    </n-button>
+  </n-flex>
 </template>
 
 <script setup lang="ts">
@@ -34,7 +38,7 @@ import type { ElInput, ElSpace } from 'element-plus';
 
 const { group, aliases } = defineProps<{
   group: {
-    key: string;
+    value: string;
     label: string;
   };
   aliases: Map<string, string[]>;
