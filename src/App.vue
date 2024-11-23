@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { darkTheme, lightTheme } from 'naive-ui';
+import { darkTheme, dateZhCN, lightTheme, zhCN } from 'naive-ui';
 import { useStore } from '~/store';
 
 const isDark = useDark({ disableTransition: false });
@@ -14,7 +14,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-config-provider :theme="isDark ? darkTheme : lightTheme" class="mx-auto size-full">
+  <n-config-provider
+    :theme="isDark ? darkTheme : lightTheme"
+    :locale="zhCN"
+    :date-locale="dateZhCN"
+    class="mx-auto size-full">
     <n-dialog-provider>
       <n-message-provider>
         <n-modal-provider>
