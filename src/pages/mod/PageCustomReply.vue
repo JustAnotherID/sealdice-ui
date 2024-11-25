@@ -1,137 +1,150 @@
 <template>
-  <header class="page-header">
-    <el-switch v-model="replyEnable" active-text="启用" inactive-text="关闭" @change="switchClick"
-      >总开关</el-switch
-    >
-    <el-button v-if="store.curDice.config.customReplyConfigEnable" type="primary" @click="doSave">
+  <header class="page-header mb-4">
+    <n-switch v-model:value="replyEnable" @update:value="switchClick">
+      <template #checked>启用</template>
+      <template #unchecked>关闭</template>
+      总开关
+    </n-switch>
+    <n-button v-if="store.curDice.config.customReplyConfigEnable" type="primary" @click="doSave">
       <template #icon>
-        <i-carbon-save />
+        <n-icon><i-carbon-save /></n-icon>
       </template>
       保存
-    </el-button>
+    </n-button>
   </header>
 
-  <el-affix v-if="modified" :offset="70">
-    <div class="tip-danger">
-      <el-text type="danger" size="large" tag="strong">内容已修改，不要忘记保存！</el-text>
-    </div>
-  </el-affix>
+  <n-affix v-if="modified" :top="60">
+    <tip-box type="error">
+      <n-text type="error" class="text-base" tag="strong">内容已修改，不要忘记保存！</n-text>
+    </tip-box>
+  </n-affix>
 
   <div class="tip">
-    <el-collapse v-model="activeTip" class="helptips">
-      <el-collapse-item name="basic">
-        <template #title>
-          <el-text tag="strong">基础帮助</el-text>
+    <n-collapse v-model="activeTip">
+      <n-collapse-item name="basic">
+        <template #header>
+          <n-text tag="strong">基础帮助</n-text>
         </template>
-        <el-text tag="p"
-          >每项自定义回复由一个&lt;条件>触发，产生一系列&lt;结果><br />一旦一个&lt;条件>被满足，将立即停止匹配，并执行&lt;结果></el-text
-        >
-      </el-collapse-item>
-      <el-collapse-item name="advanced">
-        <template #title>
-          <el-text tag="strong">进阶内容</el-text>
+        <n-text tag="p">
+          每项自定义回复由一个&lt;条件>触发，产生一系列&lt;结果><br />
+          一旦一个&lt;条件>被满足，将立即停止匹配，并执行&lt;结果>
+        </n-text>
+      </n-collapse-item>
+      <n-collapse-item name="advanced">
+        <template #header>
+          <n-text tag="strong">进阶内容</n-text>
         </template>
-        <el-text tag="p">
+        <n-text tag="p">
           越靠前的项具有越高的优先级，可以拖动来调整优先顺序！<br />
           为了避免滥用和无限互答，自定义回复的响应间隔最低为 5s<br />
           匹配到的文本将被存入变量$t0，正则匹配的组将被存入$t1 $t2 ....<br />
           若存在组名，如 (?P&lt;A&gt;cc)，将额外存入$tA
-        </el-text>
-      </el-collapse-item>
-    </el-collapse>
+        </n-text>
+      </n-collapse-item>
+    </n-collapse>
   </div>
 
-  <el-divider />
+  <n-divider />
 
   <main class="reply-main">
     <header
       v-if="store.curDice.config.customReplyConfigEnable"
       style="display: flex; flex-wrap: wrap; justify-content: space-between">
-      <el-space class="current-reply" direction="vertical">
-        <el-space style="justify-content: center" wrap>
+      <n-flex class="current-reply" vertical>
+        <n-flex align="center" wrap>
           <strong>当前文件</strong>
-          <el-select v-model="curFilename" style="width: 10rem">
-            <el-option
-              v-for="item in fileItems"
-              :key="item.filename"
-              :label="item.filename"
-              :value="item.filename" />
-          </el-select>
-          <el-checkbox-button
-            v-model="cr.enable"
-            :class="cr.enable ? `reply-file-status-open` : `reply-file-status-close`"
-            style="margin-left: 1rem">
+          <n-select
+            v-model:value="curFilename"
+            :options="
+              fileItems.map(item => {
+                return { value: item?.filename, label: item?.filename };
+              })
+            "
+            class="w-48">
+          </n-select>
+          <n-checkbox v-model:checked="cr.enable" style="margin-left: 1rem">
             {{ cr.enable ? '已启用' : '未启用' }}
-          </el-checkbox-button>
-        </el-space>
-        <el-space style="margin-top: 0.5rem" warp>
-          <el-button type="danger" size="small" plain @click="customReplyFileDelete">
+          </n-checkbox>
+        </n-flex>
+        <n-flex class="mt-2" warp>
+          <n-button type="error" size="small" tertiary @click="customReplyFileDelete">
             <template #icon>
               <i-carbon-row-delete />
             </template>
             删除
-          </el-button>
-          <el-button
-            type="primary"
+          </n-button>
+          <n-button
+            type="info"
             size="small"
-            plain
+            tertiary
             tag="a"
             style="text-decoration: none"
             :href="`${urlBase}/sd-api/configs/custom_reply/file_download?name=${encodeURIComponent(curFilename)}&token=${encodeURIComponent(store.token)}`">
             <template #icon>
-              <i-carbon-download />
+              <n-icon><i-carbon-download /></n-icon>
             </template>
             下载
-          </el-button>
-        </el-space>
-        <el-text v-if="!cr.enable" class="mt-2" type="warning"
-          >注意：启用后该文件中的自定义回复才会生效</el-text
-        >
-      </el-space>
+          </n-button>
+        </n-flex>
+        <n-text v-if="!cr.enable" class="mt-2" type="warning">
+          注意：启用后该文件中的自定义回复才会生效
+        </n-text>
+      </n-flex>
       <div class="reply-operation mt-4 sm:mt-0">
         <div>
-          <el-tooltip content="新建一个自定义回复文件。">
-            <el-button type="success" plain @click="customReplyFileNew">
-              <template #icon>
-                <i-carbon-document-add />
-              </template>
-              新建
-            </el-button>
-          </el-tooltip>
+          <n-tooltip>
+            <template #trigger>
+              <n-button type="success" secondary @click="customReplyFileNew">
+                <template #icon>
+                  <n-icon><i-carbon-document-add /></n-icon>
+                </template>
+                新建
+              </n-button>
+            </template>
+            新建一个自定义回复文件
+          </n-tooltip>
         </div>
         <div>
-          <el-tooltip content="通过粘贴/编辑文本来导入自定义回复。">
-            <el-button type="primary" plain @click="dialogFormVisible = true">
-              <template #icon>
-                <i-carbon-document />
-              </template>
-              解析
-            </el-button>
-          </el-tooltip>
+          <n-tooltip>
+            <template #trigger>
+              <n-upload
+                action=""
+                multiple
+                accept=".yaml"
+                @before-upload="beforeUpload"
+                :show-file-list="false"
+                :file-list="uploadFileList">
+                <n-button type="info" secondary>
+                  <template #icon>
+                    <n-icon><i-carbon-upload /></n-icon>
+                  </template>
+                  上传
+                </n-button>
+              </n-upload>
+            </template>
+            上传自定义回复的 .yaml 文件
+          </n-tooltip>
         </div>
-        <el-tooltip content="上传自定义回复的 .yaml 文件。">
-          <el-upload
-            action=""
-            multiple
-            accept=".yaml"
-            :before-upload="beforeUpload"
-            :file-list="uploadFileList">
-            <el-button type="primary" plain>
-              <template #icon>
-                <i-carbon-upload />
-              </template>
-              上传
-            </el-button>
-          </el-upload>
-        </el-tooltip>
+        <div>
+          <n-tooltip>
+            <template #trigger>
+              <n-button type="default" secondary @click="dialogFormVisible = true">
+                <template #icon>
+                  <n-icon><i-carbon-document /></n-icon>
+                </template>
+                解析
+              </n-button>
+            </template>
+            通过粘贴/编辑文本来导入自定义回复
+          </n-tooltip>
+        </div>
       </div>
     </header>
 
-    <el-divider v-if="store.curDice.config.customReplyConfigEnable" />
+    <n-divider v-if="store.curDice.config.customReplyConfigEnable" />
 
     <template v-if="!store.curDice.config.customReplyConfigEnable">
-      <div></div>
-      <el-text type="danger" size="large" style="font-size: 1.5rem">请先启用总开关！</el-text>
+      <n-text type="error" class="text-xl">请先启用总开关！</n-text>
     </template>
     <template v-else>
       <foldable-card
@@ -140,91 +153,91 @@
         :default-fold="true"
         :class="cr.enable ? '' : 'disabled'">
         <template #title>
-          <el-space size="large" wrap>
-            <el-space size="small">
+          <n-flex size="large" align="center" wrap>
+            <n-flex size="small" align="center">
               <strong>公共条件</strong>
-              <el-button type="success" size="small" plain @click="addOneCondition(conditions)">
+              <n-button type="success" size="tiny" secondary @click="addOneCondition(conditions)">
                 <template #icon>
-                  <i-carbon-add-large />
+                  <n-icon><i-carbon-add-large /></n-icon>
                 </template>
                 添加一项
-              </el-button>
-            </el-space>
-            <el-text type="info" size="small"
-              >该文件下所有的回复的执行，都需要先满足以下公共条件（需同时满足，即 and）。</el-text
-            >
-          </el-space>
+              </n-button>
+            </n-flex>
+            <n-text type="info" class="text-xs">
+              该文件下所有的回复的执行，都需要先满足以下公共条件（需同时满足，即 and）。
+            </n-text>
+          </n-flex>
         </template>
 
         <template v-if="conditions && conditions.length > 0">
           <custom-reply-conditions v-model="conditions" />
         </template>
         <template v-else>
-          <el-text type="info">当前无公共条件</el-text>
+          <n-text type="default">当前无公共条件</n-text>
         </template>
 
         <template #unfolded-extra>
           <template v-if="conditions && conditions.length > 0">
-            <el-text type="info">公共条件数量：{{ conditions.length }}</el-text>
+            <n-text type="info">公共条件数量：{{ conditions.length }}</n-text>
           </template>
           <template v-else>
-            <el-text type="info">当前无公共条件</el-text>
+            <n-text type="default">当前无公共条件</n-text>
           </template>
         </template>
       </foldable-card>
 
-      <el-divider />
+      <n-divider />
 
       <nested-draggable :tasks="list" :class="cr.enable ? '' : 'disabled'" />
-      <div style="display: flex; justify-content: space-between">
-        <el-button type="success" plain @click="addOne(list)">
+      <n-flex align="center" justify="space-between">
+        <n-button type="info" secondary @click="addOne(list)">
           <template #icon>
-            <i-carbon-add-large />
+            <n-icon><i-carbon-add-large /> </n-icon>
           </template>
           添加一项
-        </el-button>
-        <el-button type="primary" @click="doSave">
+        </n-button>
+        <n-button type="primary" @click="doSave">
           <template #icon>
-            <i-carbon-save />
+            <n-icon><i-carbon-save /> </n-icon>
           </template>
           保存
-        </el-button>
-      </div>
+        </n-button>
+      </n-flex>
     </template>
   </main>
 
-  <el-dialog
-    v-model="dialogFormVisible"
+  <n-modal
+    v-model:show="dialogFormVisible"
+    preset="card"
     title="导入配置"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="false"
     class="the-dialog">
     <!-- <template > -->
-    <el-input
-      v-model="configForImport"
+    <n-input
+      v-model:value="configForImport"
       placeholder="支持格式: 关键字/回复语"
       class="reply-text"
       type="textarea"
-      :autosize="{ minRows: 4, maxRows: 10 }"></el-input>
-    <!-- </template> -->
-
+      :autosize="{ minRows: 4, maxRows: 10 }" />
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" :disabled="configForImport === ''" @click="doImport"
-          >下一步</el-button
-        >
-      </span>
+      <n-flex>
+        <n-button @click="dialogFormVisible = false">取消</n-button>
+        <n-button type="primary" :disabled="configForImport === ''" @click="doImport">
+          下一步
+        </n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 
-  <el-dialog
-    v-model="dialogLicenseVisible"
+  <n-modal
+    v-model:show="dialogLicenseVisible"
+    preset="card"
     title="许可协议"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="false"
+    :mask-closable="false"
+    :close-on-esc="false"
+    :closable="false"
     class="the-dialog">
     <pre style="white-space: pre-wrap">
 尊敬的用户，欢迎您选择由木落等研发的海豹骰点核心（SealDice），在您使用自定义功能前，请务必仔细阅读使用须知，当您使用我们提供的服务时，即代表您已同意使用须知的内容。
@@ -249,12 +262,12 @@
     <!-- 一旦查实您有以上禁止行为，我们有权进行核查、修改和/或删除您导入的内容，而不需事先通知。 -->
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogLicenseVisible = false">我同意</el-button>
-        <el-button @click="licenseRefuse">我拒绝</el-button>
-      </span>
+      <n-flex>
+        <n-button type="primary" @click="dialogLicenseVisible = false">我同意</n-button>
+        <n-button type="error" @click="licenseRefuse">我拒绝</n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 </template>
 
 <script lang="ts" setup>
@@ -269,8 +282,12 @@ import {
   uploadCustomReply,
 } from '~/api/configs';
 import type { DiceConfig } from '~/api/dice';
+import { useDialog, useMessage } from 'naive-ui';
 
 const store = useStore();
+const message = useMessage();
+const dialog = useDialog();
+
 const dialogFormVisible = ref(false);
 const dialogLicenseVisible = ref(false);
 const configForImport = ref('');
@@ -367,32 +384,32 @@ const customReplyFileNew = () => {
     fileItems.value = ret2.items;
     curFilename.value = ret2.items[0].filename;
 
-    ElMessage({
-      type: 'success',
-      message: ret.success ? '成功!' : '失败',
-    });
+    if (ret.success) {
+      message.success('创建成功');
+    } else {
+      message.error('创建失败');
+    }
   });
 };
 
 const customReplyFileDelete = () => {
-  ElMessageBox.confirm('是否删除此文件？', '', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    const ret = await postCustomReplyDel(curFilename.value);
-
-    if (ret.success) {
-      const ret = await getCustomReplyFileList();
-      fileItems.value = ret.items;
-      curFilename.value = ret.items[0].filename;
-      await refreshCurrent();
-    }
-
-    ElMessage({
-      type: 'success',
-      message: '完成',
-    });
+  dialog.warning({
+    title: '删除文件',
+    content: '是否删除此文件？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const ret = await postCustomReplyDel(curFilename.value);
+      if (ret.success) {
+        const ret = await getCustomReplyFileList();
+        fileItems.value = ret.items;
+        curFilename.value = ret.items[0].filename;
+        message.success('删除成功');
+        await refreshCurrent();
+      } else {
+        message.error('删除失败');
+      }
+    },
   });
 };
 
@@ -400,14 +417,14 @@ const beforeUpload = async (file: any) => {
   // UploadRawFile
   try {
     await uploadCustomReply(file);
-    ElMessage.success('上传完成');
+    message.success('上传完成');
     const ret = await getCustomReplyFileList();
     fileItems.value = ret.items;
     curFilename.value = ret.items[0].filename;
     await refreshCurrent();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
-    ElMessage.error('上传失败，可能有同名文件！');
+    message.error('上传失败，可能有同名文件！');
   }
 };
 
@@ -459,11 +476,11 @@ const doSave = async () => {
       }
     }
     await saveCustomReply(cr.value);
-    ElMessage.success('已保存');
+    message.success('已保存');
     modified.value = false;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
-    ElMessage.error('保存失败！！');
+    message.error('保存失败！！');
   }
 };
 
@@ -556,7 +573,7 @@ const doImport = () => {
     if (!rest) break;
   }
 
-  ElMessage.success('导入成功！');
+  message.success('导入成功！');
   configForImport.value = '';
 };
 
@@ -587,18 +604,6 @@ onBeforeUnmount(() => {
 <style scoped>
 .reply-text > textarea {
   max-height: 65vh;
-}
-
-.helptips {
-  background-color: #f3f5f7;
-
-  :deep(.el-collapse-item__header) {
-    background-color: #f3f5f7;
-  }
-
-  :deep(.el-collapse-item__wrap) {
-    background-color: #f3f5f7;
-  }
 }
 </style>
 
