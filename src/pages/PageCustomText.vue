@@ -1,24 +1,26 @@
 <template>
-  <el-affix :offset="70" v-if="modified">
-    <div class="page-header tip-danger">
-      <el-text type="danger" size="large" tag="strong">内容已修改，不要忘记保存！</el-text>
-      <el-button class="button" type="primary" @click="save" :disabled="!modified">
-        <template #icon>
-          <i-carbon-save />
-        </template>
-        点我保存
-      </el-button>
-    </div>
-  </el-affix>
+  <n-affix :top="60" v-if="modified">
+    <tip-box type="error">
+      <n-flex>
+        <n-text type="error" class="text-base" tag="strong">内容已修改，不要忘记保存！</n-text>
+        <n-button class="button" type="primary" @click="save" :disabled="!modified">
+          <template #icon>
+            <n-icon><i-carbon-save /></n-icon>
+          </template>
+          点我保存
+        </n-button>
+      </n-flex>
+    </tip-box>
+  </n-affix>
 
-  <div class="tip">
-    <el-collapse class="helptips">
-      <el-collapse-item name="1">
-        <template #title>
-          <el-text tag="strong">查看帮助</el-text>
+  <tip-box type="info">
+    <n-collapse>
+      <n-collapse-item name="1">
+        <template #header>
+          <n-text tag="strong">查看帮助</n-text>
         </template>
 
-        <el-text tag="p">
+        <n-text tag="p">
           <div>此处可以对骰子返回的文本进行修改。最终返回的文本将为多个条目中随机抽取的一个。</div>
           <div>
             随机文本：默认一种显示结果，如果需要多种反馈结果，使用＋添加条目，使用 - 删除条目
@@ -26,21 +28,21 @@
           <!-- 权重选择：默认 1，权重—致则没有优先级。数字越小，优先级越高 -->
           <!-- <div>文件备份：已修改的指令统一存在于路径/路径 1/路径 2/文件名，如有需要替换文件即可</div> -->
           <div>
-            遇到有此标记 (<el-icon><i-carbon-paint-brush /></el-icon>)
+            遇到有此标记 (<n-icon><i-carbon-paint-brush /></n-icon>)
             的条目，说明和默认值不同，是一个自定义条目
           </div>
           <div style="margin-top: 1rem">
             文本下方的
-            <el-tag size="small">标签</el-tag>
+            <n-tag size="small" :bordered="false">标签</n-tag>
             代表了被默认文本所使用的特殊变量，你可以使用 {变量名} 来插入他们，例如 {$t判定值}
           </div>
           <div>
             除此之外，这些变量可以在所有文本中使用：
-            <el-space size="small" wrap>
-              <el-tag
+            <n-flex size="small" wrap>
+              <n-tag
                 :key="i"
                 size="small"
-                disable-transitions
+                :bordered="false"
                 v-for="i in [
                   '$t玩家',
                   '$tQQ昵称',
@@ -50,10 +52,10 @@
                   '$t骰子昵称',
                   '$t群号',
                   '$t群名',
-                ]"
-                >{{ i }}</el-tag
-              >
-            </el-space>
+                ]">
+                {{ i }}
+              </n-tag>
+            </n-flex>
           </div>
           <div>
             <span>以及，所有的自定义文本都可以嵌套使用，例如：</span>
@@ -69,233 +71,259 @@
 
           <div style="margin-top: 1rem">
             <div>此外，支持插入图片，将图片放在骰子的适当目录，再写这样一句话即可：</div>
-            <div><b>[图:data/images/sealdice.png]</b></div>
+            <div><n-text code>[图:data/images/sealdice.png]</n-text></div>
             <div>可以参考 核心：骰子进群 词条</div>
             <div>同样的，可以使用 CQ 码插入图片和其他内容，关于 CQ 码，请参阅 onebot 项目文档</div>
           </div>
 
           <div style="margin-top: 1rem">
-            <b
-              >COC 的“判定 - 常规”和“判定 - 简短”主要区别是，多重检定会默认使用简短版本 (.ra
-              3#射击)</b
-            >
+            <b>
+              COC 的“判定 - 常规”和“判定 - 简短”主要区别是，多重检定会默认使用简短版本 (.ra 3#射击)
+            </b>
             <b>进行调整后，可以在左侧面板“指令测试”中进行测试！</b>
           </div>
-        </el-text>
-      </el-collapse-item>
-    </el-collapse>
-  </div>
+        </n-text>
+      </n-collapse-item>
+    </n-collapse>
+  </tip-box>
 
   <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center">
-    <div>
-      <el-text>搜索：</el-text>
-      <el-input style="display: inline" v-model="currentFilterName" clearable>
-        <template #prefix>
-          <i-carbon-search />
-        </template>
-      </el-input>
-    </div>
-    <!-- 这个按钮颜色还是淡一些不然喧宾夺主 -->
-    <!-- 偷偷加个淡点的颜色回来（） -->
-    <el-button type="primary" plain @click="dialogImportVisible = true">导入/导出</el-button>
+    <n-flex align="center" size="small">
+      <n-text>搜索：</n-text>
+      <span>
+        <n-input size="small" v-model:value="currentFilterName" clearable>
+          <template #prefix>
+            <n-icon><i-carbon-search /> </n-icon>
+          </template>
+        </n-input>
+      </span>
+    </n-flex>
+    <n-button type="info" secondary @click="dialogImportVisible = true">导入/导出</n-button>
   </div>
 
-  <el-space style="margin: 1rem 0" wrap>
-    <el-radio-group v-model="filterMode" @change="handleFilterModeChange">
-      <el-radio v-for="mode of filterModes" :key="mode.value" :value="mode.value">
-        <template #default>{{ mode.desc }}</template>
-      </el-radio>
-    </el-radio-group>
-    <div v-if="filterMode === 'group'">
-      <el-text>分组：</el-text>
-      <el-select v-model="currentFilterGroup" filterable allow-create>
-        <el-option
-          v-for="group of filterGroups"
-          :key="group"
-          :label="group"
-          :value="group"></el-option>
-      </el-select>
-    </div>
-  </el-space>
+  <n-flex class="mb-8 mt-4" align="center" wrap>
+    <n-radio-group v-model:value="filterMode" @update:value="handleFilterModeChange">
+      <n-radio
+        v-for="mode of filterModes"
+        :key="mode.value"
+        :value="mode.value"
+        :label="mode.desc" />
+    </n-radio-group>
+    <n-flex v-if="filterMode === 'group'" align="center">
+      <n-text>分组：</n-text>
+      <span>
+        <n-select
+          v-model:value="currentFilterGroup"
+          filterable
+          tag
+          :options="
+            filterGroups.map(g => {
+              return { label: g, value: g };
+            })
+          " />
+      </span>
+    </n-flex>
+  </n-flex>
 
-  <el-collapse class="text-collapse" v-model="activeGroups">
+  <n-collapse class="text-collapse" :default-expanded-names="['__others__']">
     <custom-text-box
       :key="group"
       v-for="[group, values] in reactive(doSort(category))"
       :group="group">
       <template #values>
-        <el-col :xs="24" :span="12" v-for="[k, v] in values" :key="k">
-          <el-form ref="form" label-width="auto" label-position="top">
-            <el-form-item>
-              <template #label>
-                <div>
-                  <el-tag
-                    effect="dark"
-                    type="info"
-                    style="margin-right: 0.5rem"
-                    disable-transitions>
-                    {{
-                      store.curDice.customTextsHelpInfo[category][k.toString()].subType ||
-                      (store.curDice.customTextsHelpInfo[category][k.toString()].notBuiltin
-                        ? '旧版文本'
-                        : '其它')
-                    }}
-                  </el-tag>
+        <n-grid x-gap="24" :cols="2">
+          <n-grid-item v-for="[k, v] in values" :key="k">
+            <n-form ref="form" label-width="auto" label-position="top">
+              <n-form-item class="w-full">
+                <template #label>
+                  <div>
+                    <n-tag
+                      type="default"
+                      size="small"
+                      style="margin-right: 0.5rem"
+                      :bordered="false">
+                      {{
+                        store.curDice.customTextsHelpInfo[category][k.toString()].subType ||
+                        (store.curDice.customTextsHelpInfo[category][k.toString()].notBuiltin
+                          ? '旧版文本'
+                          : '其它')
+                      }}
+                    </n-tag>
 
-                  <span>
-                    <span>{{ k.toString() }}</span>
-                    <el-tooltip
-                      v-if="store.curDice.customTextsHelpInfo[category][k.toString()].extraText"
-                      :content="store.curDice.customTextsHelpInfo[category][k.toString()].extraText"
-                      raw-content>
-                      <el-icon><i-carbon-help-filled /></el-icon>
-                    </el-tooltip>
-                  </span>
+                    <span>
+                      <span>{{ k.toString() }}</span>
+                      <n-tooltip
+                        v-if="store.curDice.customTextsHelpInfo[category][k.toString()].extraText">
+                        <template #trigger>
+                          <n-icon><i-carbon-help-filled /></n-icon>
+                        </template>
+                        {{ store.curDice.customTextsHelpInfo[category][k.toString()].extraText }}
+                      </n-tooltip>
+                    </span>
 
-                  <template
-                    v-if="store.curDice.customTextsHelpInfo[category][k.toString()].notBuiltin">
-                    <el-tooltip
-                      content="移除 - 这个文本在新版的默认配置中不被使用，<br />但升级而来时仍可能被使用，请确认无用后删除"
-                      raw-content
-                      placement="bottom-end">
-                      <el-icon
-                        style="float: right; margin-left: 1rem"
-                        @click="askDeleteValue(category, k.toString())">
-                        <i-carbon-row-delete />
-                      </el-icon>
-                    </el-tooltip>
-                  </template>
+                    <template
+                      v-if="store.curDice.customTextsHelpInfo[category][k.toString()].notBuiltin">
+                      <n-tooltip placement="bottom-end">
+                        <template #trigger>
+                          <n-icon
+                            style="float: right; margin-left: 1rem"
+                            @click="askDeleteValue(category, k.toString())">
+                            <i-carbon-row-delete />
+                          </n-icon>
+                        </template>
+                        移除 - 这个文本在新版的默认配置中不被使用，<br />
+                        但升级而来时仍可能被使用，请确认无用后删除
+                      </n-tooltip>
+                    </template>
 
-                  <template
-                    v-if="store.curDice.customTextsHelpInfo[category][k.toString()].modified">
-                    <el-tooltip content="重置为初始值" placement="bottom-end">
-                      <el-icon
-                        style="float: right; margin-left: 1rem"
-                        @click="askResetValue(category, k.toString())">
-                        <i-carbon-paint-brush />
-                      </el-icon>
-                    </el-tooltip>
-                  </template>
-                  <!-- <el-tooltip content="效果预览" placement="bottom-end">
+                    <template
+                      v-if="store.curDice.customTextsHelpInfo[category][k.toString()].modified">
+                      <n-tooltip content="" placement="bottom-end">
+                        <template #trigger>
+                          <n-icon
+                            style="float: right; margin-left: 1rem"
+                            @click="askResetValue(category, k.toString())">
+                            <i-carbon-paint-brush />
+                          </n-icon>
+                        </template>
+                        重置为初始值
+                      </n-tooltip>
+                    </template>
+                    <!-- <el-tooltip content="效果预览" placement="bottom-end">
                     <el-icon @click="askResetValue(category, k.toString())" style="float: right;"><video-play /></el-icon>
                   </el-tooltip> -->
-                </div>
-              </template>
+                  </div>
+                </template>
 
-              <el-text v-if="k.toString() === '戳一戳'" type="warning" size="small" class="mb-1">
-                请确认你使用的 QQ
-                连接方式支持该功能，若不支持请于「基本设置」中关闭戳一戳来避免日志中出现相关报错。
-              </el-text>
+                <n-flex vertical class="w-full">
+                  <n-text v-if="k.toString() === '戳一戳'" type="warning" class="mb-1 text-xs">
+                    请确认你使用的 QQ
+                    连接方式支持该功能，若不支持请于「基本设置」中关闭戳一戳来避免日志中出现相关报错。
+                  </n-text>
 
-              <div v-for="(k2, index) in v" :key="index" style="width: 100%; margin-bottom: 0.5rem">
-                <!-- 这里面是单条修改项 -->
-                <el-row>
-                  <el-col :span="2">
-                    <el-tooltip
-                      :content="
-                        index === 0
-                          ? '点击添加一个回复语，SealDice将会随机抽取一个回复'
-                          : '点击删除你不想要的回复语'
-                      "
-                      placement="bottom-start">
-                      <el-icon>
-                        <i-carbon-add-filled v-if="index == 0" @click="addItem(k)" />
-                        <i-carbon-close-outline v-else @click="removeItem(v, index)" />
-                      </el-icon>
-                    </el-tooltip>
-                  </el-col>
-                  <el-col :span="22" class="relative">
-                    <!-- :suffix-icon="Management" -->
-                    <el-input
-                      type="textarea"
-                      autosize
-                      v-model="k2[0]"
-                      @change="doChanged(category, k.toString())"></el-input>
+                  <div
+                    v-for="(k2, index) in v"
+                    :key="index"
+                    style="width: 100%; margin-bottom: 0.5rem">
+                    <!-- 这里面是单条修改项 -->
+                    <n-flex align="center">
+                      <div>
+                        <n-tooltip placement="bottom-start">
+                          <template #trigger>
+                            <n-icon>
+                              <i-carbon-add-filled v-if="index === 0" @click="addItem(k)" />
+                              <i-carbon-close-outline v-else @click="removeItem(v, index)" />
+                            </n-icon>
+                          </template>
+                          {{
+                            index === 0
+                              ? '点击添加一个回复语，SealDice将会随机抽取一个回复'
+                              : '点击删除你不想要的回复语'
+                          }}
+                        </n-tooltip>
+                      </div>
+                      <div class="relative flex-auto">
+                        <n-input
+                          class="w-full"
+                          type="textarea"
+                          :autosize="{ minRows: 3 }"
+                          v-model:value="k2[0]"
+                          @update:value="doChanged(category, k.toString())" />
 
-                    <div class="absolute bottom-0 right-1" v-if="getPreview(k, k2[0])">
-                      <el-tooltip placement="bottom-start">
-                        <template #content>
-                          <component :is="getPreviewInfo(k, k2[0])"></component>
-                        </template>
+                        <div class="absolute bottom-0 right-1" v-if="getPreview(k, k2[0])">
+                          <n-popover placement="bottom-start">
+                            <template #trigger>
+                              <span
+                                v-if="getPreviewCheckErr(k, k2[0])"
+                                class="text-red-500"
+                                style="margin-left: 0.1rem; margin-top: 0.1rem">
+                                <n-icon><i-carbon-close-filled /></n-icon>
+                              </span>
+                              <n-flex v-else>
+                                <span
+                                  v-if="getPreview(k, k2[0]).version === 'v2'"
+                                  class="text-blue-500"
+                                  style="margin-left: 0.1rem; margin-top: 0.1rem">
+                                  <n-icon><i-carbon-checkmark-filled /></n-icon>
+                                </span>
+                                <span
+                                  v-if="getPreview(k, k2[0]).version === 'v1'"
+                                  class="text-yellow-500"
+                                  style="margin-left: 0.1rem; margin-top: 0.1rem">
+                                  <n-icon><i-carbon-checkmark-filled /></n-icon>
+                                </span>
+                              </n-flex>
+                            </template>
 
-                        <span
-                          v-if="getPreviewCheckErr(k, k2[0])"
-                          class="text-red-500"
-                          style="margin-left: 0.1rem; margin-top: 0.1rem">
-                          <el-icon><i-carbon-close-filled /></el-icon>
-                        </span>
-                        <template v-else>
-                          <span
-                            v-if="getPreview(k, k2[0]).version == 'v2'"
-                            class="text-blue-500"
-                            style="margin-left: 0.1rem; margin-top: 0.1rem">
-                            <el-icon><i-carbon-checkmark-filled /></el-icon>
-                          </span>
-
-                          <span
-                            v-if="getPreview(k, k2[0]).version == 'v1'"
-                            class="text-yellow-500"
-                            style="margin-left: 0.1rem; margin-top: 0.1rem">
-                            <el-icon><i-carbon-checkmark-filled /></el-icon>
-                          </span>
-                        </template>
-                      </el-tooltip>
-                    </div>
-                  </el-col>
-                </el-row>
-              </div>
-              <el-space size="small" wrap>
-                <el-tag
-                  size="small"
-                  disable-transitions
-                  v-for="i in store.curDice.customTextsHelpInfo[category][k.toString()].vars"
-                  :key="i"
-                  >{{ i }}</el-tag
-                >
-                <!-- {{ store.curDice.customTextsHelpInfo[category][k.toString()] }} -->
-              </el-space>
-            </el-form-item>
-          </el-form>
-        </el-col>
+                            <component :is="getPreviewInfo(k, k2[0])" />
+                          </n-popover>
+                        </div>
+                      </div>
+                    </n-flex>
+                  </div>
+                  <n-flex size="small" wrap>
+                    <n-tag
+                      size="small"
+                      type="info"
+                      :bordered="false"
+                      v-for="i in store.curDice.customTextsHelpInfo[category][k.toString()].vars"
+                      :key="i">
+                      {{ i }}
+                    </n-tag>
+                    <!-- {{ store.curDice.customTextsHelpInfo[category][k.toString()] }} -->
+                  </n-flex>
+                </n-flex>
+              </n-form-item>
+            </n-form>
+          </n-grid-item>
+        </n-grid>
       </template>
     </custom-text-box>
-  </el-collapse>
+  </n-collapse>
 
-  <el-dialog
-    v-model="dialogImportVisible"
+  <n-modal
+    v-model:show="dialogImportVisible"
+    preset="card"
     title="导入导出"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="true"
-    :fullscreen="true"
+    :mask-closable="false"
+    :close-on-esc="false"
+    :closable="false"
     class="the-dialog">
-    <el-checkbox v-model="importOnlyCurrent">仅当前页面 (勾选)/全部自定义文案</el-checkbox>
-    <el-checkbox v-model="importImpact">紧凑</el-checkbox>
-
-    <!-- <template > -->
-    <div>以下为导出内容，可以复制给别人：</div>
-    <el-input
-      placeholder="填入数据"
-      type="textarea"
-      :autosize="{ minRows: 4 }"
-      class="import-edit"
-      id="import-edit"
-      v-model="configForImport"></el-input>
-    <!-- </template> -->
+    <template #header-extra>
+      <n-flex>
+        <n-switch v-model:value="importOnlyCurrent">
+          <template #checked>仅当前页面</template>
+          <template #unchecked>全部文案</template>
+        </n-switch>
+        <n-checkbox v-model:checked="importImpact">紧凑</n-checkbox>
+      </n-flex>
+    </template>
+    <n-flex vertical>
+      <!-- <template > -->
+      <n-text tag="strong">以下为导出内容，可以复制给别人</n-text>
+      <n-input
+        placeholder="填入数据"
+        type="textarea"
+        :autosize="{ minRows: 4 }"
+        class="import-edit"
+        id="import-edit"
+        v-model:value="configForImport" />
+      <!-- </template> -->
+    </n-flex>
 
     <template #footer>
-      <span class="dialog-footer">
-        <!-- <el-button @click="dialogImportVisible = false">取消</el-button> -->
-        <el-button @click="configForImport = ''">清空</el-button>
-        <el-button data-clipboard-target="#import-edit" @click="copied" id="btnCopy1"
-          >复制</el-button
-        >
-        <el-button type="primary" @click="doImport" :disabled="configForImport === ''"
-          >导入并保存</el-button
-        >
-      </span>
+      <n-flex>
+        <n-button @click="dialogImportVisible = false">返回</n-button>
+        <n-button type="warning" @click="configForImport = ''">清空</n-button>
+        <n-button type="info" data-clipboard-target="#import-edit" @click="copied" id="btnCopy1">
+          复制
+        </n-button>
+        <n-button type="primary" @click="doImport" :disabled="configForImport === ''">
+          导入并保存
+        </n-button>
+      </n-flex>
     </template>
-  </el-dialog>
+  </n-modal>
 </template>
 
 <script setup lang="tsx">
@@ -313,8 +341,11 @@ import {
   mapValues,
 } from 'lodash-es';
 import ClipboardJS from 'clipboard';
+import { useDialog, useMessage } from 'naive-ui';
 
 const store = useStore();
+const message = useMessage();
+const dialog = useDialog();
 const props = defineProps<{ category: string }>();
 
 const configForImport = ref('');
@@ -322,7 +353,6 @@ const importOnlyCurrent = ref(true);
 const importImpact = ref(true);
 const dialogImportVisible = ref(false);
 
-const activeGroups = ref(['__others__']);
 const doSort = (category: string) => {
   let items = Object.entries(store.curDice?.customTexts?.[category] ?? {});
   const helpInfo = store.curDice.customTextsHelpInfo[category];
@@ -422,7 +452,7 @@ const doSort = (category: string) => {
 };
 
 const copied = () => {
-  ElMessage.success('进行了复制！');
+  message.success('进行了复制！');
 };
 
 const importRefresh = () => {
@@ -447,7 +477,7 @@ const doImport = async () => {
   try {
     const data = JSON.parse(configForImport.value);
     if (!(data.title && data.items)) {
-      ElMessage.error('格式不正确');
+      message.error('格式不正确');
       return;
     }
 
@@ -459,11 +489,11 @@ const doImport = async () => {
     }
     await store.getCustomText();
     modified.value = false;
-    ElMessage.success('已保存');
+    message.success('已保存');
     dialogImportVisible.value = false;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
-    ElMessage.error('格式不正确');
+    message.error('格式不正确');
   }
 };
 
@@ -518,7 +548,7 @@ const save = async () => {
   await store.customTextSave(props.category);
   await store.getCustomText();
   modified.value = false;
-  ElMessage.success('已保存');
+  message.success('已保存');
 };
 
 const getPreview = (k: string, text: string) => {
@@ -548,23 +578,54 @@ const getPreviewInfo = (k: string, text: string) => {
     const exists = info.presetExists ? '是' : '否';
 
     return (
-      <div style="max-width: 80vw" class="whitespace-nowrap break-words">
-        <div>
-          <span class="preview-tip-label bg-blue-50 text-blue-600">引擎版本</span>
-          {version}
-        </div>
-        <div class="whitespace-pre-wrap">
-          <span class="preview-tip-label bg-blue-500 text-center">V2 预览</span>
-          {info.textV2 || info.errV2}
-        </div>
-        <div class="whitespace-pre-wrap">
-          <span class="preview-tip-label bg-orange-600 text-center text-white">V1 预览</span>
-          {info.textV1 || info.errV1}
-        </div>
-        <div>
-          <span class="preview-tip-label bg-blue-50 text-blue-600">存在预设</span>
-          {exists} [存在时预览较为可靠]
-        </div>
+      <div>
+        <n-descriptions
+          label-placement="left"
+          label-align="left"
+          separator=" "
+          column={1}
+          content-class="whitespace-nowrap break-words">
+          <n-descriptions-item>
+            {{
+              label: () => (
+                <n-tag type="success" size="small" bordered={false}>
+                  引擎版本
+                </n-tag>
+              ),
+              default: () => version,
+            }}
+          </n-descriptions-item>
+          <n-descriptions-item>
+            {{
+              label: () => (
+                <n-tag type="info" size="small" bordered={false}>
+                  V2 预览
+                </n-tag>
+              ),
+              default: () => info.textV2 || info.errV2,
+            }}
+          </n-descriptions-item>
+          <n-descriptions-item>
+            {{
+              label: () => (
+                <n-tag type="warning" size="small" bordered={false}>
+                  V1 预览
+                </n-tag>
+              ),
+              default: () => info.textV1 || info.errV1,
+            }}
+          </n-descriptions-item>
+          <n-descriptions-item>
+            {{
+              label: () => (
+                <n-tag type="success" size="small" bordered={false}>
+                  存在预设
+                </n-tag>
+              ),
+              default: () => exists + ' [存在时预览较为可靠]',
+            }}
+          </n-descriptions-item>
+        </n-descriptions>
       </div>
     );
   }
@@ -577,16 +638,16 @@ const deleteValue = async (category: string, keyName: string) => {
 };
 
 const askDeleteValue = async (category: string, keyName: string) => {
-  ElMessageBox.confirm('删除这条文本，确定吗？', '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    deleteValue(category, keyName);
-    ElMessage({
-      type: 'success',
-      message: '成功！',
-    });
+  dialog.warning({
+    title: '警告',
+    content: '删除这条文本，确定吗？',
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      await deleteValue(category, keyName);
+      message.success('成功');
+    },
   });
 };
 
@@ -598,16 +659,16 @@ const resetValue = async (category: string, keyName: string) => {
 };
 
 const askResetValue = async (category: string, keyName: string) => {
-  ElMessageBox.confirm('重置这条文本回默认状态，确定吗？', '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    resetValue(category, keyName);
-    ElMessage({
-      type: 'success',
-      message: '成功！',
-    });
+  dialog.warning({
+    title: '警告',
+    content: '重置这条文本回默认状态，确定吗？',
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      await resetValue(category, keyName);
+      message.success('成功');
+    },
   });
 };
 
@@ -656,29 +717,8 @@ watch(props, () => {
   max-height: 65vh;
 }
 
-.helptips {
-  background-color: #f3f5f7;
-}
-
-.helptips :deep(.el-collapse-item__header) {
-  background-color: #f3f5f7;
-}
-
-.helptips :deep(.el-collapse-item__wrap) {
-  background-color: #f3f5f7;
-}
-
 .text-collapse {
   width: 100%;
-  background-color: #f3f5f7;
-
-  :deep(.el-collapse-item__header) {
-    background-color: #f3f5f7;
-  }
-
-  :deep(.el-collapse-item__wrap) {
-    background-color: #f3f5f7;
-  }
 }
 
 .preview-tip-label {
