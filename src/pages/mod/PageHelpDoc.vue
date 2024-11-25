@@ -67,6 +67,7 @@
             <n-upload
               @on-change="fileChange"
               :file-list="uploadForm.files"
+              :show-file-list="false"
               multiple
               accept=".json, .xlsx">
               <n-button type="primary">
