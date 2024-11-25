@@ -4,9 +4,19 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import randomColor from 'randomcolor';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '../../../tailwind.config';
-import { getStoryInfo, getStoryLogPage, getStoryItemPage, deleteStoryLog } from '~/api/story';
-import { postStoryLog } from '~/api/story';
+import {
+  deleteStoryLog,
+  getStoryInfo,
+  getStoryItemPage,
+  getStoryLogPage,
+  postStoryLog,
+} from '~/api/story';
+import { useDialog, useMessage } from 'naive-ui';
+
 const twColors = resolveConfig(tailwindConfig).theme.colors;
+
+const message = useMessage();
+const dialog = useDialog();
 
 interface Log {
   id: number;
@@ -47,7 +57,7 @@ const queryLogPage = ref({
   total: 0,
   name: '',
   groupId: '',
-  createdTime: [undefined, undefined] as unknown as [Date, Date],
+  createdTime: null as unknown as [number, number],
 });
 
 const getLogPage = getStoryLogPage;
@@ -83,18 +93,6 @@ async function delLog(v: Log) {
   // return backend.delete(url('log'), { headers: { token }, data: v }) as unknown as boolean
 }
 
-async function uploadLog(v: Log) {
-  await ElMessageBox.confirm('将此跑团日志上传至海豹服务器？', '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  });
-  return postStoryLog(v);
-  // return backend.post(url("uploadLog"), v,{ headers: { token }}) as any
-}
-
-//
-
 const tab: Ref<'list' | 'backup'> = ref('list');
 const mode: Ref<'logs' | 'items'> = ref('logs');
 const sum_log = ref(0),
@@ -128,7 +126,7 @@ async function searchLogs() {
     logs.value = result.data;
     queryLogPage.value.total = result.total;
   } else {
-    ElMessage.error('无法获取跑团日志' + result.err);
+    message.error('无法获取跑团日志' + result.err);
   }
 }
 
@@ -149,66 +147,66 @@ const handlePageSizeChange = async (val: number) => {
 };
 
 async function DelLog(v: Log, flag = true) {
-  await ElMessageBox.confirm('是否删除此跑团日志？', '删除', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    const info = await delLog(v);
-    if (info) {
-      ElMessage({
-        message: '删除成功',
-        type: 'success',
-      });
-      if (flag) await refreshLogs();
-    } else {
-      ElMessage({
-        message: '删除失败',
-        type: 'error',
-      });
-    }
+  dialog.warning({
+    title: '删除',
+    content: '是否删除此跑团日志？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const info = await delLog(v);
+      if (info) {
+        message.success('删除成功');
+        if (flag) await refreshLogs();
+      } else {
+        message.error('删除失败');
+      }
+    },
   });
 }
 
 async function DelLogs() {
-  await ElMessageBox.confirm('是否删除所选跑团日志？', '删除', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    const ls = [];
-    for (const v of logs.value) {
-      if (v.pitch == true) {
-        ls.push(v);
+  dialog.warning({
+    title: '删除',
+    content: '是否删除所选跑团日志？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const ls = [];
+      for (const v of logs.value) {
+        if (v.pitch == true) {
+          ls.push(v);
+        }
       }
-    }
-    for (const v of ls) {
-      const info = await delLog(v);
-      if (info === true) {
-        ElMessage({
-          message: '删除成功',
-          type: 'success',
-        });
-      } else {
-        ElMessage({
-          message: '删除失败',
-          type: 'error',
-        });
+      for (const v of ls) {
+        const info = await delLog(v);
+        if (info) {
+          message.success('删除成功');
+        } else {
+          message.error('删除失败');
+        }
       }
-    }
-    await refreshLogs();
+      nextTick(async () => {
+        await refreshLogs();
+      });
+    },
   });
 }
 
 async function UploadLog(v: Log) {
-  const info = (await uploadLog(v)) as string;
-  ElMessage({
-    showClose: true,
-    dangerouslyUseHTMLString: true,
-    message: info,
-    duration: 0,
+  dialog.warning({
+    title: '警告',
+    content: '将此跑团日志上传至海豹服务器？',
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      const info = await postStoryLog(v);
+      message.info(() => h('span', { innerHTML: info }), {
+        closable: true,
+        duration: 0,
+      });
+    },
   });
-  return info;
 }
 //
 
@@ -292,154 +290,146 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <!--    <header style="margin-bottom: 1rem;">-->
-  <!--        &lt;!&ndash; <ElButton type="primary" :icon="Refresh" @click="getLogs(); getInfo()">刷新日志列表</ElButton> &ndash;&gt;-->
-  <!--    </header>-->
-  <el-tabs v-model="tab" stretch>
-    <el-tab-pane label="跑团日志" name="list">
+  <n-tabs v-model:value="tab" justify-content="space-evenly">
+    <n-tab-pane tab="跑团日志" name="list">
       <template v-if="mode == 'logs'">
         <header>
-          <ElCard>
-            <template #header>
-              <strong style="display: block; margin: 10px 0">跑团日志 / Story</strong>
-            </template>
-            <el-space direction="vertical" alignment="flex-start">
-              <el-text size="large" style="margin-right: 1rem"
-                >记录过 {{ sum_log }} 份日志，共计 {{ sum_item }} 条消息</el-text
-              >
-              <el-text size="large" style="margin-right: 1rem"
-                >现有 {{ cur_log }} 份日志，共计 {{ cur_item }} 条消息</el-text
-              >
-            </el-space>
-          </ElCard>
+          <n-card title="跑团日志 / Story">
+            <n-flex vertical align="flex-start">
+              <n-text>记录过 {{ sum_log }} 份日志，共计 {{ sum_item }} 条消息</n-text>
+              <n-text>现有 {{ cur_log }} 份日志，共计 {{ cur_item }} 条消息</n-text>
+            </n-flex>
+          </n-card>
         </header>
-        <ElDivider></ElDivider>
+        <n-divider />
         <main>
-          <el-form :inline="true" :model="queryLogPage">
-            <el-form-item label="日志名">
-              <el-input v-model="queryLogPage.name" clearable />
-            </el-form-item>
-            <el-form-item label="群号">
-              <el-input v-model="queryLogPage.groupId" clearable />
-            </el-form-item>
-            <el-form-item label="创建时间">
-              <el-date-picker
-                v-model="queryLogPage.createdTime"
-                type="daterange"
-                range-separator="-" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="searchLogs">查询</el-button>
-            </el-form-item>
-          </el-form>
-          <ElButtonGroup style="margin-top: 5px; display: block">
-            <ElButton type="primary" size="small" @click="logs.forEach(v => (v.pitch = !v.pitch))">
+          <n-form
+            v-model:model="queryLogPage"
+            size="small"
+            class="flex flex-wrap"
+            label-width="auto"
+            label-placement="left"
+            inline>
+            <n-form-item label="日志名">
+              <n-input v-model:value="queryLogPage.name" placeholder="" clearable />
+            </n-form-item>
+            <n-form-item label="群号">
+              <n-input v-model:value="queryLogPage.groupId" placeholder="" clearable />
+            </n-form-item>
+            <n-form-item label="创建时间">
+              <n-date-picker v-model:value="queryLogPage.createdTime" type="daterange" clearable />
+            </n-form-item>
+            <n-form-item>
+              <n-button type="info" secondary @click="searchLogs">查询</n-button>
+            </n-form-item>
+          </n-form>
+          <n-button-group cl style="margin-top: 5px; display: block">
+            <n-button type="primary" size="small" @click="logs.forEach(v => (v.pitch = !v.pitch))">
               <template #icon>
-                <i-carbon-checkmark />
+                <n-icon><i-carbon-checkmark /></n-icon>
               </template>
               全选
-            </ElButton>
-            <ElButton
+            </n-button>
+            <n-button
               v-show="logs.filter(v => v.pitch).length > 0"
-              type="danger"
+              type="error"
               size="small"
               @click="DelLogs()">
               <template #icon>
-                <i-carbon-row-delete />
+                <n-icon><i-carbon-row-delete /></n-icon>
               </template>
               删除所选
-            </ElButton>
-          </ElButtonGroup>
+            </n-button>
+          </n-button-group>
           <template v-for="i in logs" :key="i.id">
             <foldable-card style="margin-top: 10px">
               <template #title>
-                <el-space>
-                  <ElCheckbox v-model="i.pitch" style="float: right" />
-                  <el-space wrap>
-                    <el-text size="large" tag="strong">{{ i.name }}</el-text>
-                    <el-text>({{ i.groupId }})</el-text>
-                  </el-space>
-                </el-space>
+                <n-flex align="center">
+                  <n-checkbox v-model:checked="i.pitch" />
+                  <n-flex align="center" wrap>
+                    <n-text class="text-base" tag="strong">{{ i.name }}</n-text>
+                    <n-text>({{ i.groupId }})</n-text>
+                  </n-flex>
+                </n-flex>
               </template>
               <template #action>
-                <ElButton size="small" plain @click="openItem(i)">查看</ElButton>
-                <!--<ElButton>下载到本地</ElButton>-->
-                <ElButton size="small" type="primary" plain @click="UploadLog(i)">
-                  <template #icon>
-                    <i-carbon-upload />
-                  </template>
-                  提取日志
-                </ElButton>
-                <ElButton size="small" type="danger" plain @click="DelLog(i)">
-                  <template #icon>
-                    <i-carbon-row-delete />
-                  </template>
-                  删除
-                </ElButton>
+                <n-flex>
+                  <n-button size="small" secondary @click="openItem(i)">查看</n-button>
+                  <n-button size="small" type="primary" secondary @click="UploadLog(i)">
+                    <template #icon>
+                      <n-icon><i-carbon-upload /></n-icon>
+                    </template>
+                    提取日志
+                  </n-button>
+                  <n-button size="small" type="error" secondary @click="DelLog(i)">
+                    <template #icon>
+                      <n-icon><i-carbon-row-delete /></n-icon>
+                    </template>
+                    删除
+                  </n-button>
+                </n-flex>
               </template>
 
-              <el-space direction="vertical" alignment="flex-start">
-                <el-space>
-                  <el-text>包含 {{ i.size }} 条消息</el-text>
-                </el-space>
-                <el-space>
-                  <el-text>创建于：{{ dayjs.unix(i.createdAt).format('YYYY-MM-DD') }}</el-text>
-                  <ElTag size="small" disable-transitions>{{
-                    dayjs.unix(i.createdAt).fromNow()
-                  }}</ElTag
-                  ><br />
-                </el-space>
-                <el-space>
-                  <el-text>更新于：{{ dayjs.unix(i.updatedAt).format('YYYY-MM-DD') }}</el-text>
-                  <ElTag size="small" disable-transitions>{{
-                    dayjs.unix(i.updatedAt).fromNow()
-                  }}</ElTag
-                  ><br />
-                </el-space>
-              </el-space>
+              <n-flex vertical align="flex-start">
+                <n-flex>
+                  <n-text>包含 {{ i.size }} 条消息</n-text>
+                </n-flex>
+                <n-flex>
+                  <n-text>创建于：{{ dayjs.unix(i.createdAt).format('YYYY-MM-DD') }}</n-text>
+                  <n-tag type="info" size="small" :bordered="false">
+                    {{ dayjs.unix(i.createdAt).fromNow() }}
+                  </n-tag>
+                </n-flex>
+                <n-flex>
+                  <n-text>更新于：{{ dayjs.unix(i.updatedAt).format('YYYY-MM-DD') }}</n-text>
+                  <n-tag type="info" size="small" :bordered="false">
+                    {{ dayjs.unix(i.updatedAt).fromNow() }}
+                  </n-tag>
+                </n-flex>
+              </n-flex>
             </foldable-card>
           </template>
         </main>
         <div style="display: flex; justify-content: center">
-          <el-pagination
+          <n-pagination
             class="pagination"
-            :page-size="queryLogPage.pageSize"
-            :current-page="queryLogPage.pageNum"
-            :pager-count="3"
-            :total="queryLogPage.total"
-            layout="sizes, prev, pager, next"
-            background
-            @current-change="handleLogPageChange"
-            @size-change="handlePageSizeChange" />
+            v-model:page="queryLogPage.pageNum"
+            v-model:page-size="queryLogPage.pageSize"
+            show-size-picker
+            :page-sizes="[10, 20, 30, 50]"
+            :page-slot="3"
+            :item-count="queryLogPage.total"
+            @update:page="handleLogPageChange"
+            @update:page-size="handlePageSizeChange" />
         </div>
       </template>
       <template v-if="mode == 'items'">
-        <ElCard shadow="never">
-          <template #header>
-            <div style="display: flex; justify-content: space-between; align-items: center">
-              <strong style="margin: 10px 0">跑团日志 / Story</strong>
-              <ElButton type="primary" @click="closeItem()">
-                <template #icon>
-                  <i-carbon-chevron-left />
-                </template>
-                返回列表
-              </ElButton>
-            </div>
-          </template>
-          <ElCollapse>
-            <ElCollapseItem title="颜色设置">
-              <template v-for="(_, id) in users" :key="id">
-                <div style="padding: 0.5rem">
-                  <el-color-picker
-                    v-model="users[id][0]"
-                    color-format="hex"
-                    :predefine="randomColor({ count: 10 })" />
-                  <span style="padding-left: 1rem">{{ users[id][1] }}</span>
-                </div>
+        <n-card title="跑团日志 / Story">
+          <template #header-extra>
+            <n-button type="primary" @click="closeItem()">
+              <template #icon>
+                <n-icon><i-carbon-chevron-left /></n-icon>
               </template>
-            </ElCollapseItem>
-          </ElCollapse>
-        </ElCard>
+              返回列表
+            </n-button>
+          </template>
+          <n-collapse>
+            <n-collapse-item title="颜色设置">
+              <template v-for="(_, id) in users" :key="id">
+                <n-descriptions label-placement="top">
+                  <n-descriptions-item :label="users[id][1]">
+                    <n-color-picker
+                      class="w-32"
+                      v-model:value="users[id][0]"
+                      :modes="['hex']"
+                      :show-alpha="false"
+                      :swatches="randomColor({ count: 16 })" />
+                  </n-descriptions-item>
+                </n-descriptions>
+              </template>
+            </n-collapse-item>
+          </n-collapse>
+        </n-card>
         <div class="my-4 px-4">
           <template v-for="(v, i1) in items" :key="i1">
             <p :style="{ color: users[v.IMUserId][0] }">
@@ -452,23 +442,23 @@ onBeforeMount(async () => {
           </template>
         </div>
         <div style="display: flex; justify-content: center">
-          <el-pagination
+          <n-pagination
             class="pagination"
-            :page-size="logItemPage.pageSize"
-            :current-page="logItemPage.pageNum"
-            :pager-count="5"
-            :total="logItemPage.size"
-            layout="prev, pager, next"
-            background
-            hide-on-single-page
-            @current-change="handleItemPageChange" />
+            v-model:page="logItemPage.pageNum"
+            v-model:page-size="logItemPage.pageSize"
+            show-size-picker
+            :page-sizes="[50, 100, 200]"
+            :page-slot="5"
+            :item-count="logItemPage.size"
+            @update:page="handleItemPageChange"
+            @update:page-size="handleItemPageChange" />
         </div>
       </template>
-    </el-tab-pane>
-    <el-tab-pane label="日志备份" name="backup">
+    </n-tab-pane>
+    <n-tab-pane tab="日志备份" name="backup">
       <story-backup />
-    </el-tab-pane>
-  </el-tabs>
+    </n-tab-pane>
+  </n-tabs>
 </template>
 
 <style scoped lang="css">

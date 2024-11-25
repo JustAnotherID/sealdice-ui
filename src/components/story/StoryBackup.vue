@@ -1,87 +1,99 @@
 <template>
-  <div class="tip">
-    <el-text>
+  <tip-box type="info">
+    <n-text>
       每次向染色器上传跑团日志之前，都会在本地先保留一份备份，再进行上传。<br />
       确定不再需要时，你可以在此处删除这些备份文件。<br />
       <br />
       <strong>删除此处的备份文件不会使日志丢失。</strong>
-    </el-text>
-  </div>
+    </n-text>
+  </tip-box>
 
-  <header
-    style="
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 1rem 0;
-      padding: 0 1rem;
-    ">
-    <el-space size="large" alignment="center">
-      <el-checkbox
-        v-model="checkAllBackups"
+  <header class="my-2 flex items-center justify-between">
+    <n-flex size="large" align="center">
+      <n-checkbox
+        v-model:checked="checkAllBackups"
         :indeterminate="isIndeterminate"
-        :disabled="!(backups && backups.length > 0)"
-        @change="handleCheckAllChange"
-        >{{ checkAllBackups ? '取消全选' : '全选' }}
-      </el-checkbox>
-      <el-text type="info" size="small"
-        >已勾选 {{ selectedBackups.length }} 个备份，共
-        {{ filesize(selectedBackups.map(bak => bak.fileSize).reduce((a, b) => a + b, 0)) }}
-      </el-text>
-    </el-space>
-    <el-button
-      type="danger"
+        :disabled="!(backups && backups.size > 0)"
+        @update:checked="handleCheckAllChange">
+        {{ checkAllBackups ? '取消全选' : '全选' }}
+      </n-checkbox>
+      <n-text type="info" class="text-xs">
+        已勾选 {{ selectedBackups.length }} 个备份，共
+        {{
+          filesize(
+            selectedBackups
+              .map(n => backups.get(n))
+              .map(bak => bak?.fileSize ?? 0)
+              .reduce((a, b) => a + b, 0),
+          )
+        }}
+      </n-text>
+    </n-flex>
+    <n-button
+      type="error"
       :disabled="!(selectedBackups && selectedBackups.length > 0)"
       @click="backupBatchDeleteConfirm">
       <template #icon>
-        <i-carbon-row-delete />
+        <n-icon><i-carbon-row-delete /></n-icon>
       </template>
       删除所选
-    </el-button>
+    </n-button>
   </header>
 
-  <main class="backup-list">
-    <el-checkbox-group v-model="selectedBackups" @change="handleCheckedBackupChange">
-      <div v-for="backup in backups" :key="backup.name" class="backup-line">
-        <el-checkbox :label="backup" size="large">
-          <template #default>{{ backup.name }}</template>
-        </el-checkbox>
-        <el-space size="small" wrap style="margin-left: 1px; justify-content: flex-end">
-          <el-button
-            size="small"
-            tag="a"
-            style="text-decoration: none; width: 8rem"
-            :href="`${urlBase}/sd-api/story/backup/download?name=${encodeURIComponent(backup.name)}&token=${encodeURIComponent(store.token)}`">
-            下载 - {{ filesize(backup.fileSize) }}
-          </el-button>
-          <el-button type="danger" size="small" plain @click="bakDeleteConfirm(backup.name)">
-            <template #icon>
-              <i-carbon-row-delete />
-            </template>
-            删除
-          </el-button>
-        </el-space>
-      </div>
-    </el-checkbox-group>
-  </main>
+  <n-text v-if="backups.size === 0" class="text-base">无备份文件</n-text>
+  <n-list v-else class="backup-list">
+    <n-checkbox-group v-model:value="selectedBackups" @update:value="handleCheckedBackupChange">
+      <n-list-item>
+        <n-flex
+          align="center"
+          justify="space-between"
+          v-for="backup in backups.values()"
+          :key="backup.name"
+          class="backup-line">
+          <n-checkbox :value="backup.name" :label="backup.name" />
+          <n-flex size="small" wrap style="margin-left: 1px; justify-content: flex-end">
+            <n-button
+              size="small"
+              secondary
+              tag="a"
+              style="text-decoration: none; width: 8rem"
+              :href="`${urlBase}/sd-api/story/backup/download?name=${encodeURIComponent(backup.name)}&token=${encodeURIComponent(store.token)}`">
+              下载 - {{ filesize(backup.fileSize) }}
+            </n-button>
+            <n-button type="error" size="small" secondary @click="bakDeleteConfirm(backup.name)">
+              <template #icon>
+                <n-icon><i-carbon-row-delete /></n-icon>
+              </template>
+              删除
+            </n-button>
+          </n-flex>
+        </n-flex>
+      </n-list-item>
+    </n-checkbox-group>
+  </n-list>
 </template>
 
 <script setup lang="ts">
-import type { CheckboxValueType } from 'element-plus';
 import { filesize } from 'filesize';
 import { useStore } from '~/store';
 import type { Backup } from '~/api/story';
 import { getStoryBackUpList, postStoryBatchDel } from '~/api/story';
 import { urlBase } from '~/backend';
+import { useDialog, useMessage } from 'naive-ui';
 
 const store = useStore();
+const message = useMessage();
+const dialog = useDialog();
 
-const backups = ref<Backup[]>([]);
+const backups = ref<Map<string, Backup>>(new Map());
 
 const refreshList = async () => {
   const resp = await getStoryBackUpList();
   if (resp?.result) {
-    backups.value = resp.data;
+    backups.value = new Map();
+    for (const backup of resp.data) {
+      backups.value.set(backup.name, backup);
+    }
   }
   selectedBackups.value = [];
 };
@@ -96,52 +108,64 @@ const refreshList = async () => {
 // };
 
 const bakDeleteConfirm = async (name: string) => {
-  const ret = await ElMessageBox.confirm('确认删除？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  dialog.warning({
+    title: '提示',
+    content: `确认删除备份文件「${name}」？`,
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      const res = await postStoryBatchDel([name]);
+      if (res?.result) {
+        message.success('已删除');
+      } else {
+        message.error('删除失败');
+      }
+      nextTick(async () => {
+        await refreshList();
+      });
+    },
   });
-  if (ret) {
-    const res = await postStoryBatchDel([name]);
-    if (res?.result) {
-      ElMessage.success('已删除');
-    } else {
-      ElMessage.error('删除失败');
-    }
-  }
-  await refreshList();
 };
 
-const selectedBackups = ref<any[]>([]);
+const selectedBackups = ref<string[]>([]);
 const checkAllBackups = ref(false);
-const isIndeterminate = ref(true);
+const isIndeterminate = ref<boolean>();
 
-const handleCheckAllChange = (val: CheckboxValueType) => {
-  selectedBackups.value = val ? backups.value : [];
+const handleCheckAllChange = (val: boolean) => {
+  selectedBackups.value = val ? Array.from(backups.value.values().map(backup => backup.name)) : [];
   isIndeterminate.value = false;
 };
 
-const handleCheckedBackupChange = (value: CheckboxValueType[]) => {
+const handleCheckedBackupChange = (
+  value: (string | number)[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  meta: { actionType: 'check' | 'uncheck'; value: string | number },
+) => {
   const checkedCount = value.length;
-  checkAllBackups.value = checkedCount === backups.value.length;
-  isIndeterminate.value = checkedCount > 0 && checkedCount < backups.value.length;
+  checkAllBackups.value = checkedCount === backups.value.size;
+  isIndeterminate.value = checkedCount > 0 && checkedCount < backups.value.size;
 };
 
 const backupBatchDeleteConfirm = async () => {
-  const ret = await ElMessageBox.confirm('确认删除选择的所有跑团日志备份？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+  dialog.warning({
+    title: '提示',
+    content: `确认删除选择的所有跑团日志备份？`,
+    positiveText: '确定',
+    negativeText: '取消',
+    closable: false,
+    onPositiveClick: async () => {
+      const res = await postStoryBatchDel(selectedBackups.value);
+      if (res.result) {
+        message.success('已删除所选备份');
+      } else {
+        message.error('有备份删除失败！失败文件：\n' + res.fails.join('\n'));
+      }
+      nextTick(async () => {
+        await refreshList();
+      });
+    },
   });
-  if (ret) {
-    const res = await postStoryBatchDel(selectedBackups.value.map(bak => bak.name));
-    if (res.result) {
-      ElMessage.success('已删除所选备份');
-    } else {
-      ElMessage.error('有备份删除失败！失败文件：\n' + res.fails.join('\n'));
-    }
-  }
-  await refreshList();
 };
 
 onBeforeMount(async () => {
