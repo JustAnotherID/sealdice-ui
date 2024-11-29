@@ -1,28 +1,30 @@
 <template>
   <Teleport v-if="store.curDice.logs.length" to="#root">
-    <el-button type="default" class="btn-scrolldown" circle @click="scrollDown" content="最新日志">
+    <n-button type="default" class="btn-scrolldown" circle @click="scrollDown" content="最新日志">
       <template #icon>
-        <i-carbon-chevron-down />
+        <n-icon><i-carbon-chevron-down /></n-icon>
       </template>
-    </el-button>
+    </n-button>
   </Teleport>
 
   <div style="display: flex; justify-content: flex-end; align-items: center">
     <div style="display: flex; flex-direction: column">
-      <el-tooltip
+      <n-tooltip
         v-if="
           store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode &&
           store.curDice.baseInfo.containerMode
-        "
-        content="容器模式下禁止直接更新，请手动拉取最新镜像">
-        <el-button type="primary" disabled>升级新版</el-button>
-      </el-tooltip>
-      <el-button
+        ">
+        <template #trigger>
+          <n-button type="primary" disabled>升级新版</n-button>
+        </template>
+        容器模式下禁止直接更新，请手动拉取最新镜像
+      </n-tooltip>
+      <n-button
         v-else-if="store.curDice.baseInfo.versionCode < store.curDice.baseInfo.versionNewCode"
         type="primary"
         @click="upgradeDialogVisible = true">
         升级新版
-      </el-button>
+      </n-button>
     </div>
   </div>
 
@@ -40,14 +42,14 @@
 
   <div class="flex items-center justify-between">
     <h4>日志</h4>
-    <el-checkbox v-model="autoRefresh">保持刷新</el-checkbox>
+    <n-checkbox v-model:checked="autoRefresh">保持刷新</n-checkbox>
   </div>
 
-  <el-divider class="latest-log-warn">
-    <el-text type="warning" size="small" class="hover:cursor-pointer" @click="scrollDown"
-      >点击下拉到底查看最新</el-text
-    >
-  </el-divider>
+  <n-divider>
+    <n-text type="warning" class="text-xs hover:cursor-pointer" @click="scrollDown">
+      点击下拉到底查看最新
+    </n-text>
+  </n-divider>
 
   <div class="logs hidden p-0 md:block">
     <el-table
@@ -57,19 +59,19 @@
       <el-table-column label="时间" width="90">
         <template #default="scope">
           <div style="display: flex; align-items: center">
-            <el-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(--el-color-warning)">
+            <n-icon v-if="scope.row.msg.startsWith('onebot | ')" color="var(--el-color-warning)">
               <i-carbon-time />
-            </el-icon>
-            <el-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(--el-color-primary)">
+            </n-icon>
+            <n-icon v-else-if="scope.row.msg.startsWith('发给')" color="var(--el-color-primary)">
               <i-carbon-time />
-            </el-icon>
-            <el-icon v-else-if="scope.row.level === 'warn'" color="var(--el-color-warning)">
+            </n-icon>
+            <n-icon v-else-if="scope.row.level === 'warn'" color="var(--el-color-warning)">
               <i-carbon-time />
-            </el-icon>
-            <el-icon v-else-if="scope.row.level === 'error'" color="var(--el-color-danger)">
+            </n-icon>
+            <n-icon v-else-if="scope.row.level === 'error'" color="var(--el-color-danger)">
               <i-carbon-time />
-            </el-icon>
-            <el-icon v-else><i-carbon-time /></el-icon>
+            </n-icon>
+            <n-icon v-else><i-carbon-time /></n-icon>
             <span style="margin-left: 0.3rem">
               <span
                 v-if="scope.row.msg.startsWith('onebot | ')"
@@ -94,39 +96,35 @@
       </el-table-column>
       <el-table-column prop="level" label="级别" width="55">
         <template #default="scope">
-          <el-text v-if="scope.row.msg.startsWith('onebot | ')" type="warning">{{
-            scope.row.level
-          }}</el-text>
-          <el-text v-else-if="scope.row.msg.startsWith('发给')" type="primary">{{
-            scope.row.level
-          }}</el-text>
-          <el-text v-else-if="scope.row.level === 'warn'" type="warning">{{
-            scope.row.level
-          }}</el-text>
-          <el-text v-else-if="scope.row.level === 'error'" type="danger">{{
-            scope.row.level
-          }}</el-text>
-          <el-text v-else>{{ scope.row.level }}</el-text>
+          <n-text v-if="scope.row.msg.startsWith('onebot | ')" type="warning">
+            {{ scope.row.level }}
+          </n-text>
+          <n-text v-else-if="scope.row.msg.startsWith('发给')" type="primary">
+            {{ scope.row.level }}
+          </n-text>
+          <n-text v-else-if="scope.row.level === 'warn'" type="warning">
+            {{ scope.row.level }}
+          </n-text>
+          <n-text v-else-if="scope.row.level === 'error'" type="error">
+            {{ scope.row.level }}
+          </n-text>
+          <n-text v-else>{{ scope.row.level }}</n-text>
         </template>
       </el-table-column>
       <el-table-column prop="msg" label="信息">
         <template #default="scope">
-          <span
-            v-if="scope.row.msg.startsWith('onebot | ')"
-            style="color: var(--el-color-warning)"
-            >{{ scope.row.msg }}</span
-          >
-          <span
-            v-else-if="scope.row.msg.startsWith('发给')"
-            style="color: var(--el-color-primary)"
-            >{{ scope.row.msg }}</span
-          >
-          <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">{{
-            scope.row.msg
-          }}</span>
-          <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">{{
-            scope.row.msg
-          }}</span>
+          <span v-if="scope.row.msg.startsWith('onebot | ')" style="color: var(--el-color-warning)">
+            {{ scope.row.msg }}
+          </span>
+          <span v-else-if="scope.row.msg.startsWith('发给')" style="color: var(--el-color-primary)">
+            {{ scope.row.msg }}
+          </span>
+          <span v-else-if="scope.row.level === 'warn'" style="color: var(--el-color-warning)">
+            {{ scope.row.msg }}
+          </span>
+          <span v-else-if="scope.row.level === 'error'" style="color: var(--el-color-danger)">
+            {{ scope.row.msg }}
+          </span>
           <span v-else>{{ scope.row.msg }}</span>
         </template>
       </el-table-column>
@@ -179,23 +177,23 @@
     </el-table-column>
   </el-table>
 
-  <el-dialog
-    v-model="upgradeDialogVisible"
+  <n-modal
+    v-model:show="upgradeDialogVisible"
+    preset="card"
     title="升级新版本"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="true"
+    :mask-closable="false"
+    :close-on-esc="false"
+    :closable="false"
     class="the-dialog">
-    <!-- <el-checkbox v-model="importOnlyCurrent">仅当前页面 (勾选)/全部自定义文案</el-checkbox> -->
-    <!-- <el-checkbox v-model="importImpact">紧凑</el-checkbox> -->
-
-    <el-link
+    <n-button
+      text
+      tag="a"
       style="font-size: 16px; font-weight: bolder"
-      type="primary"
+      type="info"
       href="https://dice.weizaima.com/changelog"
-      target="_blank"
-      >查看更新日志</el-link
-    >
+      target="_blank">
+      查看更新日志
+    </n-button>
 
     <div>请及时更新海豹到最新版本，这意味着功能增加和 BUG 修复。</div>
     <div>当然，在更新前最好看看右上角的海豹新闻，通常会很有帮助。</div>
@@ -205,9 +203,9 @@
     </div>
     <div><b>进一步的内容请查阅届时自动生成的“升级失败指引”或加群询问。</b></div>
 
-    <el-button style="margin: 1rem 0" type="primary" @click="doUpgrade"
-      >确认升级到 {{ store.curDice.baseInfo.versionNew }}
-    </el-button>
+    <n-button style="margin: 1rem 0" type="primary" @click="doUpgrade">
+      确认升级到 {{ store.curDice.baseInfo.versionNew }}
+    </n-button>
 
     <div>{{ store.curDice.baseInfo.versionNewNote }}</div>
     <div>注意：升级成功后界面不会自动刷新，请在重连完成后手动刷新</div>
@@ -222,7 +220,7 @@
         <!-- <el-button type="primary" @click="doImport" :disabled="configForImport === ''">导入并保存</el-button> -->
       </span>
     </template>
-  </el-dialog>
+  </n-modal>
 
   <!-- <div v-for="i in store.curDice.logs">
     {{i}}
@@ -234,8 +232,10 @@ import { useStore } from '~/store';
 import dayjs from 'dayjs';
 import { filesize } from 'filesize';
 import { postUpgrade } from '~/api/dice';
+import { useDialog } from 'naive-ui';
 
 const store = useStore();
+const dialog = useDialog();
 
 const upgradeDialogVisible = ref(false);
 const autoRefresh = ref(true);
@@ -245,13 +245,15 @@ let timerId: number;
 
 const doUpgrade = async () => {
   upgradeDialogVisible.value = false;
-  ElMessageBox.alert('开始下载更新，请等待……<br>完成后将自动重启海豹，并进入更新流程', '升级', {
-    dangerouslyUseHTMLString: true,
+  dialog.info({
+    title: '升级',
+    content: '开始下载更新，请等待……\n完成后将自动重启海豹，并进入更新流程',
   });
   try {
     const ret = await postUpgrade();
-    ElMessageBox.alert(ret.text + '<br>如果几分钟后服务没有恢复，检查一下海豹目录', '升级', {
-      dangerouslyUseHTMLString: true,
+    dialog.info({
+      title: '升级',
+      content: ret.text + '\n如果几分钟后服务没有恢复，检查一下海豹目录',
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
