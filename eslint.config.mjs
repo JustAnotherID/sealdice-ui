@@ -1,30 +1,19 @@
+import { globalIgnores } from 'eslint/config';
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import pluginVue from 'eslint-plugin-vue';
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import pluginOxlint from 'eslint-plugin-oxlint';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 
-export default [
+export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
     files: ['**/*.{ts,mts,tsx,js,mjs,jsx,vue}'],
   },
-  {
-    name: 'app/files-to-ignore',
-    ignores: ['**/dist/**'],
-  },
+
+  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+
   ...pluginVue.configs['flat/essential'],
-  ...vueTsEslintConfig({
-    supportedScriptLangs: {
-      ts: true,
-      tsx: true,
-    },
-  }),
+  vueTsConfigs.recommended,
+  ...pluginOxlint.configs['flat/recommended'],
   skipFormatting,
-  eslintPluginPrettierRecommended,
-  {
-    name: 'ignore-rules',
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
-  },
-];
+);
